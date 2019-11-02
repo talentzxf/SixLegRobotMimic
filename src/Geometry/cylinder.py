@@ -4,31 +4,35 @@ from PyQt5.QtGui import QColor
 
 
 class Cylinder:
-    def __init__(self, radius, height, slices):
+    def __init__(self, radius, length, slices=200):
         self.upper_face = []  # Triangle Fan
         self.lower_face = []  # Triangle Fan
         self.wall = []  # Quads
         self.face_color = QColor.fromCmykF(0.40, 0.0, 1.0, 0.0)
         self.wall_color = QColor.fromCmykF(0.39, 0.39, 0.0, 0.0)
-        self.upper_face.append([0, 0, height, self.face_color])
+        self.upper_face.append([0, 0, length, self.face_color])
         self.lower_face.append([0, 0, 0, self.face_color])
 
         self.display_list = 0
+        self.length = length
 
-        for i in range(slices+1):
+        for i in range(slices + 1):
             angle = (i * 2 * math.pi) / slices
             x = radius * math.cos(angle)
             y = radius * math.sin(angle)
             self.lower_face.append([x, y, 0, self.face_color])
-            self.upper_face.append([x, y, height, self.face_color])
+            self.upper_face.append([x, y, length, self.face_color])
 
             angle2 = ((i + 1) * 2 * math.pi) / slices  # next angle
             x2 = radius * math.cos(angle2)
             y2 = radius * math.sin(angle2)
-            self.wall.append([x, y, height, self.face_color])
+            self.wall.append([x, y, length, self.face_color])
             self.wall.append([x, y, 0, self.face_color])
             self.wall.append([x2, y2, 0, self.face_color])
-            self.wall.append([x2, y2, height, self.face_color])
+            self.wall.append([x2, y2, length, self.face_color])
+
+    def getLength(self):
+        return self.length
 
     def genObjectList(self):
         display_list = gl.glGenLists(1)

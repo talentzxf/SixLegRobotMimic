@@ -45,7 +45,7 @@
 import sys
 import math
 
-from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt
+from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QTimer
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider,
                              QWidget)
@@ -53,6 +53,7 @@ from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider,
 import OpenGL.GL as gl
 
 from src.Geometry.cylinder import Cylinder
+from src.RobotControl.linksystem import LinkSystem
 
 
 class Window(QWidget):
@@ -66,12 +67,12 @@ class Window(QWidget):
         self.ySlider = self.createSlider()
         self.zSlider = self.createSlider()
 
-        self.xSlider.valueChanged.connect(self.glWidget.setXRotation)
-        self.glWidget.xRotationChanged.connect(self.xSlider.setValue)
-        self.ySlider.valueChanged.connect(self.glWidget.setYRotation)
-        self.glWidget.yRotationChanged.connect(self.ySlider.setValue)
-        self.zSlider.valueChanged.connect(self.glWidget.setZRotation)
-        self.glWidget.zRotationChanged.connect(self.zSlider.setValue)
+        # self.xSlider.valueChanged.connect(self.glWidget.setXRotation)
+        # self.glWidget.xRotationChanged.connect(self.xSlider.setValue)
+        # self.ySlider.valueChanged.connect(self.glWidget.setYRotation)
+        # self.glWidget.yRotationChanged.connect(self.ySlider.setValue)
+        # self.zSlider.valueChanged.connect(self.glWidget.setZRotation)
+        # self.glWidget.zRotationChanged.connect(self.zSlider.setValue)
 
         mainLayout = QHBoxLayout()
         mainLayout.addWidget(self.glWidget)
@@ -80,11 +81,11 @@ class Window(QWidget):
         mainLayout.addWidget(self.zSlider)
         self.setLayout(mainLayout)
 
-        self.xSlider.setValue(15 * 16)
-        self.ySlider.setValue(345 * 16)
-        self.zSlider.setValue(0 * 16)
-
         self.setWindowTitle("Hello GL")
+
+        timer = QTimer(self)
+        timer.timeout.connect(self.glWidget.update)
+        timer.start(0)
 
     def createSlider(self):
         slider = QSlider(Qt.Vertical)
@@ -99,23 +100,29 @@ class Window(QWidget):
 
 
 class GLWidget(QOpenGLWidget):
-    xRotationChanged = pyqtSignal(int)
-    yRotationChanged = pyqtSignal(int)
-    zRotationChanged = pyqtSignal(int)
-
-    cylinder_radius = 0.01
-    cylinder_length = 0.2
 
     def __init__(self, parent=None):
         super(GLWidget, self).__init__(parent)
 
-        self.cylinder = Cylinder(0.01, self.cylinder_length, 200)
-        self.xRot = 0
+        self.base = Cylinder(0.1, 0.01, 200)
+        self.xRot = 70
         self.yRot = 0
-        self.zRot = 0
+        self.zRot = 70
 
         self.lastPos = QPoint()
         self.bg_color = QColor.fromCmykF(0.39, 0.39, 0.0, 0.0)
+
+        self.links = LinkSystem()
+        self.links.add_link(0.3, [0.0, 0.0, 1.0])
+        self.links.add_link(0.4, [1.0, 0.0, 0.0])
+        self.links.add_link(0.5, [1.0, 0.0, 0.0])
+        self.links.add_link(0.6, [1.0, 0.0, 0.0])
+
+        # self.links.getLink(0).setTheta(90)
+        self.links.getLink(1).setTheta(90)
+        self.links.getLink(2).setTheta(90)
+        self.links.getLink(3).setTheta(90)
+
 
     def getOpenglInfo(self):
         info = """
@@ -136,27 +143,24 @@ class GLWidget(QOpenGLWidget):
         return QSize(50, 50)
 
     def sizeHint(self):
-        return QSize(800, 800)
+        return QSize(1024, 1024)
 
     def setXRotation(self, angle):
         angle = self.normalizeAngle(angle)
         if angle != self.xRot:
             self.xRot = angle
-            self.xRotationChanged.emit(angle)
             self.update()
 
     def setYRotation(self, angle):
         angle = self.normalizeAngle(angle)
         if angle != self.yRot:
             self.yRot = angle
-            self.yRotationChanged.emit(angle)
             self.update()
 
     def setZRotation(self, angle):
         angle = self.normalizeAngle(angle)
         if angle != self.zRot:
             self.zRot = angle
-            self.zRotationChanged.emit(angle)
             self.update()
 
     def initializeGL(self):
@@ -168,10 +172,11 @@ class GLWidget(QOpenGLWidget):
 
         self.enableLightAndMaterial()
         gl.glEnable(gl.GL_DEPTH_TEST)
-        self.cylinder.genObjectList()
+        self.base.genObjectList()
+        self.links.genObjectList()
 
     def enableLightAndMaterial(self):
-        flashLightPos = [0.0, 10.0, 0.0]
+        flashLightPos = [10.0, 10.0, 0.0]
         flashLightDir = [0.0, 0.0, -1.0]
         flashLightColor = [0.2, 0.2, 0.2]
 
@@ -197,18 +202,14 @@ class GLWidget(QOpenGLWidget):
             gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
         gl.glLoadIdentity()
 
-        gl.glTranslated(-0.3, 0.3, -10.0)
-        gl.glRotated(self.xRot / 16.0, 1.0, 0.0, 0.0)
-        gl.glRotated(self.yRot / 16.0, 0.0, 1.0, 0.0)
-        gl.glRotated(self.zRot / 16.0, 0.0, 0.0, 1.0)
-        self.cylinder.draw()
-
-        gl.glTranslate(0, 0, self.cylinder_length)
-        gl.glRotated(90.0, 0.0, 0.0, 0.0)
-        self.cylinder.draw()
-        gl.glTranslate(0, 0, self.cylinder_length)
-        gl.glRotated(-90.0, 0.0, 0.0, 0.0)
-        self.cylinder.draw()
+        # gl.glTranslated(-0.3, 0.3, -10.0)
+        gl.glTranslated(0.0, 0.0, -10.0)
+        gl.glRotated(self.xRot, 1.0, 0.0, 0.0)
+        gl.glRotated(self.yRot, 0.0, 1.0, 0.0)
+        gl.glRotated(self.zRot, 0.0, 0.0, 1.0)
+        self.base.draw()
+        self.links.draw()
+        self.links.getLink(0).addTheta()
 
     def resizeGL(self, width, height):
         side = min(width, height)
