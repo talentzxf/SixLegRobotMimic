@@ -54,6 +54,7 @@ import OpenGL.GL as gl
 
 from src.Geometry.cylinder import Cylinder
 from src.RobotControl.linksystem import LinkSystem
+from src.RobotControl.naivecontrol import NavieControl
 
 
 class Window(QWidget):
@@ -113,15 +114,12 @@ class GLWidget(QOpenGLWidget):
         self.bg_color = QColor.fromCmykF(0.39, 0.39, 0.0, 0.0)
 
         self.links = LinkSystem()
-        self.links.add_link(0.3, [0.0, 0.0, 1.0])
-        self.links.add_link(0.4, [1.0, 0.0, 0.0])
-        self.links.add_link(0.5, [1.0, 0.0, 0.0])
-        self.links.add_link(0.6, [1.0, 0.0, 0.0])
+        self.links.add_link(0.1, [0.0, 0.0, 1.0])
+        self.links.add_link(0.1, [1.0, 0.0, 0.0])
+        self.links.add_link(0.1, [1.0, 0.0, 0.0])
+        self.links.add_link(0.1, [1.0, 0.0, 0.0])
 
-        # self.links.getLink(0).setTheta(90)
-        self.links.getLink(1).setTheta(90)
-        self.links.getLink(2).setTheta(90)
-        self.links.getLink(3).setTheta(90)
+        self.control_system = NavieControl(self.links)
 
 
     def getOpenglInfo(self):
@@ -209,7 +207,7 @@ class GLWidget(QOpenGLWidget):
         gl.glRotated(self.zRot, 0.0, 0.0, 1.0)
         self.base.draw()
         self.links.draw()
-        self.links.getLink(0).addTheta()
+        self.control_system.update()
 
     def resizeGL(self, width, height):
         side = min(width, height)

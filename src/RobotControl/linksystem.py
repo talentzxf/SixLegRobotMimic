@@ -1,5 +1,7 @@
+from src.Geometry.MatrixOps import translate_matrix, rotate_matrix
 from src.Geometry.cylinder import Cylinder
 import OpenGL.GL as gl
+import numpy as np
 
 
 class Link(Cylinder):
@@ -35,17 +37,23 @@ class Link(Cylinder):
         self.theta += gap
 
     def draw(self):
+        model_matrix = np.identity(4)
         if self.prev:
             prev = self.getPrev()
             gl.glTranslated(0.0, 0.0, prev.getLength())
+            model_matrix = np.matmul(model_matrix, translate_matrix(0.0, 0.0, prev.getLength()))
 
         if self.axis:
             gl.glRotated(self.theta, self.axis[0], self.axis[1], self.axis[2])
+            model_matrix = np.matmul(model_matrix, rotate_matrix(self.theta, self.axis))
         Cylinder.draw(self)
+        return model_matrix
+
 
 class LinkSystem:
     def __init__(self):
         self.links = []
+        self.cylinder = Cylinder(0.02, 0.02)
 
     def add_link(self, length, axis):
         new_link = Link(length, axis)
@@ -61,10 +69,25 @@ class LinkSystem:
     def genObjectList(self):
         for link in self.links:
             link.genObjectList()
+        self.cylinder.genObjectList()
 
     def getLink(self, idx):
         return self.links[idx]
 
     def draw(self):
-        for link in self.links:
-            link.draw()
+        gl.glPushMatrix()
+        model_matrix = np.identity(4)
+        # for link in self.links:
+        #     cur_model_matrix = link.draw()
+        #     model_matrix = np.matmul(cur_model_matrix, model_matrix)
+        model_matrix_1 = self.links[0].draw()
+        model_matrix_2 = self.links[1].draw()
+        model_matrix_3 = self.links[2].draw()
+        model_matrix = np.matmul(model_matrix_1, model_matrix)
+        model_matrix = np.matmul(model_matrix_2, model_matrix)
+        model_matrix = np.matmul(model_matrix_3, model_matrix)
+        print(model_matrix)
+        gl.glPopMatrix()
+        # Draw a cone at the destination
+        gl.glMultTransposeMatrixd(model_matrix.tolist())
+        self.cylinder.draw()
