@@ -103,10 +103,13 @@ class GLWidget(QOpenGLWidget):
     yRotationChanged = pyqtSignal(int)
     zRotationChanged = pyqtSignal(int)
 
+    cylinder_radius = 0.01
+    cylinder_length = 0.2
+
     def __init__(self, parent=None):
         super(GLWidget, self).__init__(parent)
 
-        self.cylinder = Cylinder(0.1, 0.5, 200)
+        self.cylinder = Cylinder(0.01, self.cylinder_length, 200)
         self.xRot = 0
         self.yRot = 0
         self.zRot = 0
@@ -133,7 +136,7 @@ class GLWidget(QOpenGLWidget):
         return QSize(50, 50)
 
     def sizeHint(self):
-        return QSize(400, 400)
+        return QSize(800, 800)
 
     def setXRotation(self, angle):
         angle = self.normalizeAngle(angle)
@@ -194,10 +197,17 @@ class GLWidget(QOpenGLWidget):
             gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
         gl.glLoadIdentity()
 
-        gl.glTranslated(0.0, 0.0, -10.0)
+        gl.glTranslated(-0.3, 0.3, -10.0)
         gl.glRotated(self.xRot / 16.0, 1.0, 0.0, 0.0)
         gl.glRotated(self.yRot / 16.0, 0.0, 1.0, 0.0)
         gl.glRotated(self.zRot / 16.0, 0.0, 0.0, 1.0)
+        self.cylinder.draw()
+
+        gl.glTranslate(0, 0, self.cylinder_length)
+        gl.glRotated(90.0, 0.0, 0.0, 0.0)
+        self.cylinder.draw()
+        gl.glTranslate(0, 0, self.cylinder_length)
+        gl.glRotated(-90.0, 0.0, 0.0, 0.0)
         self.cylinder.draw()
 
     def resizeGL(self, width, height):
