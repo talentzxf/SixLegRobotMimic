@@ -41,7 +41,7 @@
 ##
 #############################################################################
 
-
+import numpy as np
 import sys
 import math
 
@@ -202,12 +202,14 @@ class GLWidget(QOpenGLWidget):
 
         # gl.glTranslated(-0.3, 0.3, -10.0)
         gl.glTranslated(0.0, 0.0, -10.0)
+        print("Print matrix done")
         gl.glRotated(self.xRot, 1.0, 0.0, 0.0)
-        gl.glRotated(self.yRot, 0.0, 1.0, 0.0)
-        gl.glRotated(self.zRot, 0.0, 0.0, 1.0)
-        self.base.draw()
-        self.links.draw()
-        self.control_system.update()
+        print( np.array(gl.glGetFloatv(gl.GL_MODELVIEW_MATRIX)) )
+        # gl.glRotated(self.yRot, 0.0, 1.0, 0.0)
+        # gl.glRotated(self.zRot, 0.0, 0.0, 1.0)
+        # self.base.draw()
+        # self.links.draw()
+        # self.control_system.update()
 
     def resizeGL(self, width, height):
         side = min(width, height)
