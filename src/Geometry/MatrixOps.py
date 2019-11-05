@@ -5,9 +5,9 @@ import math as m
 def translate_matrix(x, y, z):
     return np.matrix(
         [[1, 0, 0, x],
-        [0, 1, 0, y],
-        [0, 0, 1, z],
-        [0, 0, 0, 1]])
+         [0, 1, 0, y],
+         [0, 0, 1, z],
+         [0, 0, 0, 1]])
 
 
 def rotate_matrix(theta, axis):
@@ -28,7 +28,7 @@ def rotate_matrix(theta, axis):
 
     return np.matrix(
         [[c + ax2 * o_m_ct, axy * o_m_ct - a2 * s, axz * o_m_ct + a1 * s, 0, ],
-        [axy * o_m_ct + a2 * s, c + ay2 * o_m_ct, ayz * o_m_ct - a0 * s, 0],
-        [axz * o_m_ct - a1 * s, ayz * o_m_ct + a0 * s, c + az2 * o_m_ct, 0],
-        [0, 0, 0, 1]]
+         [axy * o_m_ct + a2 * s, c + ay2 * o_m_ct, ayz * o_m_ct - a0 * s, 0],
+         [axz * o_m_ct - a1 * s, ayz * o_m_ct + a0 * s, c + az2 * o_m_ct, 0],
+         [0, 0, 0, 1]]
     )
