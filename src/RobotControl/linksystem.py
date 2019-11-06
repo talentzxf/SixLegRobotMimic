@@ -89,5 +89,5 @@ class LinkSystem:
         print(model_matrix)
         gl.glPopMatrix()
         # Draw a cone at the destination
-        # gl.glMultTransposeMatrixd(model_matrix.tolist())
+        gl.glMultTransposeMatrixd(model_matrix.tolist())
         self.cylinder.draw()

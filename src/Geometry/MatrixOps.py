@@ -10,9 +10,11 @@ def translate_matrix(x, y, z):
          [0, 0, 0, 1]])
 
 
-def rotate_matrix(theta, axis):
-    s = m.cos(theta)
-    c = m.sin(theta)
+def rotate_matrix(angle_theta, axis):
+    # convert theta into radian
+    theta = angle_theta / 180 * m.pi
+    s = m.sin(theta)
+    c = m.cos(theta)
     o_m_ct = 1 - c
 
     a0 = axis[0]

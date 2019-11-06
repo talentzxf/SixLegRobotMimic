@@ -56,6 +56,8 @@ from src.Geometry.cylinder import Cylinder
 from src.RobotControl.linksystem import LinkSystem
 from src.RobotControl.naivecontrol import NavieControl
 
+import Geometry.MatrixOps as matrixops
+
 
 class Window(QWidget):
 
@@ -120,7 +122,6 @@ class GLWidget(QOpenGLWidget):
         self.links.add_link(0.1, [1.0, 0.0, 0.0])
 
         self.control_system = NavieControl(self.links)
-
 
     def getOpenglInfo(self):
         info = """
@@ -201,15 +202,16 @@ class GLWidget(QOpenGLWidget):
         gl.glLoadIdentity()
 
         # gl.glTranslated(-0.3, 0.3, -10.0)
+
+        # print("Rotate -- Translate")
+        gl.glLoadIdentity()
         gl.glTranslated(0.0, 0.0, -10.0)
-        print("Print matrix done")
         gl.glRotated(self.xRot, 1.0, 0.0, 0.0)
-        print( np.array(gl.glGetFloatv(gl.GL_MODELVIEW_MATRIX)) )
-        # gl.glRotated(self.yRot, 0.0, 1.0, 0.0)
-        # gl.glRotated(self.zRot, 0.0, 0.0, 1.0)
-        # self.base.draw()
-        # self.links.draw()
-        # self.control_system.update()
+        gl.glRotated(self.yRot, 0.0, 1.0, 0.0)
+        gl.glRotated(self.zRot, 0.0, 0.0, 1.0)
+        self.base.draw()
+        self.links.draw()
+        self.control_system.update()
 
     def resizeGL(self, width, height):
         side = min(width, height)

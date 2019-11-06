@@ -7,4 +7,4 @@ class NavieControl:
         self.links.getLink(3).setTheta(90)
 
     def update(self):
-        self.links.getLink(3).addTheta()
+        self.links.getLink(2).addTheta()
