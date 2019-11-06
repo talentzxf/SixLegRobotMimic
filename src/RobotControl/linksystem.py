@@ -41,11 +41,11 @@ class Link(Cylinder):
         if self.prev:
             prev = self.getPrev()
             gl.glTranslated(0.0, 0.0, prev.getLength())
-            model_matrix = np.matmul(translate_matrix(0.0, 0.0, prev.getLength()), model_matrix)
+            model_matrix = np.matmul(model_matrix, translate_matrix(0.0, 0.0, prev.getLength()))
 
         if self.axis:
             gl.glRotated(self.theta, self.axis[0], self.axis[1], self.axis[2])
-            model_matrix = np.matmul(rotate_matrix(self.theta, self.axis), model_matrix)
+            model_matrix = np.matmul(model_matrix, rotate_matrix(self.theta, self.axis))
         Cylinder.draw(self)
         return model_matrix
 
@@ -83,9 +83,9 @@ class LinkSystem:
         model_matrix_1 = self.links[0].draw()
         model_matrix_2 = self.links[1].draw()
         model_matrix_3 = self.links[2].draw()
-        model_matrix = np.matmul(model_matrix_1, model_matrix)
-        model_matrix = np.matmul(model_matrix_2, model_matrix)
-        model_matrix = np.matmul(model_matrix_3, model_matrix)
+        model_matrix = np.matmul(model_matrix, model_matrix_1)
+        model_matrix = np.matmul(model_matrix, model_matrix_2)
+        model_matrix = np.matmul(model_matrix, model_matrix_3)
         print(model_matrix)
         gl.glPopMatrix()
         # Draw a cone at the destination
