@@ -1,5 +1,5 @@
-from src.RobotControl.linksystem import LinkSystem
-from src.RobotControl.naivecontrol import NavieControl
+from RobotControl.linksystem import LinkSystem
+from RobotControl.naivecontrol import NavieControl
 
 
 class RobotModel:

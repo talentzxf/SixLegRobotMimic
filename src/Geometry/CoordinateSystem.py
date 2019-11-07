@@ -1,12 +1,14 @@
-from src.Geometry.cylinder import Cylinder
+from Geometry.cylinder import Cylinder
 import OpenGL.GL as gl
+from PyQt5.QtGui import QColor
+
 
 class CoordinateSystem:
     def __init__(self):
         self.coordinates = []
-        self.coordinates.append(Cylinder(0.005, 0.5))
-        self.coordinates.append(Cylinder(0.005, 0.5))
-        self.coordinates.append(Cylinder(0.005, 0.5))
+        self.coordinates.append(Cylinder(0.005, 0.5, QColor.fromRgb(255, 0, 0), QColor.fromRgb(255, 0, 0)))
+        self.coordinates.append(Cylinder(0.005, 0.5, QColor.fromRgb(0, 255, 0), QColor.fromRgb(0, 255, 0)))
+        self.coordinates.append(Cylinder(0.005, 0.5, QColor.fromRgb(0, 0, 255), QColor.fromRgb(0, 0, 255)))
 
     def init(self):
         for c in self.coordinates:

@@ -1,5 +1,5 @@
-from src.Geometry.MatrixOps import translate_matrix, rotate_matrix
-from src.Geometry.cylinder import Cylinder
+from Geometry.MatrixOps import translate_matrix, rotate_matrix
+from Geometry.cylinder import Cylinder
 import OpenGL.GL as gl
 import numpy as np
 

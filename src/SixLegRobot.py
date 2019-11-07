@@ -12,14 +12,9 @@ from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider,
 
 import OpenGL.GL as gl
 
-from src.Geometry.CoordinateSystem import CoordinateSystem
-from src.Geometry.cylinder import Cylinder
-from src.RobotControl.linksystem import LinkSystem
-from src.RobotControl.naivecontrol import NavieControl
-
-import Geometry.MatrixOps as matrixops
-
-from src.RobotControl.robotmodel import RobotModel
+from Geometry.CoordinateSystem import CoordinateSystem
+from Geometry.cylinder import Cylinder
+from RobotControl.robotmodel import RobotModel
 
 
 class Window(QWidget):
@@ -70,7 +65,7 @@ class GLWidget(QOpenGLWidget):
     def __init__(self, parent=None):
         super(GLWidget, self).__init__(parent)
 
-        self.base = Cylinder(0.1, 0.01, 200)
+        self.base = Cylinder(0.1, 0.01)
         self.xRot = 70
         self.yRot = 0
         self.zRot = 70
