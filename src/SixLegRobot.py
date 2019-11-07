@@ -1,46 +1,6 @@
 #!/usr/bin/env python
 
 
-#############################################################################
-##
-## Copyright (C) 2015 Riverbank Computing Limited.
-## Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
-## All rights reserved.
-##
-## This file is part of the examples of PyQt.
-##
-## $QT_BEGIN_LICENSE:BSD$
-## You may use this file under the terms of the BSD license as follows:
-##
-## "Redistribution and use in source and binary forms, with or without
-## modification, are permitted provided that the following conditions are
-## met:
-##   * Redistributions of source code must retain the above copyright
-##     notice, this list of conditions and the following disclaimer.
-##   * Redistributions in binary form must reproduce the above copyright
-##     notice, this list of conditions and the following disclaimer in
-##     the documentation and/or other materials provided with the
-##     distribution.
-##   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
-##     the names of its contributors may be used to endorse or promote
-##     products derived from this software without specific prior written
-##     permission.
-##
-## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-## LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-## A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-## OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-## SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-## LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES LOSS OF USE,
-## DATA, OR PROFITS OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-## THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-## $QT_END_LICENSE$
-##
-#############################################################################
-
 import numpy as np
 import sys
 import math
@@ -52,11 +12,14 @@ from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider,
 
 import OpenGL.GL as gl
 
+from src.Geometry.CoordinateSystem import CoordinateSystem
 from src.Geometry.cylinder import Cylinder
 from src.RobotControl.linksystem import LinkSystem
 from src.RobotControl.naivecontrol import NavieControl
 
 import Geometry.MatrixOps as matrixops
+
+from src.RobotControl.robotmodel import RobotModel
 
 
 class Window(QWidget):
@@ -115,27 +78,8 @@ class GLWidget(QOpenGLWidget):
         self.lastPos = QPoint()
         self.bg_color = QColor.fromCmykF(0.39, 0.39, 0.0, 0.0)
 
-        self.legs = []
-        leg = LinkSystem([-0.1, 0, 0], [90, 0.0, 1.0, 0.0])
-        leg.add_link(0.2, [1.0, 0.0, 0.0])
-        leg.add_link(0.1, [0.0, 1.0, 0.0])
-        leg.add_link(0.1, [1.0, 0.0, 0.0])
-
-        self.legs.append(leg)
-
-        leg = LinkSystem([0.1, 0, 0], [90, 0.0, 1.0, 0.0])
-        leg.add_link(0.2, [1.0, 0.0, 0.0])
-        leg.add_link(0.1, [0.0, 1.0, 0.0])
-        leg.add_link(0.1, [1.0, 0.0, 0.0])
-        self.legs.append(leg)
-
-        leg = LinkSystem([0.1, 0.1, 0], [45, 0.0, 0.0, 1.0])
-        leg.add_link(0.2, [1.0, 0.0, 0.0])
-        leg.add_link(0.1, [0.0, 1.0, 0.0])
-        leg.add_link(0.1, [1.0, 0.0, 0.0])
-        self.legs.append(leg)
-
-        self.control_system = NavieControl(leg)
+        self.robot = RobotModel()
+        self.coordinates = CoordinateSystem()
 
     def getOpenglInfo(self):
         info = """
@@ -187,8 +131,8 @@ class GLWidget(QOpenGLWidget):
         gl.glEnable(gl.GL_DEPTH_TEST)
         self.base.genObjectList()
 
-        for leg in self.legs:
-            leg.genObjectList()
+        self.robot.initRobot()
+        self.coordinates.init()
 
     def enableLightAndMaterial(self):
         flashLightPos = [10.0, 10.0, 0.0]
@@ -216,22 +160,14 @@ class GLWidget(QOpenGLWidget):
         gl.glClear(
             gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
         gl.glLoadIdentity()
-
-        # gl.glTranslated(-0.3, 0.3, -10.0)
-
-        # print("Rotate -- Translate")
-        gl.glLoadIdentity()
         gl.glTranslated(0.0, 0.0, -10.0)
         gl.glRotated(self.xRot, 1.0, 0.0, 0.0)
         gl.glRotated(self.yRot, 0.0, 1.0, 0.0)
         gl.glRotated(self.zRot, 0.0, 0.0, 1.0)
+        self.coordinates.draw()
         self.base.draw()
+        self.robot.draw()
 
-        for leg in self.legs:
-            gl.glPushMatrix()
-            leg.draw()
-            gl.glPopMatrix()
-        self.control_system.update()
 
     def resizeGL(self, width, height):
         side = min(width, height)
