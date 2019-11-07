@@ -8,8 +8,8 @@ class Cylinder:
         self.upper_face = []  # Triangle Fan
         self.lower_face = []  # Triangle Fan
         self.wall = []  # Quads
-        self.face_color = QColor.fromCmykF(0.40, 0.0, 1.0, 0.0)
-        self.wall_color = QColor.fromCmykF(0.39, 0.39, 0.0, 0.0)
+        self.face_color = QColor.fromRgb(255, 0.0, 0.0, 0.0)
+        self.wall_color = QColor.fromRgb(0., 255, 0.0, 0.0)
         self.upper_face.append([0, 0, length, self.face_color])
         self.lower_face.append([0, 0, 0, self.face_color])
 
@@ -26,10 +26,10 @@ class Cylinder:
             angle2 = ((i + 1) * 2 * math.pi) / slices  # next angle
             x2 = radius * math.cos(angle2)
             y2 = radius * math.sin(angle2)
-            self.wall.append([x, y, length, self.face_color])
-            self.wall.append([x, y, 0, self.face_color])
-            self.wall.append([x2, y2, 0, self.face_color])
-            self.wall.append([x2, y2, length, self.face_color])
+            self.wall.append([x, y, length, self.wall_color])
+            self.wall.append([x, y, 0, self.wall_color])
+            self.wall.append([x2, y2, 0, self.wall_color])
+            self.wall.append([x2, y2, length, self.wall_color])
 
     def getLength(self):
         return self.length
@@ -63,7 +63,12 @@ class Cylinder:
 
     @staticmethod
     def set_vertex(v):
-        # gl.glColor4f(v[3].redF(), v[3].greenF(), v[3].blueF(), v[3].alphaF())
+        # set up cube's material
+        cubeColor = [v[3].redF(), v[3].greenF(), v[3].blueF(), v[3].alphaF()]
+        cubeSpecular = [1.0, 1.0, 1.0]
+        gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_AMBIENT_AND_DIFFUSE, cubeColor)
+        gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, cubeSpecular)
+        gl.glMaterialf(gl.GL_FRONT_AND_BACK, gl.GL_SHININESS, 10.0)
         gl.glVertex3d(v[0], v[1], v[2])
 
     def draw(self):
