@@ -4,12 +4,11 @@ from PyQt5.QtGui import QColor
 
 
 class Cylinder:
-    def __init__(self, radius, length, slices=200):
+    def __init__(self, radius, length, face_color = QColor.fromRgb(127, 127, 127, 0.0), wall_color=QColor.fromRgb(127, 127, 127, 0.0),  slices=200):
         self.upper_face = []  # Triangle Fan
         self.lower_face = []  # Triangle Fan
         self.wall = []  # Quads
-        self.face_color = QColor.fromRgb(255, 0.0, 0.0, 0.0)
-        self.wall_color = QColor.fromRgb(0., 255, 0.0, 0.0)
+
         self.upper_face.append([0, 0, length, self.face_color])
         self.lower_face.append([0, 0, 0, self.face_color])
 
