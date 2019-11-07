@@ -51,9 +51,11 @@ class Link(Cylinder):
 
 
 class LinkSystem:
-    def __init__(self):
+    def __init__(self, pos=None, rotate=None):
         self.links = []
         self.cylinder = Cylinder(0.02, 0.02)
+        self.init_pos = pos
+        self.init_rotate = rotate
 
     def add_link(self, length, axis):
         new_link = Link(length, axis)
@@ -75,19 +77,21 @@ class LinkSystem:
         return self.links[idx]
 
     def draw(self):
+        if self.init_pos:
+            gl.glTranslated(self.init_pos[0], self.init_pos[1], self.init_pos[2])
+
+        if self.init_rotate:
+            gl.glRotated(self.init_rotate[0], self.init_rotate[1], self.init_rotate[2], self.init_rotate[3])
+
         gl.glPushMatrix()
         model_matrix = np.identity(4)
-        # for link in self.links:
-        #     cur_model_matrix = link.draw()
-        #     model_matrix = np.matmul(cur_model_matrix, model_matrix)
-        model_matrix_1 = self.links[0].draw()
-        model_matrix_2 = self.links[1].draw()
-        model_matrix_3 = self.links[2].draw()
-        model_matrix = np.matmul(model_matrix, model_matrix_1)
-        model_matrix = np.matmul(model_matrix, model_matrix_2)
-        model_matrix = np.matmul(model_matrix, model_matrix_3)
-        print(model_matrix)
+        for link in self.links:
+            cur_model_matrix = link.draw()
+            model_matrix = np.matmul(model_matrix, cur_model_matrix)
+        # print(model_matrix)
         gl.glPopMatrix()
         # Draw a cone at the destination
+        # translate to the end of the last joint
+
         gl.glMultTransposeMatrixd(model_matrix.tolist())
         self.cylinder.draw()

@@ -115,13 +115,27 @@ class GLWidget(QOpenGLWidget):
         self.lastPos = QPoint()
         self.bg_color = QColor.fromCmykF(0.39, 0.39, 0.0, 0.0)
 
-        self.links = LinkSystem()
-        self.links.add_link(0.1, [0.0, 0.0, 1.0])
-        self.links.add_link(0.1, [1.0, 0.0, 0.0])
-        self.links.add_link(0.1, [1.0, 0.0, 0.0])
-        self.links.add_link(0.1, [1.0, 0.0, 0.0])
+        self.legs = []
+        leg = LinkSystem([-0.1, 0, 0], [90, 0.0, 1.0, 0.0])
+        leg.add_link(0.2, [1.0, 0.0, 0.0])
+        leg.add_link(0.1, [0.0, 1.0, 0.0])
+        leg.add_link(0.1, [1.0, 0.0, 0.0])
 
-        self.control_system = NavieControl(self.links)
+        self.legs.append(leg)
+
+        leg = LinkSystem([0.1, 0, 0], [90, 0.0, 1.0, 0.0])
+        leg.add_link(0.2, [1.0, 0.0, 0.0])
+        leg.add_link(0.1, [0.0, 1.0, 0.0])
+        leg.add_link(0.1, [1.0, 0.0, 0.0])
+        self.legs.append(leg)
+
+        leg = LinkSystem([0.1, 0.1, 0], [45, 0.0, 0.0, 1.0])
+        leg.add_link(0.2, [1.0, 0.0, 0.0])
+        leg.add_link(0.1, [0.0, 1.0, 0.0])
+        leg.add_link(0.1, [1.0, 0.0, 0.0])
+        self.legs.append(leg)
+
+        self.control_system = NavieControl(leg)
 
     def getOpenglInfo(self):
         info = """
@@ -172,7 +186,9 @@ class GLWidget(QOpenGLWidget):
         self.enableLightAndMaterial()
         gl.glEnable(gl.GL_DEPTH_TEST)
         self.base.genObjectList()
-        self.links.genObjectList()
+
+        for leg in self.legs:
+            leg.genObjectList()
 
     def enableLightAndMaterial(self):
         flashLightPos = [10.0, 10.0, 0.0]
@@ -210,7 +226,11 @@ class GLWidget(QOpenGLWidget):
         gl.glRotated(self.yRot, 0.0, 1.0, 0.0)
         gl.glRotated(self.zRot, 0.0, 0.0, 1.0)
         self.base.draw()
-        self.links.draw()
+
+        for leg in self.legs:
+            gl.glPushMatrix()
+            leg.draw()
+            gl.glPopMatrix()
         self.control_system.update()
 
     def resizeGL(self, width, height):
