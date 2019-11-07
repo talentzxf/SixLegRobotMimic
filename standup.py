@@ -21,7 +21,7 @@ for i in range(6):
     legs[i].append(i * 3 +2 )
 
 
-cmd='"#%03dP2500T1000!"'%legs[0][1]
+cmd='"#%03dP0500T1000!"'%legs[0][2]
 print(cmd)
 ser.write(cmd)
 ser.close()
