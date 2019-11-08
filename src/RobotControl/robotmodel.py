@@ -43,7 +43,7 @@ class RobotModel:
         leg.add_link(0.1, [0.0, 1.0, 0.0])
         self.legs.append(leg)
 
-        self.control_system = NavieControl(leg)
+        self.control_system = NavieControl(self.legs)
 
     def initRobot(self):
         for leg in self.legs:

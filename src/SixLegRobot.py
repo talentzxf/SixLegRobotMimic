@@ -16,6 +16,8 @@ from Geometry.CoordinateSystem import CoordinateSystem
 from Geometry.cylinder import Cylinder
 from RobotControl.robotmodel import RobotModel
 
+from Geometry.cube import Cube
+
 
 class Window(QWidget):
 
@@ -65,7 +67,8 @@ class GLWidget(QOpenGLWidget):
     def __init__(self, parent=None):
         super(GLWidget, self).__init__(parent)
 
-        self.base = Cylinder(0.1, 0.01)
+        # self.base = Cylinder(0.1, 0.01)
+        self.base = Cube(0.2, 0.2, 0.1)
         self.xRot = 70
         self.yRot = 0
         self.zRot = 70
@@ -162,7 +165,6 @@ class GLWidget(QOpenGLWidget):
         self.coordinates.draw()
         self.base.draw()
         self.robot.draw()
-
 
     def resizeGL(self, width, height):
         side = min(width, height)

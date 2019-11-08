@@ -63,7 +63,7 @@ class Cylinder:
         gl.glEnd()
 
         # Walls
-        gl.glBegin(gl.GL_QUADS)
+        gl.glBegin(gl.GL_TRIANGLE_FAN)
         for vertex in self.wall:
             self.set_vertex(vertex)
         gl.glEnd()
