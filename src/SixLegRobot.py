@@ -8,7 +8,7 @@ import math
 from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QTimer
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider,
-                             QWidget)
+                             QWidget, QVBoxLayout)
 
 import OpenGL.GL as gl
 
@@ -26,9 +26,7 @@ class Window(QWidget):
 
         self.glWidget = GLWidget()
 
-        self.xSlider = self.createSlider()
-        self.ySlider = self.createSlider()
-        self.zSlider = self.createSlider()
+
 
         # self.xSlider.valueChanged.connect(self.glWidget.setXRotation)
         # self.glWidget.xRotationChanged.connect(self.xSlider.setValue)
@@ -39,27 +37,64 @@ class Window(QWidget):
 
         mainLayout = QHBoxLayout()
         mainLayout.addWidget(self.glWidget)
-        mainLayout.addWidget(self.xSlider)
-        mainLayout.addWidget(self.ySlider)
-        mainLayout.addWidget(self.zSlider)
-        self.setLayout(mainLayout)
 
+        sliderLayout = QVBoxLayout()
+
+        # 1st row
+        firstRowLayout = QHBoxLayout()
+        self.leg1Sliders = self.createSliders()
+        firstRowLayout.addLayout(self.leg1Sliders)
+        self.leg2Sliders = self.createSliders()
+        firstRowLayout.addLayout(self.leg2Sliders)
+        sliderLayout.addLayout(firstRowLayout)
+
+        # 2nd row
+        secondRowLayout = QHBoxLayout()
+        self.leg3Sliders = self.createSliders()
+        secondRowLayout.addLayout(self.leg3Sliders)
+        self.leg4Sliders = self.createSliders()
+        secondRowLayout.addLayout(self.leg4Sliders)
+
+        sliderLayout.addLayout(secondRowLayout)
+
+        # 3rd row
+        # 2nd row
+        thirdRowLayout = QHBoxLayout()
+        self.leg5Sliders = self.createSliders()
+        thirdRowLayout.addLayout(self.leg5Sliders)
+        self.leg6Sliders = self.createSliders()
+        thirdRowLayout.addLayout(self.leg6Sliders)
+
+        sliderLayout.addLayout(thirdRowLayout)
+
+        mainLayout.addLayout(sliderLayout)
+        self.setLayout(mainLayout)
         self.setWindowTitle("Hello GL")
 
         timer = QTimer(self)
         timer.timeout.connect(self.glWidget.update)
         timer.start(0)
 
-    def createSlider(self):
-        slider = QSlider(Qt.Vertical)
+    def createSlider(self, minValue, maxValue, dir):
+        slider = QSlider(dir)
 
-        slider.setRange(0, 360 * 16)
-        slider.setSingleStep(16)
-        slider.setPageStep(15 * 16)
-        slider.setTickInterval(15 * 16)
+        slider.setRange(-45, 45)
+        slider.setSingleStep(1)
+        slider.setPageStep(10)
+        slider.setTickInterval(10)
         slider.setTickPosition(QSlider.TicksRight)
 
         return slider
+
+    def createSliders(self):
+        legSliderLayout = QHBoxLayout()
+        link1Slider = self.createSlider(-45, 45, Qt.Horizontal)
+        link2Slider = self.createSlider(-45, 45, Qt.Vertical)
+        link3Slider = self.createSlider(-45, 45, Qt.Vertical)
+        legSliderLayout.addWidget(link1Slider)
+        legSliderLayout.addWidget(link2Slider)
+        legSliderLayout.addWidget(link3Slider)
+        return legSliderLayout
 
 
 class GLWidget(QOpenGLWidget):
@@ -95,7 +130,7 @@ class GLWidget(QOpenGLWidget):
         return info
 
     def minimumSizeHint(self):
-        return QSize(50, 50)
+        return QSize(1024, 768)
 
     def sizeHint(self):
         return QSize(1024, 1024)
