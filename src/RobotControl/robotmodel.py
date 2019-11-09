@@ -27,7 +27,7 @@ class RobotModel:
         length = RobotConfig.bodyLength
         height = RobotConfig.bodyHeight
 
-        self.base = Cube(length, width, height)
+        self.body = Cube(length, width, height)
 
         leg = LinkSystem([width/2, length/2, 0], [[45, 0.0, 0.0, 1.0], [90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
@@ -59,15 +59,15 @@ class RobotModel:
         return self.control_system
 
     def initRobot(self):
-        self.base.init_object()
+        self.body.init_object()
         for leg in self.legs:
             leg.init_object()
 
-    def getLegNumber(self):
-        return len(self.legs)
+    def getLegs(self):
+        return self.legs
 
     def draw(self):
-        self.base.draw()
+        self.body.draw()
 
         for leg in self.legs:
             gl.glPushMatrix()

@@ -3,7 +3,9 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QPainter, QColor, QFont
 
 from GlobalContext import GlobalContext
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QRect, QPoint, QSize
+
+from GlobalConfig import RobotConfig
 
 
 class IKWindow(QWidget):
@@ -37,12 +39,6 @@ class MyTableWidget(QWidget):
         tab = QWidget()
         # Create first tab
         tab.layout = QVBoxLayout()
-        legComboBox = QComboBox()
-        for legIdx in range(GlobalContext.getRobot().getLegNumber()):
-            legComboBox.addItem(str(legIdx))
-
-        legComboBox.currentIndexChanged.connect(GlobalContext.getRobot().legSelected)
-        tab.layout.addWidget(legComboBox)
 
         ikWidget = IKWidget()
         tab.layout.addWidget(ikWidget)
@@ -57,15 +53,33 @@ class MyTableWidget(QWidget):
 class CoordinateConverter:
     scrWidth = 400
     scrHeight = 400
-    scale = 10
+    scale = 200
 
-    def convertToScr(self, x, y, width, height):
+    def convertRectToScr(self, x, y, width, height):
         centerX = CoordinateConverter.scrWidth / 2
         centerY = CoordinateConverter.scrHeight / 2
-        left = (centerX + x) * CoordinateConverter.scale
+        left = centerX + x * CoordinateConverter.scale
         width = width * CoordinateConverter.scale
         top = centerY - y * CoordinateConverter.scale
+        height = height * CoordinateConverter.scale
+        return QRect(left, top, width, height)
 
+    def convertPointToScr(self, x, y):
+        centerX = CoordinateConverter.scrWidth / 2
+        centerY = CoordinateConverter.scrHeight / 2
+        scrX = centerX + x * CoordinateConverter.scale
+        scrY = centerY - y * CoordinateConverter.scale
+        return QPoint(scrX, scrY)
+
+
+# Everything in this class happens in Screen coordinate
+class DraggableRect:
+    def __init__(self, pos):
+        self.size = QSize(10, 10)
+        self.pos = QPoint(pos.x() - self.size.width()/2, pos.y() - self.size.height()/2)
+
+    def draw(self, qp):
+        qp.drawRect(QRect(self.pos, self.size))
 
 
 class IKWidget(QWidget):
@@ -74,14 +88,45 @@ class IKWidget(QWidget):
         self.coordConv = CoordinateConverter()
         self.setFixedSize(self.coordConv.scrWidth, self.coordConv.scrHeight)
 
+        self.draggableRectMap = {}
+
     def paintEvent(self, event):
         qp = QPainter()
         qp.begin(self)
-        self.drawText(event, qp)
-        qp.drawRect(10, 15, 90, 60)
+        color = QColor(0, 0, 0)
+        color.setNamedColor('#d4d4d4')
+        qp.setPen(color)
+
+        qp.setBrush(QColor(127, 127, 127))
+        body_length = RobotConfig.bodyLength
+        body_width = RobotConfig.bodyWidth
+
+        body_rect = self.coordConv.convertRectToScr(-body_width / 2, body_length / 2, body_width, body_length)
+        print(body_rect)
+        qp.drawRect(body_rect)
+
+        # Draw all the leg targets
+        robot_legs = GlobalContext.getRobot().getLegs()
+        for leg in robot_legs:
+            leg_start_point = leg.get_start_pos()
+            leg_target_point = leg.get_target_pos()
+            target_scr_point = self.coordConv.convertPointToScr(leg_target_point[0], leg_target_point[1])
+
+            if leg not in self.draggableRectMap:
+                self.draggableRectMap[leg] = DraggableRect(target_scr_point)
+            qp.drawLine(self.coordConv.convertPointToScr(leg_start_point[0], leg_start_point[1]),
+                        target_scr_point)
+            self.draggableRectMap[leg].draw(qp)
+
+        self.drawCoordinate(qp)
         qp.end()
 
-    def drawText(self, event, qp):
-        qp.setPen(QColor(168, 34, 3))
-        qp.setFont(QFont('Decorative', 10))
-        qp.drawText(event.rect(), Qt.AlignCenter, "Mamahong")
+    def drawCoordinate(self, qp):
+        color = QColor(0, 0, 0)
+        # Draw Coordinate
+        color.setNamedColor('#ff0000')
+        qp.setPen(color)
+        qp.drawLine(self.coordConv.convertPointToScr(-1.0, 0.0), self.coordConv.convertPointToScr(1.0, 0.0))
+        color.setNamedColor('#00070a')
+        qp.setPen(color)
+        qp.drawLine(self.coordConv.convertPointToScr(0.0, -1.0), self.coordConv.convertPointToScr(0.0, 1.0))

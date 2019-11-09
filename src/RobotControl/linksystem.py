@@ -39,7 +39,8 @@ class Link(Cylinder):
     def addTheta(self, gap=1):
         self.theta += gap
 
-    def draw(self):
+    # if realDraw = False, we just want to know the target position
+    def draw(self, realDraw=True):
         model_matrix = np.identity(4)
         if self.prev:
             prev = self.getPrev()
@@ -70,6 +71,24 @@ class LinkSystem:
             new_link.setPrev(last_link)
 
         self.links.append(new_link)
+
+    def get_start_pos(self):
+        return self.init_pos
+
+    def get_target_pos(self):
+        model_matrix = np.identity(4)
+        if self.init_pos:
+            model_matrix = np.matmul(model_matrix,
+                                     translate_matrix(self.init_pos[0], self.init_pos[1], self.init_pos[2]))
+
+        if self.init_rotates:
+            for rotate in self.init_rotates:
+                model_matrix = np.matmul(model_matrix, rotate_matrix(rotate[0], [rotate[1], rotate[2], rotate[3]]))
+
+        for link in self.links:
+            cur_model_matrix = link.draw(False)
+            model_matrix = np.matmul(model_matrix, cur_model_matrix)
+        return model_matrix[:, 3]
 
     def init_object(self):
         for link in self.links:
