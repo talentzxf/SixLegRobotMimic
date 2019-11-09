@@ -33,6 +33,9 @@ class Link(Cylinder):
     def setTheta(self, theta):
         self.theta = theta
 
+    def getTheta(self):
+        return self.theta
+
     def addTheta(self, gap=1):
         self.theta += gap
 
@@ -75,6 +78,9 @@ class LinkSystem:
 
     def getLink(self, idx):
         return self.links[idx]
+
+    def getLinkNumber(self):
+        return len(self.links)
 
     def draw(self):
         if self.init_pos:

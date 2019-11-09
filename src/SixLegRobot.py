@@ -8,7 +8,7 @@ import math
 from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QTimer
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider,
-                             QWidget, QVBoxLayout)
+                             QWidget, QVBoxLayout, QLabel)
 
 import OpenGL.GL as gl
 
@@ -25,6 +25,7 @@ class Window(QWidget):
         super(Window, self).__init__()
 
         self.glWidget = GLWidget()
+        self.legLabels = {}
 
         mainLayout = QHBoxLayout()
         mainLayout.addWidget(self.glWidget)
@@ -32,30 +33,9 @@ class Window(QWidget):
         sliderLayout = QVBoxLayout()
 
         # 1st row
-        firstRowLayout = QHBoxLayout()
-        self.leg1Sliders = self.createSliders(1)
-        firstRowLayout.addLayout(self.leg1Sliders)
-        self.leg2Sliders = self.createSliders(2)
-        firstRowLayout.addLayout(self.leg2Sliders)
-        sliderLayout.addLayout(firstRowLayout)
-
-        # 2nd row
-        secondRowLayout = QHBoxLayout()
-        self.leg3Sliders = self.createSliders(3)
-        secondRowLayout.addLayout(self.leg3Sliders)
-        self.leg4Sliders = self.createSliders(4)
-        secondRowLayout.addLayout(self.leg4Sliders)
-
-        sliderLayout.addLayout(secondRowLayout)
-
-        # 3rd row
-        thirdRowLayout = QHBoxLayout()
-        self.leg5Sliders = self.createSliders(5)
-        thirdRowLayout.addLayout(self.leg5Sliders)
-        self.leg6Sliders = self.createSliders(6)
-        thirdRowLayout.addLayout(self.leg6Sliders)
-
-        sliderLayout.addLayout(thirdRowLayout)
+        self.addSliderRow(sliderLayout, [0, 1])
+        self.addSliderRow(sliderLayout, [2, 3])
+        self.addSliderRow(sliderLayout, [4, 5])
 
         mainLayout.addLayout(sliderLayout)
         self.setLayout(mainLayout)
@@ -65,6 +45,12 @@ class Window(QWidget):
         timer = QTimer(self)
         timer.timeout.connect(self.glWidget.update)
         timer.start(0)
+
+    def addSliderRow(self, outLayout, legNoArray):
+        hboxLayout = QHBoxLayout()
+        for legNo in legNoArray:
+            hboxLayout.addLayout(self.createSliders(legNo))
+        outLayout.addLayout(hboxLayout)
 
     def createSlider(self, minValue, maxValue, dir):
         slider = QSlider(dir)
@@ -78,6 +64,13 @@ class Window(QWidget):
         return slider
 
     def createSliders(self, legNo):
+        robot_controller = self.glWidget.getRobot().getController()
+        legLabelLayout = QVBoxLayout()
+        label = QLabel()
+        self.legLabels[legNo] = label
+        self.refreshLegLabel(robot_controller, legNo)()
+        legLabelLayout.addWidget(label)
+
         legSliderLayout = QHBoxLayout()
         link1Slider = self.createSlider(-45, 45, Qt.Horizontal)
         link2Slider = self.createSlider(-45, 45, Qt.Vertical)
@@ -86,12 +79,21 @@ class Window(QWidget):
         legSliderLayout.addWidget(link2Slider)
         legSliderLayout.addWidget(link3Slider)
 
-        robot_controller = self.glWidget.getRobot().getController()
         link1Slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, 0))
-        link1Slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, 1))
-        link1Slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, 2))
-        return legSliderLayout
+        link1Slider.valueChanged.connect(self.refreshLegLabel(robot_controller, legNo))
+        link2Slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, 1))
+        link2Slider.valueChanged.connect(self.refreshLegLabel(robot_controller, legNo))
+        link3Slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, 2))
+        link3Slider.valueChanged.connect(self.refreshLegLabel(robot_controller, legNo))
+        legLabelLayout.addLayout(legSliderLayout)
 
+        return legLabelLayout
+
+    def refreshLegLabel(self, robot_controller, legNo):
+        def refreshLabel():
+            label = self.legLabels[legNo]
+            label.setText("Leg {} {}".format(legNo, robot_controller.getStatus(legNo)))
+        return refreshLabel
 
 class GLWidget(QOpenGLWidget):
 
