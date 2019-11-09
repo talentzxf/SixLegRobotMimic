@@ -74,12 +74,21 @@ class CoordinateConverter:
 
 # Everything in this class happens in Screen coordinate
 class DraggableRect:
-    def __init__(self, pos):
-        size = QSize(10, 10)
-        adjusted_pos = QPoint(pos.x() - size.width() / 2, pos.y() - size.height() / 2)
-        self.rect = QRect(adjusted_pos, size)
+    size = QSize(10, 10)
 
-    def draw(self, qp):
+    def __init__(self, pos):
+        adjusted_pos = QPoint(pos.x() - self.size.width() / 2, pos.y() - self.size.height() / 2)
+        self.rect = QRect(adjusted_pos, self.size)
+
+    def setPos(self, pos):
+        adjusted_pos = QPoint(pos.x() - self.size.width() / 2, pos.y() - self.size.height() / 2)
+        self.rect = QRect(adjusted_pos, self.size)
+
+    def draw(self, qp, selected=False):
+        if selected:
+            qp.setBrush(QColor(0, 0, 127))
+        else:
+            qp.setBrush(QColor(127, 127, 127))
         qp.drawRect(self.rect)
 
     def contains(self, p):
@@ -102,11 +111,16 @@ class IKWidget(QWidget):
             if rect.contains(event.pos()):
                 print("Rect:" + str(rect) + " selected!")
                 self.currentRect = rect
+                self.update()
                 return
         self.currentRect = None
+        self.update()
 
     def mouseMoveEvent(self, event):
-        pass
+        if self.currentRect:
+            current_pos = event.pos()
+            self.currentRect.setPos(current_pos)
+            self.update()
 
     def paintEvent(self, event):
         qp = QPainter()
