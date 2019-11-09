@@ -26,15 +26,6 @@ class Window(QWidget):
 
         self.glWidget = GLWidget()
 
-
-
-        # self.xSlider.valueChanged.connect(self.glWidget.setXRotation)
-        # self.glWidget.xRotationChanged.connect(self.xSlider.setValue)
-        # self.ySlider.valueChanged.connect(self.glWidget.setYRotation)
-        # self.glWidget.yRotationChanged.connect(self.ySlider.setValue)
-        # self.zSlider.valueChanged.connect(self.glWidget.setZRotation)
-        # self.glWidget.zRotationChanged.connect(self.zSlider.setValue)
-
         mainLayout = QHBoxLayout()
         mainLayout.addWidget(self.glWidget)
 
@@ -42,27 +33,26 @@ class Window(QWidget):
 
         # 1st row
         firstRowLayout = QHBoxLayout()
-        self.leg1Sliders = self.createSliders()
+        self.leg1Sliders = self.createSliders(1)
         firstRowLayout.addLayout(self.leg1Sliders)
-        self.leg2Sliders = self.createSliders()
+        self.leg2Sliders = self.createSliders(2)
         firstRowLayout.addLayout(self.leg2Sliders)
         sliderLayout.addLayout(firstRowLayout)
 
         # 2nd row
         secondRowLayout = QHBoxLayout()
-        self.leg3Sliders = self.createSliders()
+        self.leg3Sliders = self.createSliders(3)
         secondRowLayout.addLayout(self.leg3Sliders)
-        self.leg4Sliders = self.createSliders()
+        self.leg4Sliders = self.createSliders(4)
         secondRowLayout.addLayout(self.leg4Sliders)
 
         sliderLayout.addLayout(secondRowLayout)
 
         # 3rd row
-        # 2nd row
         thirdRowLayout = QHBoxLayout()
-        self.leg5Sliders = self.createSliders()
+        self.leg5Sliders = self.createSliders(5)
         thirdRowLayout.addLayout(self.leg5Sliders)
-        self.leg6Sliders = self.createSliders()
+        self.leg6Sliders = self.createSliders(6)
         thirdRowLayout.addLayout(self.leg6Sliders)
 
         sliderLayout.addLayout(thirdRowLayout)
@@ -70,6 +60,7 @@ class Window(QWidget):
         mainLayout.addLayout(sliderLayout)
         self.setLayout(mainLayout)
         self.setWindowTitle("Hello GL")
+        self.setMinimumSize(1300, 600)
 
         timer = QTimer(self)
         timer.timeout.connect(self.glWidget.update)
@@ -86,7 +77,7 @@ class Window(QWidget):
 
         return slider
 
-    def createSliders(self):
+    def createSliders(self, legNo):
         legSliderLayout = QHBoxLayout()
         link1Slider = self.createSlider(-45, 45, Qt.Horizontal)
         link2Slider = self.createSlider(-45, 45, Qt.Vertical)
@@ -94,6 +85,11 @@ class Window(QWidget):
         legSliderLayout.addWidget(link1Slider)
         legSliderLayout.addWidget(link2Slider)
         legSliderLayout.addWidget(link3Slider)
+
+        robot_controller = self.glWidget.getRobot().getController()
+        link1Slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, 0))
+        link1Slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, 1))
+        link1Slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, 2))
         return legSliderLayout
 
 
@@ -129,11 +125,14 @@ class GLWidget(QOpenGLWidget):
 
         return info
 
-    def minimumSizeHint(self):
-        return QSize(1024, 768)
+    def getRobot(self):
+        return self.robot
 
-    def sizeHint(self):
-        return QSize(1024, 1024)
+    def minimumSizeHint(self):
+        return QSize(800, 600)
+
+    def maxSizeHint(self):
+        return QSize(800, 600)
 
     def setXRotation(self, angle):
         angle = self.normalizeAngle(angle)

@@ -45,6 +45,9 @@ class RobotModel:
 
         self.control_system = NavieControl(self.legs)
 
+    def getController(self):
+        return self.control_system
+
     def initRobot(self):
         for leg in self.legs:
             leg.genObjectList()

@@ -3,5 +3,10 @@ class NavieControl:
         self.legs = legs
 
     def update(self):
-        # self.links.getLink(1).addTheta()
         pass
+
+    def setLegLinkAngle(self, legNo, linkNo):
+        def setAngle(angle):
+            self.legs[legNo].getLink(linkNo).setTheta(angle)
+            pass
+        return setAngle
