@@ -18,6 +18,10 @@ from RobotControl.robotmodel import RobotModel
 
 from Geometry.cube import Cube
 
+from IKWindow import IKWindow
+
+from GlobalContext import GlobalContext
+
 
 class Window(QWidget):
 
@@ -64,7 +68,7 @@ class Window(QWidget):
         return slider
 
     def createSliders(self, legNo):
-        robot_controller = self.glWidget.getRobot().getController()
+        robot_controller = GlobalContext.getRobot().getController()
         legLabelLayout = QVBoxLayout()
         label = QLabel()
         self.legLabels[legNo] = label
@@ -109,7 +113,6 @@ class GLWidget(QOpenGLWidget):
         self.lastPos = QPoint()
         self.bg_color = QColor.fromCmykF(0.39, 0.39, 0.0, 0.0)
 
-        self.robot = RobotModel()
         self.coordinates = CoordinateSystem()
 
     def getOpenglInfo(self):
@@ -126,9 +129,6 @@ class GLWidget(QOpenGLWidget):
         )
 
         return info
-
-    def getRobot(self):
-        return self.robot
 
     def minimumSizeHint(self):
         return QSize(800, 600)
@@ -163,9 +163,9 @@ class GLWidget(QOpenGLWidget):
 
         self.enableLightAndMaterial()
         gl.glEnable(gl.GL_DEPTH_TEST)
-        self.base.genObjectList()
+        self.base.init_object()
 
-        self.robot.initRobot()
+        GlobalContext.getRobot().initRobot()
         self.coordinates.init()
 
     def enableLightAndMaterial(self):
@@ -200,7 +200,7 @@ class GLWidget(QOpenGLWidget):
         gl.glRotated(self.zRot, 0.0, 0.0, 1.0)
         self.coordinates.draw()
         self.base.draw()
-        self.robot.draw()
+        GlobalContext.getRobot().draw()
 
     def resizeGL(self, width, height):
         side = min(width, height)
@@ -243,4 +243,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = Window()
     window.show()
+
+    ikWindow = IKWindow()
+    ikWindow.show()
     sys.exit(app.exec_())

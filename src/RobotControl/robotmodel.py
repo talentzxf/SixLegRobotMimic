@@ -1,6 +1,8 @@
 from RobotControl.linksystem import LinkSystem
 from RobotControl.naivecontrol import NavieControl
 import OpenGL.GL as gl
+from PyQt5.QtCore import (Qt, pyqtSignal)
+from PyQt5.QtGui import QColor
 
 class RobotModel:
     link1_length = 0.05
@@ -46,7 +48,10 @@ class RobotModel:
 
     def initRobot(self):
         for leg in self.legs:
-            leg.genObjectList()
+            leg.init_object()
+
+    def getLegNumber(self):
+        return len(self.legs)
 
     def draw(self):
         for leg in self.legs:
@@ -55,3 +60,12 @@ class RobotModel:
             gl.glPopMatrix()
 
         self.control_system.update()
+
+    def legSelected(self, legIdx):
+        print("Leg:{} selected".format(legIdx))
+        for idx in range(len(self.legs)):
+            leg = self.legs[idx]
+            if idx is legIdx:
+                leg.set_color(QColor.fromRgb(127, 127, 0))
+            else:
+                leg.set_color(QColor.fromRgb(127, 127, 127))

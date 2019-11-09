@@ -7,7 +7,7 @@ class NavieControl:
 
     def setLegLinkAngle(self, legNo, linkNo):
         def setAngle(angle):
-            self.legs[legNo].getLink(linkNo).setTheta(angle)
+            self.legs[legNo].get_link(linkNo).setTheta(angle)
             print("Setting Leg:{}, link:{} to angle: {}".format(legNo, linkNo, angle))
 
         return setAngle
@@ -15,10 +15,12 @@ class NavieControl:
     def getStatus(self, legNo):
         leg = self.legs[legNo]
         retStr = ""
-        for linkIdx in range(leg.getLinkNumber()):
-            link = leg.getLink(linkIdx)
+        for linkIdx in range(leg.get_link_number()):
+            link = leg.get_link(linkIdx)
             retStr += " link{}: {}".format(linkIdx, link.getTheta())
 
         return retStr
+
+
 
 

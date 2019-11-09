@@ -61,7 +61,7 @@ class Cube:
     def getLength(self):
         return self.length
 
-    def genObjectList(self):
+    def init_object(self):
         display_list = gl.glGenLists(1)
         gl.glNewList(display_list, gl.GL_COMPILE)
 

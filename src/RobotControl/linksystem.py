@@ -71,16 +71,20 @@ class LinkSystem:
 
         self.links.append(new_link)
 
-    def genObjectList(self):
+    def init_object(self):
         for link in self.links:
-            link.genObjectList()
-        self.cylinder.genObjectList()
+            link.init_object()
+        self.cylinder.init_object()
 
-    def getLink(self, idx):
+    def get_link(self, idx):
         return self.links[idx]
 
-    def getLinkNumber(self):
+    def get_link_number(self):
         return len(self.links)
+
+    def set_color(self, new_color):
+        for link in self.links:
+            link.set_color(new_color)
 
     def draw(self):
         if self.init_pos:

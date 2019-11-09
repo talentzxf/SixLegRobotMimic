@@ -4,24 +4,19 @@ from PyQt5.QtGui import QColor
 
 
 class Cylinder:
-    def __init__(self, radius, length, face_color=None, wall_color=None, slices=200):
+    def __init__(self, radius, length, color=None, slices=200):
 
         self.upper_face = []  # Triangle Fan
         self.lower_face = []  # Triangle Fan
         self.wall = []  # Quads
 
-        if face_color is None:
-            self.face_color = QColor.fromRgb(127, 127, 127)
+        if color is None:
+            self.color = QColor.fromRgb(127, 127, 127)
         else:
-            self.face_color = face_color
+            self.color = color
 
-        if wall_color is None:
-            self.wall_color = QColor.fromRgb(127, 127, 127)
-        else:
-            self.wall_color = wall_color
-
-        self.upper_face.append([0, 0, length, self.face_color])
-        self.lower_face.append([0, 0, 0, self.face_color])
+        self.upper_face.append([0, 0, length])
+        self.lower_face.append([0, 0, 0])
 
         self.display_list = 0
         self.length = length
@@ -30,21 +25,21 @@ class Cylinder:
             angle = (i * 2 * math.pi) / slices
             x = radius * math.cos(angle)
             y = radius * math.sin(angle)
-            self.lower_face.append([x, y, 0, self.face_color])
-            self.upper_face.append([x, y, length, self.face_color])
+            self.lower_face.append([x, y, 0])
+            self.upper_face.append([x, y, length])
 
             angle2 = ((i + 1) * 2 * math.pi) / slices  # next angle
             x2 = radius * math.cos(angle2)
             y2 = radius * math.sin(angle2)
-            self.wall.append([x, y, length, self.wall_color])
-            self.wall.append([x, y, 0, self.wall_color])
-            self.wall.append([x2, y2, 0, self.wall_color])
-            self.wall.append([x2, y2, length, self.wall_color])
+            self.wall.append([x, y, length])
+            self.wall.append([x, y, 0])
+            self.wall.append([x2, y2, 0])
+            self.wall.append([x2, y2, length])
 
     def getLength(self):
         return self.length
 
-    def genObjectList(self):
+    def init_object(self):
         display_list = gl.glGenLists(1)
         gl.glNewList(display_list, gl.GL_COMPILE)
 
@@ -71,15 +66,17 @@ class Cylinder:
 
         self.display_list = display_list
 
-    @staticmethod
-    def set_vertex(v):
+    def set_vertex(self, v):
         # set up cube's material
-        cubeColor = [v[3].redF(), v[3].greenF(), v[3].blueF(), v[3].alphaF()]
+        cubeColor = [self.color.redF(), self.color.greenF(), self.color.blueF(), self.color.alphaF()]
         cubeSpecular = [1.0, 1.0, 1.0]
         gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_AMBIENT_AND_DIFFUSE, cubeColor)
         gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, cubeSpecular)
         gl.glMaterialf(gl.GL_FRONT_AND_BACK, gl.GL_SHININESS, 10.0)
         gl.glVertex3d(v[0], v[1], v[2])
+
+    def set_color(self, new_color):
+        self.color = new_color
 
     def draw(self):
         gl.glCallList(self.display_list)
