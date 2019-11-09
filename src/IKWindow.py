@@ -47,3 +47,5 @@ class MyTableWidget(QWidget):
     def initTab2(self):
         tab = QWidget()
         return tab
+
+class IKWidget()

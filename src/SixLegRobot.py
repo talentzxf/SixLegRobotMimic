@@ -21,6 +21,7 @@ from Geometry.cube import Cube
 from IKWindow import IKWindow
 
 from GlobalContext import GlobalContext
+from GlobalConfig import RobotConfig
 
 
 class Window(QWidget):
@@ -97,15 +98,15 @@ class Window(QWidget):
         def refreshLabel():
             label = self.legLabels[legNo]
             label.setText("Leg {} {}".format(legNo, robot_controller.getStatus(legNo)))
+
         return refreshLabel
+
 
 class GLWidget(QOpenGLWidget):
 
     def __init__(self, parent=None):
         super(GLWidget, self).__init__(parent)
 
-        # self.base = Cylinder(0.1, 0.01)
-        self.base = Cube(0.2, 0.2, 0.1)
         self.xRot = 70
         self.yRot = 0
         self.zRot = 70
@@ -163,7 +164,6 @@ class GLWidget(QOpenGLWidget):
 
         self.enableLightAndMaterial()
         gl.glEnable(gl.GL_DEPTH_TEST)
-        self.base.init_object()
 
         GlobalContext.getRobot().initRobot()
         self.coordinates.init()
@@ -199,7 +199,6 @@ class GLWidget(QOpenGLWidget):
         gl.glRotated(self.yRot, 0.0, 1.0, 0.0)
         gl.glRotated(self.zRot, 0.0, 0.0, 1.0)
         self.coordinates.draw()
-        self.base.draw()
         GlobalContext.getRobot().draw()
 
     def resizeGL(self, width, height):

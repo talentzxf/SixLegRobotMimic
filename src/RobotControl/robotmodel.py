@@ -4,6 +4,11 @@ import OpenGL.GL as gl
 from PyQt5.QtCore import (Qt, pyqtSignal)
 from PyQt5.QtGui import QColor
 
+from GlobalConfig import RobotConfig
+
+from Geometry.cube import Cube
+
+
 class RobotModel:
     link1_length = 0.05
     link2_length = 0.1
@@ -17,27 +22,34 @@ class RobotModel:
 
     def __init__(self):
         self.legs = []
-        leg = LinkSystem([0.1, 0.1, 0], [[45, 0.0, 0.0, 1.0], [90, 0.0, 1.0, 0.0]])
+
+        width = RobotConfig.bodyWidth
+        length = RobotConfig.bodyLength
+        height = RobotConfig.bodyHeight
+
+        self.base = Cube(length, width, height)
+
+        leg = LinkSystem([width/2, length/2, 0], [[45, 0.0, 0.0, 1.0], [90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = LinkSystem([0.1, 0, 0], [[90, 0.0, 1.0, 0.0]])
+        leg = LinkSystem([width/2, 0, 0], [[90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = LinkSystem([0.1, -0.1, 0], [[-45, 0.0, 0.0, 1.0], [90, 0.0, 1.0, 0.0]])
+        leg = LinkSystem([width/2, -length/2, 0], [[-45, 0.0, 0.0, 1.0], [90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = LinkSystem([-0.1, -0.1, 0], [[45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
+        leg = LinkSystem([-width/2, -length/2, 0], [[45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = LinkSystem([-0.1, 0, 0], [[-90, 0.0, 1.0, 0.0]])
+        leg = LinkSystem([-width/2, 0, 0], [[-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = LinkSystem([-0.1, 0.1, 0], [[-45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
+        leg = LinkSystem([-width/2, length/2, 0], [[-45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
@@ -47,6 +59,7 @@ class RobotModel:
         return self.control_system
 
     def initRobot(self):
+        self.base.init_object()
         for leg in self.legs:
             leg.init_object()
 
@@ -54,6 +67,8 @@ class RobotModel:
         return len(self.legs)
 
     def draw(self):
+        self.base.draw()
+
         for leg in self.legs:
             gl.glPushMatrix()
             leg.draw()
