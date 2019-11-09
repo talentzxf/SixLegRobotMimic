@@ -75,11 +75,15 @@ class CoordinateConverter:
 # Everything in this class happens in Screen coordinate
 class DraggableRect:
     def __init__(self, pos):
-        self.size = QSize(10, 10)
-        self.pos = QPoint(pos.x() - self.size.width()/2, pos.y() - self.size.height()/2)
+        size = QSize(10, 10)
+        adjusted_pos = QPoint(pos.x() - size.width() / 2, pos.y() - size.height() / 2)
+        self.rect = QRect(adjusted_pos, size)
 
     def draw(self, qp):
-        qp.drawRect(QRect(self.pos, self.size))
+        qp.drawRect(self.rect)
+
+    def contains(self, p):
+        return self.rect.contains(p)
 
 
 class IKWidget(QWidget):
@@ -89,6 +93,20 @@ class IKWidget(QWidget):
         self.setFixedSize(self.coordConv.scrWidth, self.coordConv.scrHeight)
 
         self.draggableRectMap = {}
+
+        self.currentRect = None
+
+    def mousePressEvent(self, event):
+        for leg in self.draggableRectMap:
+            rect = self.draggableRectMap[leg]
+            if rect.contains(event.pos()):
+                print("Rect:" + str(rect) + " selected!")
+                self.currentRect = rect
+                return
+        self.currentRect = None
+
+    def mouseMoveEvent(self, event):
+        pass
 
     def paintEvent(self, event):
         qp = QPainter()
@@ -116,7 +134,11 @@ class IKWidget(QWidget):
                 self.draggableRectMap[leg] = DraggableRect(target_scr_point)
             qp.drawLine(self.coordConv.convertPointToScr(leg_start_point[0], leg_start_point[1]),
                         target_scr_point)
-            self.draggableRectMap[leg].draw(qp)
+
+            if self.draggableRectMap[leg] is self.currentRect:
+                self.draggableRectMap[leg].draw(qp, True)
+            else:
+                self.draggableRectMap[leg].draw(qp, False)
 
         self.drawCoordinate(qp)
         qp.end()
