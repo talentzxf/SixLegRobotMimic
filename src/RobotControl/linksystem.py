@@ -75,7 +75,7 @@ class LinkSystem:
     def get_start_pos(self):
         return self.init_pos
 
-    def get_target_pos(self):
+    def get_init_transformation_matrix(self):
         model_matrix = np.identity(4)
         if self.init_pos:
             model_matrix = np.matmul(model_matrix,
@@ -84,6 +84,11 @@ class LinkSystem:
         if self.init_rotates:
             for rotate in self.init_rotates:
                 model_matrix = np.matmul(model_matrix, rotate_matrix(rotate[0], [rotate[1], rotate[2], rotate[3]]))
+
+        return model_matrix
+
+    def get_target_pos(self):
+        model_matrix = self.get_init_transformation_matrix()
 
         for link in self.links:
             cur_model_matrix = link.draw(False)
