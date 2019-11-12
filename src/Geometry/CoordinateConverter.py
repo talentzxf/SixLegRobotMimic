@@ -33,7 +33,7 @@ class CoordinateConverter:
         point.append(1)
         point_vector = np.array(point)[np.newaxis].T
         target_matrix = np.matmul(inv_obj_trans, point_vector)
-        target_point = target_matrix[:, 3]
+        target_point = np.asarray(target_matrix[0:3, :]).flatten().tolist()
         return target_point
 
     def objectToWorld(self, point, objTransformationMatrix):
@@ -41,5 +41,20 @@ class CoordinateConverter:
         point_vector = np.array(point)[np.newaxis].T
         print(point_vector)
         target_matrix = np.matmul(objTransformationMatrix, point_vector)
-        target_point = target_matrix[:, 3]
+        target_point = np.asarray(target_matrix[0:3, :]).flatten().tolist()
         return target_point
+
+
+# unit tests
+if __name__ == '__main__':
+    import unittest
+    import MatrixOps
+
+    conv = CoordinateConverter()
+    rotation = MatrixOps.rotate_matrix(45, [0, 0, 1])
+    transformation = MatrixOps.translate_matrix(1, 1, 0)
+    objTransformationMatrix = np.matmul(transformation, rotation)
+    origin = [0, 0, 0]
+    converted_origin = conv.worldToObject(origin, objTransformationMatrix)
+    print(converted_origin)
+
