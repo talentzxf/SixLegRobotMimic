@@ -82,7 +82,7 @@ class DraggableRect:
         qp.drawRect(self.rect)
 
         # draw the local coordinate of the leg
-        worldPos = self.coord.objectToWorld([1, 0, self.z], self.leg.get_init_transformation_matrix)
+        worldPos = self.coord.objectToWorld([1, 0, self.z], self.leg.get_init_transformation_matrix())
         scrPos = self.coord.worldToScr(worldPos[0], worldPos[1])
         leg_start_point = self.leg.get_start_pos()
         qp.drawLine(self.coordConv.worldToScr(leg_start_point[0], leg_start_point[1]),
@@ -138,7 +138,7 @@ class IKWidget(QWidget):
         for leg in robot_legs:
             leg_start_point = leg.get_start_pos()
             leg_target_point = leg.get_target_pos()
-            target_scr_point = self.coordConv.worldToScr(leg_target_point[0], leg_target_point[1])
+            target_scr_point = self.coordConv.worldToScr(leg_target_point[0].item(0), leg_target_point[1].item(0))
 
             print("target_point", leg_target_point)
             if leg not in self.draggableRectMap:
