@@ -26,8 +26,6 @@ class Window(QWidget):
 
         self.glWidget = GLWidget()
 
-
-
         # self.xSlider.valueChanged.connect(self.glWidget.setXRotation)
         # self.glWidget.xRotationChanged.connect(self.xSlider.setValue)
         # self.ySlider.valueChanged.connect(self.glWidget.setYRotation)
