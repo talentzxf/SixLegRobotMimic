@@ -100,7 +100,12 @@ class DraggableRect:
             scrPosY = self.coord.worldToScr(worldPosY[0], worldPosY[1])
             qp.drawLine(leg_scr_position, scrPosY)
 
-
+            # Local z coordinate
+            color.setNamedColor('#0000ff')
+            qp.setPen(color)
+            worldPosY = self.coord.objectToWorld([0, 0, 1], self.leg.get_init_transformation_matrix())
+            scrPosY = self.coord.worldToScr(worldPosY[0], worldPosY[1])
+            qp.drawLine(leg_scr_position, scrPosY)
 
     def contains(self, p):
         return self.rect.contains(p)
@@ -172,7 +177,7 @@ class IKWidget(QWidget):
         # Draw Coordinate
         color.setNamedColor('#ff0000')
         qp.setPen(color)
-        qp.drawLine(self.coordConv.worldToScr(-1.0, 0.0), self.coordConv.worldToScr(1.0, 0.0))
+        qp.drawLine(self.coordConv.worldToScr(0.0, 0.0), self.coordConv.worldToScr(1.0, 0.0))
         color.setNamedColor('#00070a')
         qp.setPen(color)
-        qp.drawLine(self.coordConv.worldToScr(0.0, -1.0), self.coordConv.worldToScr(0.0, 1.0))
+        qp.drawLine(self.coordConv.worldToScr(0.0, 0.0), self.coordConv.worldToScr(0.0, 1.0))
