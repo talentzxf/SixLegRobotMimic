@@ -6,13 +6,13 @@ from PyQt5.QtGui import QColor
 class CoordinateSystem:
     def __init__(self):
         self.coordinates = []
-        self.coordinates.append(Cylinder(0.005, 0.3, QColor.fromRgb(255, 0, 0), QColor.fromRgb(255, 0, 0)))
-        self.coordinates.append(Cylinder(0.005, 0.3, QColor.fromRgb(0, 255, 0), QColor.fromRgb(0, 255, 0)))
-        self.coordinates.append(Cylinder(0.005, 0.3, QColor.fromRgb(0, 0, 255), QColor.fromRgb(0, 0, 255)))
+        self.coordinates.append(Cylinder(0.005, 0.3, QColor.fromRgb(255, 0, 0)))
+        self.coordinates.append(Cylinder(0.005, 0.3, QColor.fromRgb(0, 255, 0)))
+        self.coordinates.append(Cylinder(0.005, 0.3, QColor.fromRgb(0, 0, 255)))
 
     def init(self):
         for c in self.coordinates:
-            c.genObjectList()
+            c.init_object()
 
     def draw(self):
         gl.glPushMatrix()

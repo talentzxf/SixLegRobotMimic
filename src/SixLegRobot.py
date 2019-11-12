@@ -8,7 +8,7 @@ import math
 from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt, QTimer
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider,
-                             QWidget, QVBoxLayout)
+                             QWidget, QVBoxLayout, QLabel)
 
 import OpenGL.GL as gl
 
@@ -18,6 +18,11 @@ from RobotControl.robotmodel import RobotModel
 
 from Geometry.cube import Cube
 
+from IKWindow import IKWindow
+
+from GlobalContext import GlobalContext
+from GlobalConfig import RobotConfig
+
 
 class Window(QWidget):
 
@@ -25,13 +30,7 @@ class Window(QWidget):
         super(Window, self).__init__()
 
         self.glWidget = GLWidget()
-
-        # self.xSlider.valueChanged.connect(self.glWidget.setXRotation)
-        # self.glWidget.xRotationChanged.connect(self.xSlider.setValue)
-        # self.ySlider.valueChanged.connect(self.glWidget.setYRotation)
-        # self.glWidget.yRotationChanged.connect(self.ySlider.setValue)
-        # self.zSlider.valueChanged.connect(self.glWidget.setZRotation)
-        # self.glWidget.zRotationChanged.connect(self.zSlider.setValue)
+        self.legLabels = {}
 
         mainLayout = QHBoxLayout()
         mainLayout.addWidget(self.glWidget)
@@ -39,39 +38,24 @@ class Window(QWidget):
         sliderLayout = QVBoxLayout()
 
         # 1st row
-        firstRowLayout = QHBoxLayout()
-        self.leg1Sliders = self.createSliders()
-        firstRowLayout.addLayout(self.leg1Sliders)
-        self.leg2Sliders = self.createSliders()
-        firstRowLayout.addLayout(self.leg2Sliders)
-        sliderLayout.addLayout(firstRowLayout)
-
-        # 2nd row
-        secondRowLayout = QHBoxLayout()
-        self.leg3Sliders = self.createSliders()
-        secondRowLayout.addLayout(self.leg3Sliders)
-        self.leg4Sliders = self.createSliders()
-        secondRowLayout.addLayout(self.leg4Sliders)
-
-        sliderLayout.addLayout(secondRowLayout)
-
-        # 3rd row
-        # 2nd row
-        thirdRowLayout = QHBoxLayout()
-        self.leg5Sliders = self.createSliders()
-        thirdRowLayout.addLayout(self.leg5Sliders)
-        self.leg6Sliders = self.createSliders()
-        thirdRowLayout.addLayout(self.leg6Sliders)
-
-        sliderLayout.addLayout(thirdRowLayout)
+        self.addSliderRow(sliderLayout, [0, 1])
+        self.addSliderRow(sliderLayout, [2, 3])
+        self.addSliderRow(sliderLayout, [4, 5])
 
         mainLayout.addLayout(sliderLayout)
         self.setLayout(mainLayout)
         self.setWindowTitle("Hello GL")
+        self.setMinimumSize(1300, 600)
 
         timer = QTimer(self)
         timer.timeout.connect(self.glWidget.update)
         timer.start(0)
+
+    def addSliderRow(self, outLayout, legNoArray):
+        hboxLayout = QHBoxLayout()
+        for legNo in legNoArray:
+            hboxLayout.addLayout(self.createSliders(legNo))
+        outLayout.addLayout(hboxLayout)
 
     def createSlider(self, minValue, maxValue, dir):
         slider = QSlider(dir)
@@ -84,7 +68,14 @@ class Window(QWidget):
 
         return slider
 
-    def createSliders(self):
+    def createSliders(self, legNo):
+        robot_controller = GlobalContext.getRobot().getController()
+        legLabelLayout = QVBoxLayout()
+        label = QLabel()
+        self.legLabels[legNo] = label
+        self.refreshLegLabel(robot_controller, legNo)()
+        legLabelLayout.addWidget(label)
+
         legSliderLayout = QHBoxLayout()
         link1Slider = self.createSlider(-45, 45, Qt.Horizontal)
         link2Slider = self.createSlider(-45, 45, Qt.Vertical)
@@ -92,7 +83,23 @@ class Window(QWidget):
         legSliderLayout.addWidget(link1Slider)
         legSliderLayout.addWidget(link2Slider)
         legSliderLayout.addWidget(link3Slider)
-        return legSliderLayout
+
+        link1Slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, 0))
+        link1Slider.valueChanged.connect(self.refreshLegLabel(robot_controller, legNo))
+        link2Slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, 1))
+        link2Slider.valueChanged.connect(self.refreshLegLabel(robot_controller, legNo))
+        link3Slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, 2))
+        link3Slider.valueChanged.connect(self.refreshLegLabel(robot_controller, legNo))
+        legLabelLayout.addLayout(legSliderLayout)
+
+        return legLabelLayout
+
+    def refreshLegLabel(self, robot_controller, legNo):
+        def refreshLabel():
+            label = self.legLabels[legNo]
+            label.setText("Leg {} {}".format(legNo, robot_controller.getStatus(legNo)))
+
+        return refreshLabel
 
 
 class GLWidget(QOpenGLWidget):
@@ -100,8 +107,6 @@ class GLWidget(QOpenGLWidget):
     def __init__(self, parent=None):
         super(GLWidget, self).__init__(parent)
 
-        # self.base = Cylinder(0.1, 0.01)
-        self.base = Cube(0.2, 0.2, 0.1)
         self.xRot = 70
         self.yRot = 0
         self.zRot = 70
@@ -109,7 +114,6 @@ class GLWidget(QOpenGLWidget):
         self.lastPos = QPoint()
         self.bg_color = QColor.fromCmykF(0.39, 0.39, 0.0, 0.0)
 
-        self.robot = RobotModel()
         self.coordinates = CoordinateSystem()
 
     def getOpenglInfo(self):
@@ -128,10 +132,10 @@ class GLWidget(QOpenGLWidget):
         return info
 
     def minimumSizeHint(self):
-        return QSize(1024, 768)
+        return QSize(800, 600)
 
-    def sizeHint(self):
-        return QSize(1024, 1024)
+    def maxSizeHint(self):
+        return QSize(800, 600)
 
     def setXRotation(self, angle):
         angle = self.normalizeAngle(angle)
@@ -160,9 +164,8 @@ class GLWidget(QOpenGLWidget):
 
         self.enableLightAndMaterial()
         gl.glEnable(gl.GL_DEPTH_TEST)
-        self.base.genObjectList()
 
-        self.robot.initRobot()
+        GlobalContext.getRobot().initRobot()
         self.coordinates.init()
 
     def enableLightAndMaterial(self):
@@ -196,8 +199,7 @@ class GLWidget(QOpenGLWidget):
         gl.glRotated(self.yRot, 0.0, 1.0, 0.0)
         gl.glRotated(self.zRot, 0.0, 0.0, 1.0)
         self.coordinates.draw()
-        self.base.draw()
-        self.robot.draw()
+        GlobalContext.getRobot().draw()
 
     def resizeGL(self, width, height):
         side = min(width, height)
@@ -240,4 +242,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = Window()
     window.show()
+
+    ikWindow = IKWindow()
+    ikWindow.show()
     sys.exit(app.exec_())
