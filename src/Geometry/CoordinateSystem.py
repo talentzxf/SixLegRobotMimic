@@ -6,9 +6,9 @@ from PyQt5.QtGui import QColor
 class CoordinateSystem:
     def __init__(self):
         self.coordinates = []
-        self.coordinates.append(Cylinder(0.005, 0.3, QColor.fromRgb(255, 0, 0)))
-        self.coordinates.append(Cylinder(0.005, 0.3, QColor.fromRgb(0, 255, 0)))
-        self.coordinates.append(Cylinder(0.005, 0.3, QColor.fromRgb(0, 0, 255)))
+        self.coordinates.append(Cylinder(0.01, 0.3, QColor.fromRgb(255, 0, 0)))
+        self.coordinates.append(Cylinder(0.01, 0.3, QColor.fromRgb(0, 255, 0)))
+        self.coordinates.append(Cylinder(0.01, 0.3, QColor.fromRgb(0, 0, 255)))
 
     def init_object(self):
         for c in self.coordinates:
@@ -18,12 +18,12 @@ class CoordinateSystem:
         gl.glPushMatrix()
 
         gl.glPushMatrix()
-        # CW Rotate around y to get x
+        # CCW Rotate around y to get x
         gl.glRotated(90, 0.0, 1.0, 0.0)
         self.coordinates[0].draw()
         gl.glPopMatrix()
 
-        # CCW Rotate around x to get y
+        # CW Rotate around x to get y
         gl.glPushMatrix()
         gl.glRotated(-90, 1.0, 0.0, 0.0)
         self.coordinates[1].draw()

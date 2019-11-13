@@ -73,8 +73,10 @@ class DraggableRect:
         world_pos.append(self.z)
         # 2. Convert to leg coordinate
         leg_relative_pos = self.coord.worldToObject(world_pos, self.leg.get_init_transformation_matrix())
+        print("Leg relative pos:", leg_relative_pos)
 
     def draw(self, qp, selected=False):
+        old_pen = qp.pen()
         if selected:
             qp.setBrush(QColor(0, 0, 127))
         else:
@@ -83,30 +85,32 @@ class DraggableRect:
 
         if selected:
             color = QColor(0, 0, 0)
-            color = QColor(0, 0, 0)
             color.setNamedColor('#ff0000')
             qp.setPen(color)
             # draw the local coordinate of the leg
             leg_start_point = self.leg.get_start_pos()
             leg_scr_position = self.coord.worldToScr(leg_start_point[0], leg_start_point[1])
-            # Local x coordinate
-            worldPosX = self.coord.objectToWorld([1, 0, self.z], self.leg.get_init_transformation_matrix())
-            scrPosX = self.coord.worldToScr(worldPosX[0], worldPosX[1])
-
-            qp.drawLine(leg_scr_position, scrPosX)
-            # Local y coordinate
-            color.setNamedColor('#00ff00')
-            qp.setPen(color)
-            worldPosY = self.coord.objectToWorld([0, 1, self.z], self.leg.get_init_transformation_matrix())
-            scrPosY = self.coord.worldToScr(worldPosY[0], worldPosY[1])
-            qp.drawLine(leg_scr_position, scrPosY)
+            # # Local x coordinate
+            # worldPosX = self.coord.objectToWorld([1, 0, self.z], self.leg.get_init_transformation_matrix())
+            # scrPosX = self.coord.worldToScr(worldPosX[0], worldPosX[1])
+            #
+            # qp.drawLine(leg_scr_position, scrPosX)
+            # # Local y coordinate
+            # color.setNamedColor('#00ff00')
+            # qp.setPen(color)
+            # worldPosY = self.coord.objectToWorld([0, 1, self.z], self.leg.get_init_transformation_matrix())
+            # scrPosY = self.coord.worldToScr(worldPosY[0], worldPosY[1])
+            # qp.drawLine(leg_scr_position, scrPosY)
 
             # Local z coordinate
             color.setNamedColor('#0000ff')
             qp.setPen(color)
-            worldPosY = self.coord.objectToWorld([0, 0, 1], self.leg.get_init_transformation_matrix())
-            scrPosY = self.coord.worldToScr(worldPosY[0], worldPosY[1])
-            qp.drawLine(leg_scr_position, scrPosY)
+            print("Leg name:" , self.leg.getName(), " Init Matrix:", self.leg.get_init_transformation_matrix())
+            worldPosZ = self.coord.objectToWorld([0, 0, 1], self.leg.get_init_transformation_matrix())
+            print(worldPosZ)
+            scrPosZ = self.coord.worldToScr(worldPosZ[0], worldPosZ[1])
+            qp.drawLine(leg_scr_position, scrPosZ)
+        qp.setPen(old_pen)
 
     def contains(self, p):
         return self.rect.contains(p)
@@ -159,7 +163,6 @@ class IKWidget(QWidget):
             leg_target_point = leg.get_target_pos()
             target_scr_point = self.coordConv.worldToScr(leg_target_point[0].item(0), leg_target_point[1].item(0))
 
-            print("target_point", leg_target_point)
             if leg not in self.draggableRectMap:
                 self.draggableRectMap[leg] = DraggableRect(target_scr_point, leg_target_point[2].item(0), leg)
             qp.drawLine(self.coordConv.worldToScr(leg_start_point[0], leg_start_point[1]),

@@ -69,8 +69,21 @@ if __name__ == '__main__':
     converted_obj_point = conv.objectToWorld(origin_world_point, objTransformationMatrix)
     print(converted_obj_point, " should be:", [-math.sqrt(2) / 2, -math.sqrt(2) / 2, 0])
 
-    # Robot leg 1
-    leg_rotation = MatrixOps.rotate_matrix(45, [0, 0, 1])
-    leg_transformation = MatrixOps.translate_matrix(0.1, 0.15, 0)
-    leg_objTransformationMatrix = np.matmul(leg_transformation, leg_rotation)
-    print(leg_objTransformationMatrix)
+    # Rotate 90 around y, z will be x, x will be -z.
+    rotation = MatrixOps.rotate_matrix(90, [0, 1, 0])
+    objTransformationMatrix = rotation
+    obj_x = [1, 0, 0]
+    converted_obj_x = conv.objectToWorld(obj_x, objTransformationMatrix)
+    obj_z = [0, 0, 1]
+    converted_obj_z = conv.objectToWorld(obj_z, objTransformationMatrix)
+    print(converted_obj_z, " should be: [1,0,0]")
+
+    # Rotate 90 around x, y will be z, z will be -y.
+    rotation = MatrixOps.rotate_matrix(90, [1, 0, 0])
+    objTransformationMatrix = rotation
+    obj_y = [0, 1, 0]
+    converted_obj_y = conv.objectToWorld(obj_y, objTransformationMatrix)
+    obj_z = [0, 0, 1]
+    converted_obj_z = conv.objectToWorld(obj_z, objTransformationMatrix)
+    print(converted_obj_y, " should be: [0, 0, -1]")
+    print(converted_obj_z, " should be: [0,1,0]")

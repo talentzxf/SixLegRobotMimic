@@ -29,27 +29,27 @@ class RobotModel:
 
         self.body = Cube(length, width, height)
 
-        leg = LinkSystem([width/2, length/2, 0], [[45, 0.0, 0.0, 1.0], [90, 0.0, 1.0, 0.0]])
+        leg = LinkSystem([width/2, length/2, 0], [[45, 0.0, 0.0, 1.0], [90, 0.0, 1.0, 0.0]], "0")
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = LinkSystem([width/2, 0, 0], [[90, 0.0, 1.0, 0.0]])
+        leg = LinkSystem([width/2, 0, 0], [[90, 0.0, 1.0, 0.0]], "1")
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = LinkSystem([width/2, -length/2, 0], [[-45, 0.0, 0.0, 1.0], [90, 0.0, 1.0, 0.0]])
+        leg = LinkSystem([width/2, -length/2, 0], [[-45, 0.0, 0.0, 1.0], [90, 0.0, 1.0, 0.0]], "2")
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = LinkSystem([-width/2, -length/2, 0], [[45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
+        leg = LinkSystem([-width/2, -length/2, 0], [[45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "3")
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = LinkSystem([-width/2, 0, 0], [[-90, 0.0, 1.0, 0.0]])
+        leg = LinkSystem([-width/2, 0, 0], [[-90, 0.0, 1.0, 0.0]], "4")
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = LinkSystem([-width/2, length/2, 0], [[-45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
+        leg = LinkSystem([-width/2, length/2, 0], [[-45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "5")
         self.addLegLinks(leg)
         self.legs.append(leg)
 

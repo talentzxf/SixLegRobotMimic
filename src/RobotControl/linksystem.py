@@ -200,7 +200,7 @@ class Link(Cylinder):
 
 
 class LinkSystem:
-    def __init__(self, pos=None, rotate=None):
+    def __init__(self, pos=None, rotate=None, name=None):
         self.links = []
         self.cylinder = Cylinder(0.02, 0.02)
         self.init_pos = pos
@@ -208,6 +208,10 @@ class LinkSystem:
 
         self.draw_coordinate = False
         self.coordinate = CoordinateSystem()
+        self.name = name
+
+    def getName(self):
+        return self.name
 
     def add_link(self, length, axis):
         new_link = Link(length, axis)

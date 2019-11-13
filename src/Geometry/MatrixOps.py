@@ -11,6 +11,7 @@ def translate_matrix(x, y, z):
 
 
 def rotate_matrix(angle_theta, axis):
+    # Use right hand rule !!!
     # convert theta into radian
     theta = angle_theta / 180 * m.pi
     s = m.sin(theta)
