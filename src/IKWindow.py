@@ -90,17 +90,17 @@ class DraggableRect:
             # draw the local coordinate of the leg
             leg_start_point = self.leg.get_start_pos()
             leg_scr_position = self.coord.worldToScr(leg_start_point[0], leg_start_point[1])
-            # # Local x coordinate
-            # worldPosX = self.coord.objectToWorld([1, 0, self.z], self.leg.get_init_transformation_matrix())
-            # scrPosX = self.coord.worldToScr(worldPosX[0], worldPosX[1])
-            #
-            # qp.drawLine(leg_scr_position, scrPosX)
-            # # Local y coordinate
-            # color.setNamedColor('#00ff00')
-            # qp.setPen(color)
-            # worldPosY = self.coord.objectToWorld([0, 1, self.z], self.leg.get_init_transformation_matrix())
-            # scrPosY = self.coord.worldToScr(worldPosY[0], worldPosY[1])
-            # qp.drawLine(leg_scr_position, scrPosY)
+            # Local x coordinate
+            worldPosX = self.coord.objectToWorld([1, 0, self.z], self.leg.get_init_transformation_matrix())
+            scrPosX = self.coord.worldToScr(worldPosX[0], worldPosX[1])
+
+            qp.drawLine(leg_scr_position, scrPosX)
+            # Local y coordinate
+            color.setNamedColor('#00ff00')
+            qp.setPen(color)
+            worldPosY = self.coord.objectToWorld([0, 1, self.z], self.leg.get_init_transformation_matrix())
+            scrPosY = self.coord.worldToScr(worldPosY[0], worldPosY[1])
+            qp.drawLine(leg_scr_position, scrPosY)
 
             # Local z coordinate
             color.setNamedColor('#0000ff')
