@@ -166,7 +166,7 @@ class GLWidget(QOpenGLWidget):
         gl.glEnable(gl.GL_DEPTH_TEST)
 
         GlobalContext.getRobot().initRobot()
-        self.coordinates.init()
+        self.coordinates.init_object()
 
     def enableLightAndMaterial(self):
         flashLightPos = [10.0, 10.0, 0.0]

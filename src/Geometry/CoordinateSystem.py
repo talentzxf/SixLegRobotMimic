@@ -10,7 +10,7 @@ class CoordinateSystem:
         self.coordinates.append(Cylinder(0.005, 0.3, QColor.fromRgb(0, 255, 0)))
         self.coordinates.append(Cylinder(0.005, 0.3, QColor.fromRgb(0, 0, 255)))
 
-    def init(self):
+    def init_object(self):
         for c in self.coordinates:
             c.init_object()
 

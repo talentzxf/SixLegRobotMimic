@@ -83,6 +83,7 @@ class DraggableRect:
 
         if selected:
             color = QColor(0, 0, 0)
+            color = QColor(0, 0, 0)
             color.setNamedColor('#ff0000')
             qp.setPen(color)
             # draw the local coordinate of the leg
@@ -166,8 +167,10 @@ class IKWidget(QWidget):
 
             if self.draggableRectMap[leg] is self.currentRect:
                 self.draggableRectMap[leg].draw(qp, True)
+                leg.setDrawCoordinate(True)
             else:
                 self.draggableRectMap[leg].draw(qp, False)
+                leg.setDrawCoordinate(False)
 
         self.drawCoordinate(qp)
         qp.end()
@@ -178,6 +181,6 @@ class IKWidget(QWidget):
         color.setNamedColor('#ff0000')
         qp.setPen(color)
         qp.drawLine(self.coordConv.worldToScr(0.0, 0.0), self.coordConv.worldToScr(1.0, 0.0))
-        color.setNamedColor('#00070a')
+        color.setNamedColor('#00ff00')
         qp.setPen(color)
         qp.drawLine(self.coordConv.worldToScr(0.0, 0.0), self.coordConv.worldToScr(0.0, 1.0))
