@@ -107,9 +107,9 @@ class GLWidget(QOpenGLWidget):
     def __init__(self, parent=None):
         super(GLWidget, self).__init__(parent)
 
-        self.xRot = 70
+        self.xRot = 120
         self.yRot = 0
-        self.zRot = 70
+        self.zRot = -70
 
         self.lastPos = QPoint()
         self.bg_color = QColor.fromCmykF(0.39, 0.39, 0.0, 0.0)
@@ -211,7 +211,7 @@ class GLWidget(QOpenGLWidget):
 
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
-        gl.glOrtho(-0.5, +0.5, +0.5, -0.5, 4.0, 15.0)
+        gl.glOrtho(-0.5, +0.5, +0.5, -0.5, 15.0, -15.0)
         gl.glMatrixMode(gl.GL_MODELVIEW)
 
     def mousePressEvent(self, event):
