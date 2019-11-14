@@ -1,3 +1,5 @@
+import math
+
 from PyQt5.QtWidgets import (QWidget, QTabWidget, QVBoxLayout, QHBoxLayout, QPushButton, QComboBox)
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QPainter, QColor, QFont
@@ -63,17 +65,16 @@ class DraggableRect:
         self.coord = CoordinateConverter()
         self.z = z  # z is the z coordinate of the leg in world space
 
+    def getZ(self):
+        return self.z
+
+    def getLeg(self):
+        return self.leg
+
     def setPos(self, pos):
         adjusted_pos = QPoint(pos.x() - self.size.width() / 2, pos.y() - self.size.height() / 2)
         self.rect = QRect(adjusted_pos, self.size)
-
-        # use IK to find link position of the leg
-        # 1. Convert to world coordinate
-        world_pos = self.coord.scrToWorld(adjusted_pos)
-        world_pos.append(self.z)
-        # 2. Convert to leg coordinate
-        leg_relative_pos = self.coord.worldToObject(world_pos, self.leg.get_init_transformation_matrix())
-        print("Leg relative pos:", leg_relative_pos)
+        return adjusted_pos
 
     def draw(self, qp, selected=False):
         old_pen = qp.pen()
@@ -105,9 +106,7 @@ class DraggableRect:
             # Local z coordinate
             color.setNamedColor('#0000ff')
             qp.setPen(color)
-            print("Leg name:" , self.leg.getName(), " Init Matrix:", self.leg.get_init_transformation_matrix())
             worldPosZ = self.coord.objectToWorld([0, 0, 1], self.leg.get_init_transformation_matrix())
-            print(worldPosZ)
             scrPosZ = self.coord.worldToScr(worldPosZ[0], worldPosZ[1])
             qp.drawLine(leg_scr_position, scrPosZ)
         qp.setPen(old_pen)
@@ -119,8 +118,8 @@ class DraggableRect:
 class IKWidget(QWidget):
     def __init__(self):
         super().__init__()
-        self.coordConv = CoordinateConverter()
-        self.setFixedSize(self.coordConv.scrWidth, self.coordConv.scrHeight)
+        self.coord = CoordinateConverter()
+        self.setFixedSize(self.coord.scrWidth, self.coord.scrHeight)
 
         self.draggableRectMap = {}
 
@@ -139,7 +138,27 @@ class IKWidget(QWidget):
     def mouseMoveEvent(self, event):
         if self.currentRect:
             current_pos = event.pos()
-            self.currentRect.setPos(current_pos)
+            adjusted_pos = self.currentRect.setPos(current_pos)
+
+            cur_leg = self.currentRect.getLeg()
+
+            # use IK to find link position of the leg
+            # 1. Convert to world coordinate
+            world_pos = self.coord.scrToWorld(adjusted_pos)
+            world_pos.append(self.currentRect.getZ())
+            # 2. Convert to leg coordinate
+            leg_relative_pos = self.coord.worldToObject(world_pos, cur_leg.get_init_transformation_matrix())
+            theta1 = 180.0 * math.atan2(leg_relative_pos[1], leg_relative_pos[2]) / math.pi
+
+            # 3. calculate other two angles:
+            # Equation, (4 solutions!!! How to solve???):
+            # lyz = math.sqrt(pos[1]*pos[1]+pos[2]*pos[2])
+            # l2*cos(theta)+l3*cos(theta)=lyz - l1
+            # l2*sin(theta)+l3*sin(theta)=pos[0]
+
+            legId = GlobalContext.getRobot().getLegId(cur_leg.getName())
+            GlobalContext.getRobot().getController().setLegLinkAngle(legId, 0)(-theta1)
+
             self.update()
 
     def paintEvent(self, event):
@@ -153,7 +172,7 @@ class IKWidget(QWidget):
         body_length = RobotConfig.bodyLength
         body_width = RobotConfig.bodyWidth
 
-        body_rect = self.coordConv.convertRectToScr(-body_width / 2, body_length / 2, body_width, body_length)
+        body_rect = self.coord.convertRectToScr(-body_width / 2, body_length / 2, body_width, body_length)
         qp.drawRect(body_rect)
 
         # Draw all the leg targets
@@ -161,11 +180,11 @@ class IKWidget(QWidget):
         for leg in robot_legs:
             leg_start_point = leg.get_start_pos()
             leg_target_point = leg.get_target_pos()
-            target_scr_point = self.coordConv.worldToScr(leg_target_point[0].item(0), leg_target_point[1].item(0))
+            target_scr_point = self.coord.worldToScr(leg_target_point[0].item(0), leg_target_point[1].item(0))
 
             if leg not in self.draggableRectMap:
                 self.draggableRectMap[leg] = DraggableRect(target_scr_point, leg_target_point[2].item(0), leg)
-            qp.drawLine(self.coordConv.worldToScr(leg_start_point[0], leg_start_point[1]),
+            qp.drawLine(self.coord.worldToScr(leg_start_point[0], leg_start_point[1]),
                         target_scr_point)
 
             if self.draggableRectMap[leg] is self.currentRect:
@@ -183,7 +202,7 @@ class IKWidget(QWidget):
         # Draw Coordinate
         color.setNamedColor('#ff0000')
         qp.setPen(color)
-        qp.drawLine(self.coordConv.worldToScr(0.0, 0.0), self.coordConv.worldToScr(1.0, 0.0))
+        qp.drawLine(self.coord.worldToScr(0.0, 0.0), self.coord.worldToScr(1.0, 0.0))
         color.setNamedColor('#00ff00')
         qp.setPen(color)
-        qp.drawLine(self.coordConv.worldToScr(0.0, 0.0), self.coordConv.worldToScr(0.0, 1.0))
+        qp.drawLine(self.coord.worldToScr(0.0, 0.0), self.coord.worldToScr(0.0, 1.0))
