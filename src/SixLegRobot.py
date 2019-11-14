@@ -38,9 +38,9 @@ class Window(QWidget):
         sliderLayout = QVBoxLayout()
 
         # 1st row
-        self.addSliderRow(sliderLayout, [0, 1])
-        self.addSliderRow(sliderLayout, [2, 3])
-        self.addSliderRow(sliderLayout, [4, 5])
+        # self.addSliderRow(sliderLayout, [0, 1])
+        # self.addSliderRow(sliderLayout, [2, 3])
+        # self.addSliderRow(sliderLayout, [4, 5])
 
         mainLayout.addLayout(sliderLayout)
         self.setLayout(mainLayout)
