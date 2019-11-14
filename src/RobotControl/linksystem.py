@@ -198,7 +198,7 @@ class Link(Cylinder):
         Cylinder.draw(self)
         return model_matrix
 
-
+# TODO: inherit a leg class from LinkSystem
 class LinkSystem:
     def __init__(self, pos=None, rotate=None, name=None):
         self.links = []

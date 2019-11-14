@@ -22,6 +22,7 @@ class RobotModel:
 
     def __init__(self):
         self.legs = []
+        self.legid_mapping = {}
 
         width = RobotConfig.bodyWidth
         length = RobotConfig.bodyLength
@@ -32,28 +33,36 @@ class RobotModel:
         leg = LinkSystem([width/2, length/2, 0], [[45, 0.0, 0.0, 1.0], [90, 0.0, 1.0, 0.0]], "0")
         self.addLegLinks(leg)
         self.legs.append(leg)
+        self.legid_mapping["0"] = 0
 
         leg = LinkSystem([width/2, 0, 0], [[90, 0.0, 1.0, 0.0]], "1")
         self.addLegLinks(leg)
         self.legs.append(leg)
+        self.legid_mapping["1"] = 1
 
-        # leg = LinkSystem([width/2, -length/2, 0], [[-45, 0.0, 0.0, 1.0], [90, 0.0, 1.0, 0.0]], "2")
-        # self.addLegLinks(leg)
-        # self.legs.append(leg)
-        #
-        # leg = LinkSystem([-width/2, -length/2, 0], [[45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "3")
-        # self.addLegLinks(leg)
-        # self.legs.append(leg)
-        #
-        # leg = LinkSystem([-width/2, 0, 0], [[-90, 0.0, 1.0, 0.0]], "4")
-        # self.addLegLinks(leg)
-        # self.legs.append(leg)
-        #
-        # leg = LinkSystem([-width/2, length/2, 0], [[-45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "5")
-        # self.addLegLinks(leg)
-        # self.legs.append(leg)
+        leg = LinkSystem([width/2, -length/2, 0], [[-45, 0.0, 0.0, 1.0], [90, 0.0, 1.0, 0.0]], "2")
+        self.addLegLinks(leg)
+        self.legs.append(leg)
+        self.legid_mapping["2"] = 2
 
+        leg = LinkSystem([-width/2, -length/2, 0], [[45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "3")
+        self.addLegLinks(leg)
+        self.legs.append(leg)
+        self.legid_mapping["3"] = 3
+
+        leg = LinkSystem([-width/2, 0, 0], [[-90, 0.0, 1.0, 0.0]], "4")
+        self.addLegLinks(leg)
+        self.legs.append(leg)
+        self.legid_mapping["4"] = 4
+
+        leg = LinkSystem([-width/2, length/2, 0], [[-45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "5")
+        self.addLegLinks(leg)
+        self.legs.append(leg)
+        self.legid_mapping["5"] = 5
         self.control_system = NavieControl(self.legs)
+
+    def getLegId(self, name):
+        return self.legid_mapping[name]
 
     def getController(self):
         return self.control_system
