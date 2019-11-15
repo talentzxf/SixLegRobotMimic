@@ -142,6 +142,7 @@ class IKWidget(QWidget):
 
             cur_leg = self.currentRect.getLeg()
 
+            # TODO: Move this part to a separate IKSolver
             # use IK to find link position of the leg
             # 1. Convert to world coordinate
             world_pos = self.coord.scrToWorld(adjusted_pos)
