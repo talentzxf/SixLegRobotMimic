@@ -40,10 +40,10 @@ class IKSolver:
         self.prev_angles = start_angles
 
     def getAngle(self, target_x, target_y, mid_x, mid_y):
-        theta1 = math.atan2(mid_y, mid_x)
+        theta1 = math.atan2(mid_y, mid_x - self.l_array[0])
         theta1_2 = math.atan2(target_y - mid_y, target_x - mid_x)
         theta2 = theta1_2 - theta1
-        return [-180*theta1/math.pi, -180*theta2/math.pi]
+        return [180 * theta1 / math.pi, 180 * theta2 / math.pi]
 
     # TODO: Currently, we only implement 3 link system. Can we do this for any number of links? hmmmmm
     def solve(self, p):  # Find the three angles
@@ -51,14 +51,14 @@ class IKSolver:
         theta0 = -180.0 * math.atan2(p[1], p[2]) / math.pi
 
         # calculate other two angles in x-xp plane:
-        p_conv_x = p[1] * p[1] + p[2] * p[2]
+        p_conv_x = math.sqrt(p[1] * p[1] + p[2] * p[2])
         p_conv_y = p[0]
 
         x0 = self.l_array[0]
         y0 = 0
         r0 = self.l_array[1]
 
-        x1 = math.sqrt(p_conv_x)
+        x1 = p_conv_x
         y1 = p_conv_y
         r1 = self.l_array[2]
 
@@ -67,7 +67,7 @@ class IKSolver:
             return None
         if len(intersect_points) == 1:  # Only one point, just calculate the angle
             angles = self.getAngle(p_conv_x, p_conv_y, intersect_points[0][0], intersect_points[0][1])
-            self.prev_angles = [theta0, angles[1], angles[2]]
+            self.prev_angles = [theta0, angles[0], angles[1]]
             return self.prev_angles
 
         mid_point_0 = intersect_points[0]
@@ -85,4 +85,6 @@ class IKSolver:
 
 
 if __name__ == '__main__':
-    print(get_intercetions(0, 0, 1, 2, 0, 1))
+    # print(get_intercetions(0, 0, 1, 2, 0, 1))
+    solver = IKSolver([1., 1., 1.], [0., 0., 0.])
+    print(solver.solve([0, 0, 2]))
