@@ -43,7 +43,7 @@ class IKSolver:
         theta1 = math.atan2(mid_y, mid_x)
         theta1_2 = math.atan2(target_y - mid_y, target_x - mid_x)
         theta2 = theta1_2 - theta1
-        return [180*theta1/math.pi, 180*theta2/math.pi]
+        return [-180*theta1/math.pi, -180*theta2/math.pi]
 
     # TODO: Currently, we only implement 3 link system. Can we do this for any number of links? hmmmmm
     def solve(self, p):  # Find the three angles
