@@ -11,8 +11,8 @@ from Geometry.cube import Cube
 
 class RobotModel:
     link1_length = 0.05
-    link2_length = 0.1
-    link3_length = 0.1
+    link2_length = 0.2
+    link3_length = 0.2
 
     @staticmethod
     def addLegLinks(leg):

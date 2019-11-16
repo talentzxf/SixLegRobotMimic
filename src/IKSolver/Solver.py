@@ -67,7 +67,8 @@ class IKSolver:
             return None
         if len(intersect_points) == 1:  # Only one point, just calculate the angle
             angles = self.getAngle(p_conv_x, p_conv_y, intersect_points[0][0], intersect_points[0][1])
-            return [theta0, angles[1], angles[2]]
+            self.prev_angles = [theta0, angles[1], angles[2]]
+            return self.prev_angles
 
         mid_point_0 = intersect_points[0]
         mid_point_1 = intersect_points[1]
@@ -76,9 +77,11 @@ class IKSolver:
 
         diff1 = math.fabs(angles_1[0] - self.prev_angles[1]) + math.fabs(angles_1[1] - self.prev_angles[2])
         diff2 = math.fabs(angles_2[0] - self.prev_angles[1]) + math.fabs(angles_2[1] - self.prev_angles[2])
-        if diff1 > diff2:
-            return [theta0, angles_1[0], angles_1[1]]
-        return [theta0, angles_2[0], angles_2[1]]
+        if diff1 < diff2:
+            self.prev_angles = [theta0, angles_1[0], angles_1[1]]
+            return self.prev_angles
+        self.prev_angles = [theta0, angles_2[0], angles_2[1]]
+        return self.prev_angles
 
 
 if __name__ == '__main__':
