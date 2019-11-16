@@ -149,16 +149,16 @@ class IKWidget(QWidget):
             world_pos.append(self.currentRect.getZ())
             # 2. Convert to leg coordinate
             leg_relative_pos = self.coord.worldToObject(world_pos, cur_leg.get_init_transformation_matrix())
-            theta1 = 180.0 * math.atan2(leg_relative_pos[1], leg_relative_pos[2]) / math.pi
+            # 3. Use IKSolver to solve it
+            thetas = cur_leg.getSolver().solve(leg_relative_pos)
 
-            # 3. calculate other two angles:
-            # Equation, (4 solutions!!! How to solve???):
-            # lyz = math.sqrt(pos[1]*pos[1]+pos[2]*pos[2])
-            # l2*cos(theta)+l3*cos(theta)=lyz - l1
-            # l2*sin(theta)+l3*sin(theta)=pos[0]
-
-            legId = GlobalContext.getRobot().getLegId(cur_leg.getName())
-            GlobalContext.getRobot().getController().setLegLinkAngle(legId, 0)(-theta1)
+            if thetas is not None:
+                # 4. Update angles
+                # TODO: put this into logic of leg
+                legId = GlobalContext.getRobot().getLegId(cur_leg.getName())
+                GlobalContext.getRobot().getController().setLegLinkAngle(legId, 0)(thetas[0])
+                GlobalContext.getRobot().getController().setLegLinkAngle(legId, 1)(thetas[1])
+                GlobalContext.getRobot().getController().setLegLinkAngle(legId, 2)(thetas[2])
 
             self.update()
 

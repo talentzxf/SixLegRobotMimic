@@ -34,5 +34,52 @@ def get_intercetions(x0, y0, r0, x1, y1, r1):
             return [(x3, y3), (x4, y4)]
 
 
+class IKSolver:
+    def __init__(self, l_array, start_angles):
+        self.l_array = l_array  # link length definition
+        self.prev_angles = start_angles
+
+    def getAngle(self, target_x, target_y, mid_x, mid_y):
+        theta1 = math.atan2(mid_y, mid_x)
+        theta1_2 = math.atan2(target_y - mid_y, target_x - mid_x)
+        theta2 = theta1_2 - theta1
+        return [180*theta1/math.pi, 180*theta2/math.pi]
+
+    # TODO: Currently, we only implement 3 link system. Can we do this for any number of links? hmmmmm
+    def solve(self, p):  # Find the three angles
+        # theta0 is just rotation toward the target point in y-z plane
+        theta0 = -180.0 * math.atan2(p[1], p[2]) / math.pi
+
+        # calculate other two angles in x-xp plane:
+        p_conv_x = p[1] * p[1] + p[2] * p[2]
+        p_conv_y = p[0]
+
+        x0 = self.l_array[0]
+        y0 = 0
+        r0 = self.l_array[1]
+
+        x1 = math.sqrt(p_conv_x)
+        y1 = p_conv_y
+        r1 = self.l_array[2]
+
+        intersect_points = get_intercetions(x0, y0, r0, x1, y1, r1)
+        if intersect_points is None:
+            return None
+        if len(intersect_points) == 1:  # Only one point, just calculate the angle
+            angles = self.getAngle(p_conv_x, p_conv_y, intersect_points[0][0], intersect_points[0][1])
+            return [theta0, angles[1], angles[2]]
+
+        mid_point_0 = intersect_points[0]
+        mid_point_1 = intersect_points[1]
+        angles_1 = self.getAngle(p_conv_x, p_conv_y, mid_point_0[0], mid_point_0[1])
+        angles_2 = self.getAngle(p_conv_x, p_conv_y, mid_point_1[0], mid_point_1[1])
+
+        diff1 = math.fabs(angles_1[0] - self.prev_angles[1]) + math.fabs(angles_1[1] - self.prev_angles[2])
+        diff2 = math.fabs(angles_2[0] - self.prev_angles[1]) + math.fabs(angles_2[1] - self.prev_angles[2])
+        if diff1 > diff2:
+            return [theta0, angles_1[0], angles_1[1]]
+        return [theta0, angles_2[0], angles_2[1]]
+
+
 if __name__ == '__main__':
     print(get_intercetions(0, 0, 1, 2, 0, 1))

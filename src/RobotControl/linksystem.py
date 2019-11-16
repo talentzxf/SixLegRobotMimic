@@ -5,6 +5,8 @@ import numpy as np
 
 from Geometry.CoordinateSystem import CoordinateSystem
 
+from IKSolver.Solver import IKSolver
+
 
 class Link(Cylinder):
     radius = 0.01
@@ -198,6 +200,7 @@ class Link(Cylinder):
         Cylinder.draw(self)
         return model_matrix
 
+
 # TODO: inherit a leg class from LinkSystem
 class LinkSystem:
     def __init__(self, pos=None, rotate=None, name=None):
@@ -209,11 +212,19 @@ class LinkSystem:
         self.draw_coordinate = False
         self.coordinate = CoordinateSystem()
         self.name = name
+        self.link_length_array = []
+        self.start_angles = []
+        self.solver = IKSolver(self.link_length_array, self.start_angles)
+
+    def getSolver(self):
+        return self.solver
 
     def getName(self):
         return self.name
 
     def add_link(self, length, axis):
+        self.link_length_array.append(length)
+        self.start_angles.append(0)
         new_link = Link(length, axis)
 
         # get the last link

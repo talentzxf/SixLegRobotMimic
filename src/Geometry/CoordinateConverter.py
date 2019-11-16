@@ -30,7 +30,6 @@ class CoordinateConverter:
     def worldToObject(self, point, objTransformationMatrix):
         # TODO: Optimize as rotation matrix is orthogonality
         inv_obj_trans = np.linalg.inv(objTransformationMatrix)
-        print("Backward transormation matrix", inv_obj_trans)
         point.append(1)
         point_vector = np.array(point)[np.newaxis].T
         target_matrix = np.matmul(inv_obj_trans, point_vector)
