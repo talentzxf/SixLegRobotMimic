@@ -99,6 +99,7 @@ class LinkSystem:
         for link in self.links:
             cur_model_matrix = link.draw(False)
             model_matrix = np.matmul(model_matrix, cur_model_matrix)
+        # TODO: lack the transition from start point to the end point of the last link!!!
         return model_matrix[:, 3]
 
     def init_object(self):

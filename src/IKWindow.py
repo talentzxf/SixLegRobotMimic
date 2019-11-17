@@ -1,6 +1,6 @@
 import math
 
-from PyQt5.QtWidgets import (QWidget, QTabWidget, QVBoxLayout, QHBoxLayout, QPushButton, QComboBox)
+from PyQt5.QtWidgets import (QWidget, QTabWidget, QVBoxLayout, QHBoxLayout, QSlider)
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QPainter, QColor, QFont
 
@@ -39,13 +39,18 @@ class MyTableWidget(QWidget):
 
     # TODO: better naming
     def initTab1(self):
+        self.heightSlider = QSlider(Qt.Vertical)
+        self.heightSlider.setRange(-10, 10)
         tab = QWidget()
         # Create first tab
         tab.layout = QVBoxLayout()
 
         ikWidget = IKWidget()
         tab.layout.addWidget(ikWidget)
+        tab.layout.addWidget(self.heightSlider)
         tab.setLayout(tab.layout)
+
+        self.heightSlider.hide()
         return tab
 
     def initTab2(self):
@@ -181,6 +186,7 @@ class IKWidget(QWidget):
         for leg in robot_legs:
             leg_start_point = leg.get_start_pos()
             leg_target_point = leg.get_target_pos()
+            print("leg:", leg.getName(), " pos:", leg_target_point)
             target_scr_point = self.coord.worldToScr(leg_target_point[0].item(0), leg_target_point[1].item(0))
 
             if leg not in self.draggableRectMap:
