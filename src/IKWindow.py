@@ -1,7 +1,7 @@
 import math
 
 from PyQt5.QtWidgets import (QWidget, QTabWidget, QVBoxLayout, QHBoxLayout, QSlider)
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QPainter, QColor, QFont
 
 from GlobalContext import GlobalContext
@@ -39,19 +39,48 @@ class MyTableWidget(QWidget):
 
     # TODO: better naming
     def initTab1(self):
-        self.heightSlider = QSlider(Qt.Vertical)
-        self.heightSlider.setRange(-10, 10)
+        slider = QSlider(Qt.Vertical)
+        slider.setRange(-10, 10)
+        slider.setSingleStep(1)
+        slider.setPageStep(10)
+        slider.setTickInterval(10)
+        slider.setTickPosition(QSlider.TicksRight)
+
+        self.heightSlider = slider
         tab = QWidget()
         # Create first tab
-        tab.layout = QVBoxLayout()
+        tab.layout = QHBoxLayout()
 
         ikWidget = IKWidget()
         tab.layout.addWidget(ikWidget)
         tab.layout.addWidget(self.heightSlider)
         tab.setLayout(tab.layout)
+        ikWidget.legSelected.connect(self.legSelected)
+        self.ikWidget = ikWidget
 
         self.heightSlider.hide()
         return tab
+
+    def legSelected(self, draggableRect):
+        try:
+            self.heightSlider.valueChanged.disconnect()
+        except Exception:
+            pass
+        self.heightSlider.valueChanged.connect(self.ikWidget.update)
+
+        if draggableRect:
+            self.heightSlider.setValue(draggableRect.getZ())
+            self.heightSlider.show()
+            self.heightSlider.valueChanged.connect(self.setZ(draggableRect))
+        else:
+            self.heightSlider.setValue(0)
+            self.heightSlider.hide()
+
+    def setZ(self, draggableRect):
+        def _setZ(z):
+            draggableRect.setZ(z)
+
+        return _setZ
 
     def initTab2(self):
         tab = QWidget()
@@ -69,6 +98,9 @@ class DraggableRect:
         self.leg = leg
         self.coord = CoordinateConverter()
         self.z = z  # z is the z coordinate of the leg in world space
+
+    def setZ(self, z):
+        self.z = z
 
     def getZ(self):
         return self.z
@@ -121,6 +153,8 @@ class DraggableRect:
 
 
 class IKWidget(QWidget):
+    legSelected = pyqtSignal(object)
+
     def __init__(self):
         super().__init__()
         self.coord = CoordinateConverter()
@@ -136,7 +170,12 @@ class IKWidget(QWidget):
             if rect.contains(event.pos()):
                 self.currentRect = rect
                 self.update()
+
+                self.legSelected.emit(self.currentRect)
+                self.update()
                 return
+
+        self.legSelected.emit(None)
         self.currentRect = None
         self.update()
 
@@ -186,7 +225,6 @@ class IKWidget(QWidget):
         for leg in robot_legs:
             leg_start_point = leg.get_start_pos()
             leg_target_point = leg.get_target_pos()
-            print("leg:", leg.getName(), " pos:", leg_target_point)
             target_scr_point = self.coord.worldToScr(leg_target_point[0].item(0), leg_target_point[1].item(0))
 
             if leg not in self.draggableRectMap:
