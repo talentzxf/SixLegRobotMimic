@@ -1,7 +1,7 @@
 import math
 
 from PyQt5.QtWidgets import (QWidget, QTabWidget, QVBoxLayout, QHBoxLayout, QSlider)
-from PyQt5.QtCore import pyqtSlot, pyqtSignal
+from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject
 from PyQt5.QtGui import QPainter, QColor, QFont
 
 from GlobalContext import GlobalContext
@@ -37,6 +37,8 @@ class MyTableWidget(QWidget):
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
 
+        self.prevSelectedRect = None
+
     # TODO: better naming
     def initTab1(self):
         slider = QSlider(Qt.Vertical)
@@ -69,7 +71,7 @@ class MyTableWidget(QWidget):
         self.heightSlider.valueChanged.connect(self.ikWidget.update)
 
         if draggableRect:
-            self.heightSlider.setValue(draggableRect.getZ())
+            self.heightSlider.setValue(draggableRect.getZ() * 100.0)
             self.heightSlider.show()
             self.heightSlider.valueChanged.connect(self.setZ(draggableRect))
         else:
@@ -78,7 +80,7 @@ class MyTableWidget(QWidget):
 
     def setZ(self, draggableRect):
         def _setZ(z):
-            draggableRect.setZ(z)
+            draggableRect.setZ(z / 100.0)
 
         return _setZ
 
@@ -88,11 +90,13 @@ class MyTableWidget(QWidget):
 
 
 # Everything in this class happens in Screen coordinate
-class DraggableRect:
+class DraggableRect(QObject):
+    valueChanged = pyqtSignal()
     size = QSize(10, 10)
 
     # leg means this rect corresponds to which leg.
     def __init__(self, pos, z, leg):
+        QObject.__init__(self)
         adjusted_pos = QPoint(pos.x() - self.size.width() / 2, pos.y() - self.size.height() / 2)
         self.rect = QRect(adjusted_pos, self.size)
         self.leg = leg
@@ -101,8 +105,12 @@ class DraggableRect:
 
     def setZ(self, z):
         self.z = z
+        print("set z to:", self.z)
+        self.valueChanged.emit()
+
 
     def getZ(self):
+        print("get z:", self.z)
         return self.z
 
     def getLeg(self):
@@ -129,14 +137,14 @@ class DraggableRect:
             leg_start_point = self.leg.get_start_pos()
             leg_scr_position = self.coord.worldToScr(leg_start_point[0], leg_start_point[1])
             # Local x coordinate
-            worldPosX = self.coord.objectToWorld([1, 0, self.z], self.leg.get_init_transformation_matrix())
+            worldPosX = self.coord.objectToWorld([1, 0, 0], self.leg.get_init_transformation_matrix())
             scrPosX = self.coord.worldToScr(worldPosX[0], worldPosX[1])
 
             qp.drawLine(leg_scr_position, scrPosX)
             # Local y coordinate
             color.setNamedColor('#00ff00')
             qp.setPen(color)
-            worldPosY = self.coord.objectToWorld([0, 1, self.z], self.leg.get_init_transformation_matrix())
+            worldPosY = self.coord.objectToWorld([0, 1, 0], self.leg.get_init_transformation_matrix())
             scrPosY = self.coord.worldToScr(worldPosY[0], worldPosY[1])
             qp.drawLine(leg_scr_position, scrPosY)
 
@@ -229,6 +237,7 @@ class IKWidget(QWidget):
 
             if leg not in self.draggableRectMap:
                 self.draggableRectMap[leg] = DraggableRect(target_scr_point, leg_target_point[2].item(0), leg)
+                self.draggableRectMap[leg].valueChanged.connect(self.update)
             qp.drawLine(self.coord.worldToScr(leg_start_point[0], leg_start_point[1]),
                         target_scr_point)
 
