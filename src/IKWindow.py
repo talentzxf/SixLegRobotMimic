@@ -98,6 +98,7 @@ class DraggableRect(QObject):
     def __init__(self, pos, z, leg):
         QObject.__init__(self)
         adjusted_pos = QPoint(pos.x() - self.size.width() / 2, pos.y() - self.size.height() / 2)
+        self.pos = adjusted_pos
         self.rect = QRect(adjusted_pos, self.size)
         self.leg = leg
         self.coord = CoordinateConverter()
@@ -115,8 +116,11 @@ class DraggableRect(QObject):
 
     def setPos(self, pos):
         adjusted_pos = QPoint(pos.x() - self.size.width() / 2, pos.y() - self.size.height() / 2)
+        self.pos = adjusted_pos
         self.rect = QRect(adjusted_pos, self.size)
-        return adjusted_pos
+
+    def getPos(self):
+        return self.pos
 
     def draw(self, qp, selected=False):
         old_pen = qp.pen()
@@ -185,17 +189,8 @@ class IKWidget(QWidget):
     def mouseMoveEvent(self, event):
         if self.currentRect:
             current_pos = event.pos()
-            adjusted_pos = self.currentRect.setPos(current_pos)
-
-            cur_leg = self.currentRect.getLeg()
-
-            # TODO: Move this part to a separate IKSolver
-            # use IK to find link position of the leg
-            # 1. Convert to world coordinate
-            world_pos = self.coord.scrToWorld(adjusted_pos)
-            world_pos.append(self.currentRect.getZ())
-            cur_leg.set_end_pos(world_pos)
-
+            self.currentRect.setPos(current_pos)
+            self.updateRobot()
             self.update()
 
     def paintEvent(self, event):
@@ -221,6 +216,7 @@ class IKWidget(QWidget):
 
             if leg not in self.draggableRectMap:
                 self.draggableRectMap[leg] = DraggableRect(target_scr_point, leg_target_point[2].item(0), leg)
+                self.draggableRectMap[leg].valueChanged.connect(self.updateRobot)
             qp.drawLine(self.coord.worldToScr(leg_start_point[0], leg_start_point[1]),
                         target_scr_point)
 
@@ -233,6 +229,15 @@ class IKWidget(QWidget):
 
         self.drawCoordinate(qp)
         qp.end()
+
+    def updateRobot(self):
+        if self.currentRect is not None:
+            cur_leg = self.currentRect.getLeg()
+
+            # use IK to find link position of the leg
+            world_pos = self.coord.scrToWorld(self.currentRect.getPos())
+            world_pos.append(self.currentRect.getZ())
+            cur_leg.set_end_pos(world_pos)
 
     def drawCoordinate(self, qp):
         color = QColor(0, 0, 0)

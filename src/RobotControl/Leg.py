@@ -6,16 +6,12 @@ from Geometry.CoordinateConverter import CoordinateConverter
 
 
 class RoboLeg(LinkSystem):
-    def __init__(self, pos=None, rotate=None, name=None):
+    def __init__(self, pos=None, rotate=None):
         super().__init__(pos, rotate)
-        self.name = name
         self.link_length_array = []
         self.start_angles = []
         self.solver = IKSolver(self.link_length_array, self.start_angles)
         self.coord = CoordinateConverter()
-
-    def getName(self):
-        return self.name
 
     def add_link(self, length, axis):
         self.link_length_array.append(length)
