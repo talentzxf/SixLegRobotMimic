@@ -1,6 +1,6 @@
 import math
 
-from PyQt5.QtWidgets import (QWidget, QTabWidget, QVBoxLayout, QHBoxLayout, QSlider)
+from PyQt5.QtWidgets import (QWidget, QTabWidget, QVBoxLayout, QHBoxLayout, QSlider, QPushButton)
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject
 from PyQt5.QtGui import QPainter, QColor, QFont
 
@@ -31,7 +31,7 @@ class MyTableWidget(QWidget):
 
         # Add tabs
         self.tabs.addTab(self.initTab1(), "IK control")
-        self.tabs.addTab(self.initTab2(), "Tab 2")
+        self.tabs.addTab(self.initTab2(), "Global control")
 
         # Add tabs to widget
         self.layout.addWidget(self.tabs)
@@ -86,8 +86,40 @@ class MyTableWidget(QWidget):
 
     def initTab2(self):
         tab = QWidget()
+        vboxlayout = QVBoxLayout()
+        button = QPushButton("Reset position")
+        button.clicked.connect(self.resetRobotPos)
+        vboxlayout.addWidget(button)
+
+        goButton = QPushButton("Go forward")
+        vboxlayout.addWidget(goButton)
+        goButton.clicked.connect(self.robotGo)
+
+        hboxLayout = QHBoxLayout()
+        zslider = QSlider(Qt.Vertical)
+        zslider.setRange(-10, 10)
+        zslider.setSingleStep(1)
+        zslider.setPageStep(10)
+        zslider.setTickInterval(1)
+        zslider.setTickPosition(QSlider.TicksRight)
+        zslider.valueChanged.connect(self.globalZChanged)
+
+        hboxLayout.addWidget(zslider)
+        vboxlayout.addLayout(hboxLayout)
+
+        tab.setLayout(vboxlayout)
+
         return tab
 
+    def globalZChanged(self, newValue):
+        GlobalContext.getRobot().getController().setLegHeight(newValue / 100.0)
+        GlobalContext.getRobot().getController().resetPos()
+
+    def resetRobotPos(self):
+        GlobalContext.getRobot().getController().resetPos()
+
+    def robotGo(self):
+        GlobalContext.getRobot().getController().robotGo()
 
 # Everything in this class happens in Screen coordinate
 class DraggableRect(QObject):

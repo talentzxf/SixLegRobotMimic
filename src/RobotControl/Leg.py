@@ -25,16 +25,16 @@ class RoboLeg(LinkSystem):
     def set_link_callback(self, link_id, callback):
         self.links[link_id].angleChanged.connect(callback)
 
-    def set_end_pos(self, target_world_pos):
-        # 1. convert to object coordinate
-        leg_relative_pos = self.coord.worldToObject(target_world_pos, self.get_init_transformation_matrix())
-        # 2. Use IKSolver to solve it
-        thetas = self.solver.solve(leg_relative_pos)
-
+    def set_end_pos_local(self, target_obj_pos):
+        thetas = self.solver.solve(target_obj_pos)
         if thetas is not None:
             # 3. Update angles
             for i in range(len(thetas)):
                 self.set_link_angle(i, thetas[i])
+
+    def set_end_pos(self, target_world_pos):
+        target_obj_pos = self.coord.worldToObject(target_world_pos, self.get_init_transformation_matrix())
+        self.set_end_pos_local(target_obj_pos)
 
     def getStatus(self):
         retStr = ""

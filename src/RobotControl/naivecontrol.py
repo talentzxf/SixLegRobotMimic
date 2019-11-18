@@ -1,9 +1,24 @@
+import time
+
+
+class ForwardController:
+    def __init__(self, start_time):
+        self.start_time = start_time
+
+
+
 class NavieControl:
     def __init__(self, legs):
         self.legs = legs
+        self.allLegsHeight = 0.0
+        self.internallController = None
 
     def update(self):
-        pass
+        if self.internallController:
+            self.internallController.update()
+
+    def setLegHeight(self, height):
+        self.allLegsHeight = height
 
     def setLegLinkAngle(self, legNo, linkNo):
         def setAngle(angle):
@@ -17,3 +32,10 @@ class NavieControl:
 
     def getStatus(self, legNo):
         return self.legs[legNo].getStatus()
+
+    def resetPos(self):
+        for leg in self.legs:
+            leg.set_end_pos_local([self.allLegsHeight, 0, 0.3])
+
+    def robotGo(self):
+        self.internallController = ForwardController(time.time())
