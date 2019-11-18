@@ -12,5 +12,8 @@ class NavieControl:
 
         return setAngle
 
+    def addValueChangeCallback(self, legNo, linkNo, callback):
+        self.legs[legNo].set_link_callback(linkNo, callback)
+
     def getStatus(self, legNo):
         return self.legs[legNo].getStatus()

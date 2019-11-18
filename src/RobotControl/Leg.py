@@ -1,3 +1,4 @@
+from PyQt5.QtCore import pyqtSignal
 from RobotControl.linksystem import LinkSystem
 
 from IKSolver.Solver import IKSolver
@@ -21,6 +22,9 @@ class RoboLeg(LinkSystem):
     def set_link_angle(self, link_id, theta):
         self.links[link_id].setTheta(theta)
 
+    def set_link_callback(self, link_id, callback):
+        self.links[link_id].angleChanged.connect(callback)
+
     def set_end_pos(self, target_world_pos):
         # 1. convert to object coordinate
         leg_relative_pos = self.coord.worldToObject(target_world_pos, self.get_init_transformation_matrix())
@@ -36,6 +40,6 @@ class RoboLeg(LinkSystem):
         retStr = ""
         for linkIdx in range(len(self.links)):
             link = self.links[linkIdx]
-            retStr += " link{}: {}".format(linkIdx, link.getTheta())
+            retStr += " link{}: {:.2f}".format(linkIdx, link.getTheta())
 
         return retStr

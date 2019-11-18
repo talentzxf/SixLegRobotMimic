@@ -13,15 +13,10 @@ from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider,
 import OpenGL.GL as gl
 
 from Geometry.CoordinateSystem import CoordinateSystem
-from Geometry.cylinder import Cylinder
-from RobotControl.robotmodel import RobotModel
-
-from Geometry.cube import Cube
 
 from IKWindow import IKWindow
 
 from GlobalContext import GlobalContext
-from GlobalConfig import RobotConfig
 
 
 class Window(QWidget):
@@ -60,7 +55,7 @@ class Window(QWidget):
     def createSlider(self, minValue, maxValue, dir):
         slider = QSlider(dir)
 
-        slider.setRange(-45, 45)
+        slider.setRange(minValue, maxValue)
         slider.setSingleStep(1)
         slider.setPageStep(10)
         slider.setTickInterval(10)
@@ -77,21 +72,21 @@ class Window(QWidget):
         legLabelLayout.addWidget(label)
 
         legSliderLayout = QHBoxLayout()
-        link1Slider = self.createSlider(-45, 45, Qt.Horizontal)
-        link2Slider = self.createSlider(-45, 45, Qt.Vertical)
-        link3Slider = self.createSlider(-45, 45, Qt.Vertical)
-        legSliderLayout.addWidget(link1Slider)
-        legSliderLayout.addWidget(link2Slider)
-        legSliderLayout.addWidget(link3Slider)
 
-        link1Slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, 0))
-        link1Slider.valueChanged.connect(self.refreshLegLabel(robot_controller, legNo))
-        link2Slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, 1))
-        link2Slider.valueChanged.connect(self.refreshLegLabel(robot_controller, legNo))
-        link3Slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, 2))
-        link3Slider.valueChanged.connect(self.refreshLegLabel(robot_controller, legNo))
+        sliders = [self.createSlider(-45, 45, Qt.Horizontal),
+                   self.createSlider(-45, 45, Qt.Vertical),
+                   self.createSlider(-45, 45, Qt.Vertical)]
+
+        for idx in range(len(sliders)):
+            slider = sliders[idx]
+            legSliderLayout.addWidget(slider)
+
+            slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, idx))
+            slider.valueChanged.connect(self.refreshLegLabel(robot_controller, legNo))
+            robot_controller.addValueChangeCallback(legNo, idx, slider.setValue)
+            robot_controller.addValueChangeCallback(legNo, idx, self.refreshLegLabel(robot_controller, legNo))
+
         legLabelLayout.addLayout(legSliderLayout)
-
         return legLabelLayout
 
     def refreshLegLabel(self, robot_controller, legNo):

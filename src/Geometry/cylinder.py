@@ -1,11 +1,12 @@
 import math
 import OpenGL.GL as gl
+from PyQt5.QtCore import QObject
 from PyQt5.QtGui import QColor
 
 
-class Cylinder:
+class Cylinder(QObject):
     def __init__(self, radius, length, color=None, slices=200):
-
+        super().__init__()
         self.upper_face = []  # Triangle Fan
         self.lower_face = []  # Triangle Fan
         self.wall = []  # Quads

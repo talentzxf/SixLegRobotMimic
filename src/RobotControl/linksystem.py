@@ -4,9 +4,12 @@ import OpenGL.GL as gl
 import numpy as np
 
 from Geometry.CoordinateSystem import CoordinateSystem
+from PyQt5.QtCore import pyqtSignal
 
 
 class Link(Cylinder):
+    angleChanged = pyqtSignal(float)
+
     radius = 0.01
     next = None
     prev = None
@@ -34,6 +37,7 @@ class Link(Cylinder):
 
     def setTheta(self, theta):
         self.theta = theta
+        self.angleChanged.emit(self.theta)
 
     def getTheta(self):
         return self.theta
