@@ -1,4 +1,4 @@
-import time
+from Geometry.CoordinateConverter import CoordinateConverter
 
 
 class LinearInterpolator:
@@ -23,10 +23,13 @@ class LinearInterpolator:
 
 
 class LinearTrajectory:
-    def __init__(self, leg, start_point, end_point, stopWhenEnded=True):
+    def __init__(self, leg, start_point, end_point):
         self.leg = leg
         self.linearInterpolator = LinearInterpolator(start_point, end_point, 10)
-        self.stopWhenEnded = stopWhenEnded
+        self.next = None
+
+    def setNext(self, nextTrajectory):
+        self.next = nextTrajectory
 
     def next_move(self):
         next_pos = self.linearInterpolator.get_next()
@@ -34,21 +37,25 @@ class LinearTrajectory:
         if next_pos:
             self.leg.set_end_pos_local(next_pos)
             return True
-        elif not self.stopWhenEnded:
-            self.linearInterpolator.reset()
-            return True
+        elif self.next:
+            print("In next trajectory !!!!!!!!!!")
+            return self.next.next_move()
         return False
 
 
 class NavieControl:
     def __init__(self, legs):
         self.legs = legs
-        self.allLegsHeight = 0.0
+        self.allLegsHeight = -0.1
+        self.leg_init_stretch = 0.3
+        self.step_size = 0.1
         self.trajectory = None
+        self.coord = CoordinateConverter()
 
     def update(self):
         if self.trajectory:
-            self.trajectory.next_move()
+            if not self.trajectory.next_move():
+                self.trajectory = None
 
     def setLegHeight(self, height):
         self.allLegsHeight = height
@@ -68,9 +75,36 @@ class NavieControl:
 
     def resetPos(self):
         for leg in self.legs:
-            leg.set_end_pos_local([self.allLegsHeight, 0, 0.3])
+            leg.set_end_pos_local([self.allLegsHeight, 0, self.leg_init_stretch])
+
+    def addTrajectory(self, leg, world_positions):
+        last_pos = None
+        for pos in world_positions:
+            if last_pos is None:
+                last_pos = pos
+            else:
+                last_obj_pos = self.coord.worldToObject(last_pos.copy(), leg.get_init_transformation_matrix())
+                next_obj_pos = self.coord.worldToObject(pos.copy(), leg.get_init_transformation_matrix())
+
+                print("from obj:{} to {}", last_obj_pos, next_obj_pos)
+                newTraj = LinearTrajectory(leg, last_obj_pos, next_obj_pos)
+                last_pos = pos
+                if self.trajectory is None:
+                    self.trajectory = newTraj
+                else:
+                    self.trajectory.setNext(newTraj)
+
 
     def robotGo(self):
-        self.trajectory = LinearTrajectory(self.legs[0],
-                                           [self.allLegsHeight, 0, 0.3],
-                                           [0.5, 0, 0.3])
+        # 1. Map leg coordinate to world
+        objStartPos = [self.allLegsHeight, 0, self.leg_init_stretch]
+        worldStartPos = self.coord.objectToWorld(objStartPos.copy(), self.legs[0].get_init_transformation_matrix())
+        worldTargetPos1 = [worldStartPos[0], worldStartPos[1] + self.step_size/2, worldStartPos[2] + self.step_size / 2]
+        worldTargetPos2 = [worldStartPos[0], worldStartPos[1] + self.step_size, worldStartPos[2]]
+
+        print("Traj Points:{},{},{}".format(worldStartPos, worldTargetPos1, worldTargetPos2))
+
+        self.addTrajectory(self.legs[0],
+                           [worldStartPos, worldTargetPos1, worldTargetPos2])
+
+
