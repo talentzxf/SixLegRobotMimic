@@ -1,29 +1,54 @@
 import time
 
 
-class LinerInterpolator:
+class LinearInterpolator:
     def __init__(self, start, end, steps):
         self.start = start
         self.end = end
         self.t = 0.0  # from 0.0 to 1.0
         self.delta = 1.0 / steps
 
-    def get_result(self):
-        cur_position_x = self.start[0] + self.t * (self.end[0] - self.start[0])
-        cur_position_y = self.start[1] + self.t * (self.end[1] - self.start[1])
+    def get_next(self):
+        retPoint = []
+        for idx in range(len(self.start)):
+            p = self.start[idx] + self.t * (self.end[idx] - self.start[idx])
+            retPoint.append(p)
         self.t += self.delta
-        yield [cur_position_x, cur_position_y]
+        if self.t > 1.0:
+            return None
+        return retPoint
+
+    def reset(self):
+        self.t = 0.0
+
+
+class LinearTrajectory:
+    def __init__(self, leg, start_point, end_point, stopWhenEnded=True):
+        self.leg = leg
+        self.linearInterpolator = LinearInterpolator(start_point, end_point, 10)
+        self.stopWhenEnded = stopWhenEnded
+
+    def next_move(self):
+        next_pos = self.linearInterpolator.get_next()
+        print("next_pos", next_pos)
+        if next_pos:
+            self.leg.set_end_pos_local(next_pos)
+            return True
+        elif not self.stopWhenEnded:
+            self.linearInterpolator.reset()
+            return True
+        return False
 
 
 class NavieControl:
     def __init__(self, legs):
         self.legs = legs
         self.allLegsHeight = 0.0
-        self.internallController = None
+        self.trajectory = None
 
     def update(self):
-        if self.internallController:
-            self.internallController.update()
+        if self.trajectory:
+            self.trajectory.next_move()
 
     def setLegHeight(self, height):
         self.allLegsHeight = height
@@ -46,4 +71,6 @@ class NavieControl:
             leg.set_end_pos_local([self.allLegsHeight, 0, 0.3])
 
     def robotGo(self):
-        self.internallController = ForwardStatus()
+        self.trajectory = LinearTrajectory(self.legs[0],
+                                           [self.allLegsHeight, 0, 0.3],
+                                           [0.5, 0, 0.3])
