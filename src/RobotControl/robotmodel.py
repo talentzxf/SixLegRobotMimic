@@ -8,6 +8,8 @@ from GlobalConfig import RobotConfig
 
 from Geometry.cube import Cube
 
+from RobotControl.Leg import RoboLeg
+
 
 class RobotModel:
     link1_length = 0.05
@@ -30,32 +32,32 @@ class RobotModel:
 
         self.body = Cube(length, width, height)
 
-        leg = LinkSystem([width/2, length/2, 0], [[-135, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "0")
+        leg = RoboLeg([width/2, length/2, 0], [[-135, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "0")
         self.addLegLinks(leg)
         self.legs.append(leg)
         self.legid_mapping["0"] = 0
 
-        leg = LinkSystem([width/2, 0, 0], [[180, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "1")
+        leg = RoboLeg([width/2, 0, 0], [[180, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "1")
         self.addLegLinks(leg)
         self.legs.append(leg)
         self.legid_mapping["1"] = 1
 
-        leg = LinkSystem([width/2, -length/2, 0], [[135, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "2")
+        leg = RoboLeg([width/2, -length/2, 0], [[135, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "2")
         self.addLegLinks(leg)
         self.legs.append(leg)
         self.legid_mapping["2"] = 2
 
-        leg = LinkSystem([-width/2, -length/2, 0], [[45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "3")
+        leg = RoboLeg([-width/2, -length/2, 0], [[45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "3")
         self.addLegLinks(leg)
         self.legs.append(leg)
         self.legid_mapping["3"] = 3
 
-        leg = LinkSystem([-width/2, 0, 0], [[-90, 0.0, 1.0, 0.0]], "4")
+        leg = RoboLeg([-width/2, 0, 0], [[-90, 0.0, 1.0, 0.0]], "4")
         self.addLegLinks(leg)
         self.legs.append(leg)
         self.legid_mapping["4"] = 4
 
-        leg = LinkSystem([-width/2, length/2, 0], [[-45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "5")
+        leg = RoboLeg([-width/2, length/2, 0], [[-45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]], "5")
         self.addLegLinks(leg)
         self.legs.append(leg)
         self.legid_mapping["5"] = 5

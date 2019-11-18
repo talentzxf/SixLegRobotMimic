@@ -105,12 +105,9 @@ class DraggableRect(QObject):
 
     def setZ(self, z):
         self.z = z
-        print("set z to:", self.z)
         self.valueChanged.emit()
 
-
     def getZ(self):
-        print("get z:", self.z)
         return self.z
 
     def getLeg(self):
@@ -177,8 +174,6 @@ class IKWidget(QWidget):
             rect = self.draggableRectMap[leg]
             if rect.contains(event.pos()):
                 self.currentRect = rect
-                self.update()
-
                 self.legSelected.emit(self.currentRect)
                 self.update()
                 return
@@ -199,18 +194,7 @@ class IKWidget(QWidget):
             # 1. Convert to world coordinate
             world_pos = self.coord.scrToWorld(adjusted_pos)
             world_pos.append(self.currentRect.getZ())
-            # 2. Convert to leg coordinate
-            leg_relative_pos = self.coord.worldToObject(world_pos, cur_leg.get_init_transformation_matrix())
-            # 3. Use IKSolver to solve it
-            thetas = cur_leg.getSolver().solve(leg_relative_pos)
-
-            if thetas is not None:
-                # 4. Update angles
-                # TODO: put this into logic of leg
-                legId = GlobalContext.getRobot().getLegId(cur_leg.getName())
-                GlobalContext.getRobot().getController().setLegLinkAngle(legId, 0)(thetas[0])
-                GlobalContext.getRobot().getController().setLegLinkAngle(legId, 1)(thetas[1])
-                GlobalContext.getRobot().getController().setLegLinkAngle(legId, 2)(thetas[2])
+            cur_leg.set_end_pos(world_pos)
 
             self.update()
 
@@ -237,7 +221,6 @@ class IKWidget(QWidget):
 
             if leg not in self.draggableRectMap:
                 self.draggableRectMap[leg] = DraggableRect(target_scr_point, leg_target_point[2].item(0), leg)
-                self.draggableRectMap[leg].valueChanged.connect(self.update)
             qp.drawLine(self.coord.worldToScr(leg_start_point[0], leg_start_point[1]),
                         target_scr_point)
 

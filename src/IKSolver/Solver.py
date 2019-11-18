@@ -1,6 +1,8 @@
 import numpy as np
 import math
 
+eps = 0.00001
+
 
 def get_intercetions(x0, y0, r0, x1, y1, r1):
     # circle 1: (x0, y0), radius r0
@@ -14,6 +16,12 @@ def get_intercetions(x0, y0, r0, x1, y1, r1):
     # One circle within other
     if d < abs(r0 - r1):
         return None
+
+    # Two tangent circle:
+    if math.fabs(d - r0 - r1) < eps:
+        x3 = r0 / (r0 + r1) * (x1 - x0) + x0
+        y3 = r0 / (r0 + r1) * (y1 - y0) + y0
+        return [(x3, y3)]
     # coincident circles
     if d == 0 and r0 == r1:
         return None
@@ -62,7 +70,15 @@ class IKSolver:
         y1 = p_conv_y
         r1 = self.l_array[2]
 
-        intersect_points = get_intercetions(x0, y0, r0, x1, y1, r1)
+        try:
+            intersect_points = get_intercetions(x0, y0, r0, x1, y1, r1)
+        except ValueError:
+            d = math.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
+            a = (r0 ** 2 - r1 ** 2 + d ** 2) / (2 * d)
+            print("x0:{} y0:{} r0:{}".format(x0, y0, r0))
+            print("x1:{} y1:{} r1:{}".format(x1, y1, r1))
+            print("d is:{}, a is:{} r0:{}".format(d, a, r0))
+            return None
         if intersect_points is None:
             return None
         if len(intersect_points) == 1:  # Only one point, just calculate the angle
@@ -86,5 +102,6 @@ class IKSolver:
 
 if __name__ == '__main__':
     # print(get_intercetions(0, 0, 1, 2, 0, 1))
-    solver = IKSolver([1., 1., 1.], [0., 0., 0.])
-    print(solver.solve([0, 0, 2]))
+    # solver = IKSolver([1., 1., 1.], [0., 0., 0.])
+    # print(solver.solve([0, 0, 2]))
+    print(get_intercetions(0.05, 0, 0.2, 0.45, 0, 0.2))
