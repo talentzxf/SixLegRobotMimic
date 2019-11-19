@@ -3,3 +3,4 @@ pip3 install pyqt5
 pip3 install numpy
 pip3 install PyOpenGL
 pip3 install httpserver
+pip3 install Flask

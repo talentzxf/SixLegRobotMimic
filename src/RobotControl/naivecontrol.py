@@ -31,6 +31,12 @@ class LinearTrajectory:
     def setNext(self, nextTrajectory):
         self.next = nextTrajectory
 
+    def getLastTrajectory(self):
+        if self.next:
+            return self.next.getLastTrajectory()
+        else:
+            return self
+
     def next_move(self):
         next_pos = self.linearInterpolator.get_next()
         print("next_pos", next_pos)
@@ -41,6 +47,7 @@ class LinearTrajectory:
             print("In next trajectory !!!!!!!!!!")
             return self.next.next_move()
         return False
+
 
 class StopTrajectory:
     def __init__(self, startTime, duration):
@@ -53,15 +60,19 @@ class NavieControl:
         self.allLegsHeight = -0.1
         self.leg_init_stretch = 0.3
         self.step_size = 0.1
-        self.trajectoryMap = {}  # Leg to trajectory map
+        self.trajectoryArray = []  # all currently running trajectories
         self.coord = CoordinateConverter()
 
     def update(self):
-        for leg in self.trajectoryMap:
-            traj = self.trajectoryMap[leg]
+        endedTraj = []
+
+        for traj in self.trajectoryArray:
             if traj is not None:
-                if not traj.next_move():
-                    self.trajectoryMap[leg] = None
+                if not traj.next_move():  # Can't move any more, at the end of the trajectory
+                    endedTraj.append(traj)
+
+        for tobeDeletedTraj in endedTraj:
+            self.trajectoryArray.remove(tobeDeletedTraj)
 
     def setLegHeight(self, height):
         self.allLegsHeight = height
@@ -83,7 +94,8 @@ class NavieControl:
         for leg in self.legs:
             leg.set_end_pos_local([self.allLegsHeight, 0, self.leg_init_stretch])
 
-    def addTrajectory(self, leg, world_positions):
+    def genTrajectory(self, leg, world_positions):
+        retTraj = None
         last_pos = None
         for pos in world_positions:
             if last_pos is None:
@@ -95,13 +107,13 @@ class NavieControl:
                 print("from obj:{} to {}", last_obj_pos, next_obj_pos)
                 newTraj = LinearTrajectory(leg, last_obj_pos, next_obj_pos)
                 last_pos = pos
-
-                if leg not in self.trajectoryMap or self.trajectoryMap[leg] is None:
-                    self.trajectoryMap[leg] = newTraj
+                if retTraj is None:
+                    retTraj = newTraj
                 else:
-                    self.trajectoryMap[leg].setNext(newTraj)
+                    retTraj.getLastTrajectory().setNext(newTraj)
+        return retTraj
 
-    def legMoveForward(self, legId):
+    def genLegMoveForwardTraj(self, legId):
         leg = self.legs[legId]
         objStartPos = [self.allLegsHeight, 0, self.leg_init_stretch]
         worldStartPos = self.coord.objectToWorld(objStartPos, leg.get_init_transformation_matrix())
@@ -110,13 +122,18 @@ class NavieControl:
         worldTargetPos2 = [worldStartPos[0], worldStartPos[1] + self.step_size, worldStartPos[2]]
 
         print("Traj Points:{},{},{}".format(worldStartPos, worldTargetPos1, worldTargetPos2))
-
-        self.addTrajectory(leg,
-                           [worldStartPos, worldTargetPos1, worldTargetPos2])
+        return self.genTrajectory(leg,
+                                  [worldStartPos, worldTargetPos1, worldTargetPos2])
 
     def robotGo(self):
-        self.legMoveForward(0)
-        self.legMoveForward(2)
-        self.legMoveForward(4)
+        traj0 = self.genLegMoveForwardTraj(0)
+        traj2 = self.genLegMoveForwardTraj(2)
+        traj4 = self.genLegMoveForwardTraj(4)
 
+        traj0.getLastTrajectory().setNext(self.genLegMoveForwardTraj(1))
+        traj2.getLastTrajectory().setNext(self.genLegMoveForwardTraj(3))
+        traj4.getLastTrajectory().setNext(self.genLegMoveForwardTraj(5))
 
+        self.trajectoryArray.append(traj0)
+        self.trajectoryArray.append(traj2)
+        self.trajectoryArray.append(traj4)
