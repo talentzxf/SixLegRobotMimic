@@ -28,6 +28,7 @@ class CoordinateConverter:
                 (self.centerY - scrPoint.y()) / CoordinateConverter.scale]
 
     def worldToObject(self, point, objTransformationMatrix):
+        point = point.copy()
         # TODO: Optimize as rotation matrix is orthogonality
         inv_obj_trans = np.linalg.inv(objTransformationMatrix)
         point.append(1)
@@ -37,6 +38,7 @@ class CoordinateConverter:
         return target_point
 
     def objectToWorld(self, point, objTransformationMatrix):
+        point = point.copy()
         point.append(1)
         point_vector = np.array(point)[np.newaxis].T
         target_matrix = np.matmul(objTransformationMatrix, point_vector)

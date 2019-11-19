@@ -42,6 +42,10 @@ class LinearTrajectory:
             return self.next.next_move()
         return False
 
+class StopTrajectory:
+    def __init__(self, startTime, duration):
+        pass
+
 
 class NavieControl:
     def __init__(self, legs):
@@ -49,13 +53,15 @@ class NavieControl:
         self.allLegsHeight = -0.1
         self.leg_init_stretch = 0.3
         self.step_size = 0.1
-        self.trajectory = None
+        self.trajectoryMap = {}  # Leg to trajectory map
         self.coord = CoordinateConverter()
 
     def update(self):
-        if self.trajectory:
-            if not self.trajectory.next_move():
-                self.trajectory = None
+        for leg in self.trajectoryMap:
+            traj = self.trajectoryMap[leg]
+            if traj is not None:
+                if not traj.next_move():
+                    self.trajectoryMap[leg] = None
 
     def setLegHeight(self, height):
         self.allLegsHeight = height
@@ -83,28 +89,34 @@ class NavieControl:
             if last_pos is None:
                 last_pos = pos
             else:
-                last_obj_pos = self.coord.worldToObject(last_pos.copy(), leg.get_init_transformation_matrix())
-                next_obj_pos = self.coord.worldToObject(pos.copy(), leg.get_init_transformation_matrix())
+                last_obj_pos = self.coord.worldToObject(last_pos, leg.get_init_transformation_matrix())
+                next_obj_pos = self.coord.worldToObject(pos, leg.get_init_transformation_matrix())
 
                 print("from obj:{} to {}", last_obj_pos, next_obj_pos)
                 newTraj = LinearTrajectory(leg, last_obj_pos, next_obj_pos)
                 last_pos = pos
-                if self.trajectory is None:
-                    self.trajectory = newTraj
+
+                if leg not in self.trajectoryMap or self.trajectoryMap[leg] is None:
+                    self.trajectoryMap[leg] = newTraj
                 else:
-                    self.trajectory.setNext(newTraj)
+                    self.trajectoryMap[leg].setNext(newTraj)
 
-
-    def robotGo(self):
-        # 1. Map leg coordinate to world
+    def legMoveForward(self, legId):
+        leg = self.legs[legId]
         objStartPos = [self.allLegsHeight, 0, self.leg_init_stretch]
-        worldStartPos = self.coord.objectToWorld(objStartPos.copy(), self.legs[0].get_init_transformation_matrix())
-        worldTargetPos1 = [worldStartPos[0], worldStartPos[1] + self.step_size/2, worldStartPos[2] + self.step_size / 2]
+        worldStartPos = self.coord.objectToWorld(objStartPos, leg.get_init_transformation_matrix())
+        worldTargetPos1 = [worldStartPos[0], worldStartPos[1] + self.step_size / 2,
+                           worldStartPos[2] + self.step_size / 2]
         worldTargetPos2 = [worldStartPos[0], worldStartPos[1] + self.step_size, worldStartPos[2]]
 
         print("Traj Points:{},{},{}".format(worldStartPos, worldTargetPos1, worldTargetPos2))
 
-        self.addTrajectory(self.legs[0],
+        self.addTrajectory(leg,
                            [worldStartPos, worldTargetPos1, worldTargetPos2])
+
+    def robotGo(self):
+        self.legMoveForward(0)
+        self.legMoveForward(2)
+        self.legMoveForward(4)
 
 
