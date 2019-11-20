@@ -50,13 +50,16 @@ class Link(Cylinder):
         model_matrix = np.identity(4)
         if self.prev:
             prev = self.getPrev()
-            gl.glTranslated(0.0, 0.0, prev.getLength())
+            if realDraw:
+                gl.glTranslated(0.0, 0.0, prev.getLength())
             model_matrix = np.matmul(model_matrix, translate_matrix(0.0, 0.0, prev.getLength()))
 
         if self.axis:
-            gl.glRotated(self.theta, self.axis[0], self.axis[1], self.axis[2])
+            if realDraw:
+                gl.glRotated(self.theta, self.axis[0], self.axis[1], self.axis[2])
             model_matrix = np.matmul(model_matrix, rotate_matrix(self.theta, self.axis))
-        Cylinder.draw(self)
+        if realDraw:
+            Cylinder.draw(self)
         return model_matrix
 
 
@@ -69,6 +72,8 @@ class LinkSystem:
 
         self.draw_coordinate = False
         self.coordinate = CoordinateSystem()
+
+        self.targetModelMatrix = np.identity(4)
 
     def getSolver(self):
         return self.solver
@@ -105,6 +110,9 @@ class LinkSystem:
         for link in self.links:
             cur_model_matrix = link.draw(False)
             model_matrix = np.matmul(model_matrix, cur_model_matrix)
+
+        # move along last link
+        model_matrix = np.matmul(model_matrix, translate_matrix(0.0, 0.0, self.links[len(self.links) - 1].getLength()))
         return model_matrix[:, 3]
 
     def init_object(self):
@@ -132,13 +140,14 @@ class LinkSystem:
             self.coordinate.draw()
 
         gl.glPushMatrix()
-        model_matrix = np.identity(4)
+        self.targetModelMatrix = np.identity(4)
         for link in self.links:
             cur_model_matrix = link.draw()
-            model_matrix = np.matmul(model_matrix, cur_model_matrix)
-        # print(model_matrix)
+            self.targetModelMatrix = np.matmul(self.targetModelMatrix, cur_model_matrix)
         gl.glPopMatrix()
         # Draw a cone at the destination
         # translate to the end of the last joint
-        gl.glMultTransposeMatrixd(model_matrix.tolist())
+        self.targetModelMatrix = np.matmul(self.targetModelMatrix,
+                                           translate_matrix(0.0, 0.0, self.links[len(self.links) - 1].getLength()))
+        gl.glMultTransposeMatrixd(self.targetModelMatrix.tolist())
         self.cylinder.draw()
