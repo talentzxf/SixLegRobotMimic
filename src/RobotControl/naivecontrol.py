@@ -131,7 +131,7 @@ class RobotMove:
 
     def setNext(self, nextMove):
         self.next_move = nextMove
-        return self
+        return nextMove
 
 
 class GoForwardMoveStep1(RobotMove):
@@ -219,7 +219,11 @@ class MoveStepFactory:
         return GoForwardMoveStep3(self.legs, self.allLegsHeight, self.leg_init_stretch)
 
     def getGoMove(self):
-        return self.genMove1().setNext(self.genMove2().setNext(self.genMove3().setNext(self.genMove2().setNext(self.genMove3()))))
+        first_step = self.genMove1()
+        cur_step = first_step
+        for i in range(10):
+            cur_step = cur_step.setNext(self.genMove2()).setNext(self.genMove3())
+        return first_step
 
 class NavieControl:
     def __init__(self, legs):
