@@ -122,7 +122,7 @@ class RobotMove:
         for tobeDeletedTraj in endedTraj:
             self.trajectoryArray.remove(tobeDeletedTraj)
 
-        if len(self.trajectoryArray) is 0:
+        if len(self.trajectoryArray) == 0:
             if self.next_move is None:
                 return False
             else:
@@ -221,8 +221,9 @@ class MoveStepFactory:
     def getGoMove(self):
         first_step = self.genMove1()
         cur_step = first_step
-        for i in range(10):
+        for i in range(100):
             cur_step = cur_step.setNext(self.genMove2()).setNext(self.genMove3())
+
         return first_step
 
 class NavieControl:
@@ -236,6 +237,7 @@ class NavieControl:
         endedMoves = []
         for move in self.moves:
             if not move.go():
+                print("Move ended!")
                 endedMoves.append(move)
 
         for endedMove in endedMoves:
