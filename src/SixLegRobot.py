@@ -74,8 +74,8 @@ class Window(QWidget):
         legSliderLayout = QHBoxLayout()
 
         sliders = [self.createSlider(-90, 90, Qt.Horizontal),
-                   self.createSlider(-90, 90, Qt.Vertical),
-                   self.createSlider(-90, 90, Qt.Vertical)]
+                   self.createSlider(-180, 180, Qt.Vertical),
+                   self.createSlider(-180, 180, Qt.Vertical)]
 
         for idx in range(len(sliders)):
             slider = sliders[idx]

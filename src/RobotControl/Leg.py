@@ -1,4 +1,3 @@
-from PyQt5.QtCore import pyqtSignal
 from RobotControl.linksystem import LinkSystem
 
 from IKSolver.Solver import IKSolver
@@ -40,6 +39,6 @@ class RoboLeg(LinkSystem):
         retStr = ""
         for linkIdx in range(len(self.links)):
             link = self.links[linkIdx]
-            retStr += " link{}: {:.2f}".format(linkIdx, link.getTheta())
+            retStr += " link{}: {:4.2f}".format(linkIdx, link.getTheta())
 
         return retStr

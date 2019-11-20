@@ -81,6 +81,15 @@ class RobotMove:
         self.step_size = 0.1
 
         self.next_move = None
+        self.after_move_complete_callback = None
+
+    def setCallBack(self, callback):
+        self.after_move_complete_callback = callback
+        return self
+
+    def invoke_call_back(self):
+        if self.after_move_complete_callback:
+            self.after_move_complete_callback()
 
     # Move up and down via a mid point in the air, i.e. the leg is moving and didn't hold body weight
     def genLegMoveForwardTraj(self, legId):
@@ -219,12 +228,10 @@ class MoveStepFactory:
         return GoForwardMoveStep3(self.legs, self.allLegsHeight, self.leg_init_stretch)
 
     def getGoMove(self):
-        first_step = self.genMove1()
-        cur_step = first_step
-        for i in range(100):
-            cur_step = cur_step.setNext(self.genMove2()).setNext(self.genMove3())
-
+        first_step = self.genMove2()
+        first_step.setNext(self.genMove3())
         return first_step
+
 
 class NavieControl:
     def __init__(self, legs):
@@ -237,7 +244,7 @@ class NavieControl:
         endedMoves = []
         for move in self.moves:
             if not move.go():
-                print("Move ended!")
+                move.invoke_call_back()
                 endedMoves.append(move)
 
         for endedMove in endedMoves:
@@ -264,5 +271,5 @@ class NavieControl:
             leg.set_end_pos_local([self.allLegsHeight, 0, self.leg_init_stretch])
 
     def robotGo(self):
-        stepFactory = MoveStepFactory(self.legs, self.allLegsHeight,self.leg_init_stretch)
-        self.moves.append(stepFactory.getGoMove())
+        stepFactory = MoveStepFactory(self.legs, self.allLegsHeight, self.leg_init_stretch)
+        self.moves.append(stepFactory.getGoMove().setCallBack(self.robotGo))
