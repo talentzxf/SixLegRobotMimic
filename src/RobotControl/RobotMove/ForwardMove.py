@@ -64,6 +64,6 @@ class MoveStepFactory:
         return GoForwardMoveStep2(self.legs, self.allLegsHeight, self.leg_init_stretch)
 
     def getGoMove(self):
-        first_step = self.genMove2()
-        first_step.setNext(self.genMove3())
+        first_step = self.genMove1()
+        first_step.setNext(self.genMove2())
         return first_step

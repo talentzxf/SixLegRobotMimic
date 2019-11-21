@@ -1,5 +1,7 @@
 from GlobalConfig import RobotConfig
 
+from RobotControl.RobotMove.LinearTrajectory import LinearTrajectory
+
 
 class RobotMove:
     def __init__(self, legs, allLegsHeight, leg_init_stretch):
