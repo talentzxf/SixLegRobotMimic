@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import traceback
 
 import numpy as np
 import sys
@@ -231,10 +231,14 @@ class GLWidget(QOpenGLWidget):
 
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    window = Window()
-    window.show()
+    try:
+        app = QApplication(sys.argv)
+        window = Window()
+        window.show()
 
-    ikWindow = IKWindow()
-    ikWindow.show()
+        ikWindow = IKWindow()
+        ikWindow.show()
+    except Exception as e:
+        print(e)
+
     sys.exit(app.exec_())
