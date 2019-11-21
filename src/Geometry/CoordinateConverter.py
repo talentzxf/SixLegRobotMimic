@@ -5,7 +5,7 @@ import numpy as np
 class CoordinateConverter:
     scrWidth = 400
     scrHeight = 400
-    scale = 200
+    scale = 50
 
     def __init__(self):
         self.centerX = CoordinateConverter.scrWidth / 2

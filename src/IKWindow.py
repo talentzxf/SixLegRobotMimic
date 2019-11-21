@@ -42,10 +42,10 @@ class MyTableWidget(QWidget):
     # TODO: better naming
     def initTab1(self):
         slider = QSlider(Qt.Vertical)
-        slider.setRange(-10, 10)
+        slider.setRange(-30, 30)
         slider.setSingleStep(1)
         slider.setPageStep(10)
-        slider.setTickInterval(10)
+        slider.setTickInterval(1)
         slider.setTickPosition(QSlider.TicksRight)
 
         self.heightSlider = slider
@@ -80,7 +80,7 @@ class MyTableWidget(QWidget):
 
     def setZ(self, draggableRect):
         def _setZ(z):
-            draggableRect.setZ(z / 100.0)
+            draggableRect.setZ(z / 10.0)
 
         return _setZ
 
@@ -97,7 +97,7 @@ class MyTableWidget(QWidget):
 
         hboxLayout = QHBoxLayout()
         zslider = QSlider(Qt.Vertical)
-        zslider.setRange(-10, 10)
+        zslider.setRange(-30, 30)
         zslider.setSingleStep(1)
         zslider.setPageStep(10)
         zslider.setTickInterval(1)
@@ -112,7 +112,7 @@ class MyTableWidget(QWidget):
         return tab
 
     def globalZChanged(self, newValue):
-        GlobalContext.getRobot().getController().setLegHeight(newValue / 100.0)
+        GlobalContext.getRobot().getController().setLegHeight(newValue/10)
         GlobalContext.getRobot().getController().resetPos()
 
     def resetRobotPos(self):
