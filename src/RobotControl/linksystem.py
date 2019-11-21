@@ -6,11 +6,13 @@ import numpy as np
 from Geometry.CoordinateSystem import CoordinateSystem
 from PyQt5.QtCore import pyqtSignal
 
+from src.GlobalConfig import RobotConfig
+
 
 class Link(Cylinder):
     angleChanged = pyqtSignal(float)
 
-    radius = 0.01
+    radius = RobotConfig.linkRadius
     next = None
     prev = None
     axis = None

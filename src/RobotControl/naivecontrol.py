@@ -1,5 +1,6 @@
 from Geometry.CoordinateConverter import CoordinateConverter
 import numpy as np
+from GlobalConfig import RobotConfig
 
 
 class LinearInterpolator:
@@ -78,7 +79,7 @@ class RobotMove:
         self.allLegsHeight = allLegsHeight
         self.leg_init_stretch = leg_init_stretch
         self.trajectoryArray = []  # all currently running trajectories
-        self.step_size = 0.1
+        self.step_size = RobotConfig.defaultStepSize
 
         self.next_move = None
         self.after_move_complete_callback = None
@@ -236,8 +237,8 @@ class MoveStepFactory:
 class NavieControl:
     def __init__(self, legs):
         self.legs = legs
-        self.allLegsHeight = -0.1
-        self.leg_init_stretch = 0.3
+        self.allLegsHeight = RobotConfig.defaultLegHeight
+        self.leg_init_stretch = RobotConfig.defaultStretch
         self.moves = []
 
     def update(self):

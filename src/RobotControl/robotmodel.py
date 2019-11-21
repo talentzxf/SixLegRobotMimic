@@ -10,11 +10,13 @@ from Geometry.cube import Cube
 
 from RobotControl.Leg import RoboLeg
 
+from GlobalConfig import RobotConfig
+
 
 class RobotModel:
-    link1_length = 0.05
-    link2_length = 0.2
-    link3_length = 0.2
+    link1_length = RobotConfig.link1Length
+    link2_length = RobotConfig.link2Length
+    link3_length = RobotConfig.link3Length
 
     @staticmethod
     def addLegLinks(leg):
@@ -31,27 +33,27 @@ class RobotModel:
 
         self.body = Cube(length, width, height)
 
-        leg = RoboLeg([width/2, length/2, 0], [[-135, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
+        leg = RoboLeg([width / 2, length / 2, 0], [[-135, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = RoboLeg([width/2, 0, 0], [[180, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
+        leg = RoboLeg([width / 2, 0, 0], [[180, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = RoboLeg([width/2, -length/2, 0], [[135, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
+        leg = RoboLeg([width / 2, -length / 2, 0], [[135, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = RoboLeg([-width/2, -length/2, 0], [[45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
+        leg = RoboLeg([-width / 2, -length / 2, 0], [[45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = RoboLeg([-width/2, 0, 0], [[-90, 0.0, 1.0, 0.0]])
+        leg = RoboLeg([-width / 2, 0, 0], [[-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = RoboLeg([-width/2, length/2, 0], [[-45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
+        leg = RoboLeg([-width / 2, length / 2, 0], [[-45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 

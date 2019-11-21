@@ -165,7 +165,6 @@ class GLWidget(QOpenGLWidget):
 
     def enableLightAndMaterial(self):
         flashLightPos = [10.0, 10.0, 0.0]
-        flashLightDir = [0.0, 0.0, -1.0]
         flashLightColor = [0.2, 0.2, 0.2]
 
         gl.glLightModeli(gl.GL_LIGHT_MODEL_TWO_SIDE, gl.GL_TRUE)
@@ -175,8 +174,6 @@ class GLWidget(QOpenGLWidget):
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, flashLightColor)
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, flashLightColor)
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, flashLightColor)
-        # gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPOT_DIRECTION, flashLightDir)
-        # gl.glLightf(gl.GL_LIGHT0, gl.GL_SPOT_CUTOFF, 12.0)
 
         # set up cube's material
         cubeColor = [0.6, 0.7, 1.0]
@@ -189,7 +186,7 @@ class GLWidget(QOpenGLWidget):
         gl.glClear(
             gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
         gl.glLoadIdentity()
-        gl.glTranslated(0.0, 0.0, -13.0)
+        gl.glTranslated(0.0, 0.0, -10.0)
         gl.glRotated(self.xRot, 1.0, 0.0, 0.0)
         gl.glRotated(self.yRot, 0.0, 1.0, 0.0)
         gl.glRotated(self.zRot, 0.0, 0.0, 1.0)
@@ -206,7 +203,7 @@ class GLWidget(QOpenGLWidget):
 
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
-        gl.glOrtho(-0.5, +0.5, +0.5, -0.5, 15.0, -15.0)
+        gl.glOrtho(-5, +5, +5, -5, 50.0, -50.0)
         gl.glMatrixMode(gl.GL_MODELVIEW)
 
     def mousePressEvent(self, event):
