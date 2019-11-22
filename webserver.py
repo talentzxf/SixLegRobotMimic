@@ -52,7 +52,7 @@ class RobotResource(Resource):
         # 0 -- 500
         # 90 -- 1500
         # 180 -- 2000
-        return 500 + angle/180*2000
+        return 1500 + angle/180*2000
 
     @use_kwargs(add_args)
     def post(self, leg_id, link_id, angle):
