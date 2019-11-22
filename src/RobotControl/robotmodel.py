@@ -33,7 +33,7 @@ class RobotModel:
 
         self.body = Cube(length, width, height)
 
-        leg = RoboLeg([width / 2, length / 2, 0], [[-135, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
+        leg = RoboLeg(0, [width / 2, length / 2, 0], [[-135, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 

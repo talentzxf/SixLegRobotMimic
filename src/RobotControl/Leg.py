@@ -6,8 +6,9 @@ from Geometry.CoordinateConverter import CoordinateConverter
 
 
 class RoboLeg(LinkSystem):
-    def __init__(self, pos=None, rotate=None):
+    def __init__(self, legId = None, pos=None, rotate=None):
         super().__init__(pos, rotate)
+        self.legId = legId
         self.link_length_array = []
         self.start_angles = []
         self.solver = IKSolver(self.link_length_array, self.start_angles)

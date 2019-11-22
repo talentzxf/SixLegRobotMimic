@@ -39,13 +39,11 @@ class LinearTrajectory:
 
     def go(self):
         next_pos = self.linearInterpolator.get_next()
-        print("next_pos", next_pos)
         if next_pos:
             self.leg.set_end_pos_local(next_pos)
             print("current leg position:", self.leg.get_target_pos())
             return True
         elif self.next:
-            print("In next trajectory !!!!!!!!!!")
             return self.next.go()
         return False
 
