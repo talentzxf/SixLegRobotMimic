@@ -37,7 +37,7 @@ class RobotMove:
 
     # Move directly to the original point (in object space),
     # i.e. the leg is just rotating and is holding the body weight
-    def genLegBackwardTraj(self, legId):
+    def genLegBackToStartTraj(self, legId):
         leg = self.legs[legId]
         # 1. get current leg target position in world
         leg_target_point = leg.get_target_pos()

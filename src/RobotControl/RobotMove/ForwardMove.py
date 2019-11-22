@@ -13,9 +13,9 @@ class GoForwardMoveStep1(RobotMove):
             traj3 = self.genLegMoveForwardTraj(3)
             traj5 = self.genLegMoveForwardTraj(5)
 
-            traj0 = self.genLegBackwardTraj(0)
-            traj2 = self.genLegBackwardTraj(2)
-            traj4 = self.genLegBackwardTraj(4)
+            traj0 = self.genLegBackToStartTraj(0)
+            traj2 = self.genLegBackToStartTraj(2)
+            traj4 = self.genLegBackToStartTraj(4)
 
             self.trajectoryArray.append(traj0)
             self.trajectoryArray.append(traj1)
@@ -38,9 +38,9 @@ class GoForwardMoveStep2(RobotMove):
             traj2 = self.genLegMoveForwardTraj(2)
             traj4 = self.genLegMoveForwardTraj(4)
 
-            traj1 = self.genLegBackwardTraj(1)
-            traj3 = self.genLegBackwardTraj(3)
-            traj5 = self.genLegBackwardTraj(5)
+            traj1 = self.genLegBackToStartTraj(1)
+            traj3 = self.genLegBackToStartTraj(3)
+            traj5 = self.genLegBackToStartTraj(5)
 
             self.trajectoryArray.append(traj0)
             self.trajectoryArray.append(traj1)
