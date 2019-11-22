@@ -4,7 +4,7 @@ from RobotControl.RobotMove.ForwardMove import MoveStepFactory
 
 from RobotControl.RobotMove.StopMove import StopMove
 
-import threading
+from RobotControl.RobotMove.LeftMove import LeftMoveFactory
 
 
 class NavieControl:
@@ -56,3 +56,8 @@ class NavieControl:
     def robotStop(self):
         self.moves = []  # Remove all current moves
         self.moves.append(StopMove(self.legs, self.allLegsHeight, self.leg_init_stretch))
+
+    def robotLeft(self):
+        self.robotStop()
+        leftStepFactory = LeftMoveFactory(self.legs, self.allLegsHeight, self.leg_init_stretch)
+        self.moves.append(leftStepFactory.getMove())

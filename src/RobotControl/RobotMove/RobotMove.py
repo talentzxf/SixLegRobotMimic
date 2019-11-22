@@ -2,6 +2,8 @@ from GlobalConfig import RobotConfig
 
 from RobotControl.RobotMove.LinearTrajectory import LinearTrajectory
 
+import math
+
 
 class RobotMove:
     def __init__(self, legs, allLegsHeight, leg_init_stretch):
@@ -31,7 +33,7 @@ class RobotMove:
                            worldStartPos[2] + self.step_size / 2]
         worldTargetPos2 = [worldStartPos[0], worldStartPos[1] + self.step_size, worldStartPos[2]]
 
-        print("Step1 Leg:{} Traj Points:{},{},{}".format(legId, worldStartPos, worldTargetPos1, worldTargetPos2))
+        print("genLegMoveForwardTraj Leg:{} Traj Points:{},{},{}".format(legId, worldStartPos, worldTargetPos1, worldTargetPos2))
         return LinearTrajectory.genTrajectory(leg,
                                               [worldStartPos, worldTargetPos1, worldTargetPos2])
 
@@ -48,7 +50,27 @@ class RobotMove:
         objTargetPos = [self.allLegsHeight, 0, self.leg_init_stretch]
         worldTargetPos = LinearTrajectory.coord.objectToWorld(objTargetPos, leg.get_init_transformation_matrix())
 
-        print("Step2 Leg:{} Traj Points:{},{}".format(legId, worldStartPos, worldTargetPos))
+        print("genLegBackToStartTraj Leg:{} Traj Points:{},{}".format(legId, worldStartPos, worldTargetPos))
+
+        return LinearTrajectory.genTrajectory(leg, [worldStartPos, worldTargetPos])
+
+    # Move directly to the original point (in object space),
+    # i.e. the leg is just rotating and is holding the body weight
+    def genLegRotateTraj(self, legId, theta):
+        angle_radian = theta/180*math.pi
+        leg = self.legs[legId]
+        # 1. get current leg target position in world
+        leg_target_point = leg.get_target_pos()
+
+        print("target is:", leg_target_point)
+        # TODO: not sure how to elegantly convert numpy data to python list
+        worldStartPos = [leg_target_point[0].item(0), leg_target_point[1].item(0), leg_target_point[2].item(0)]
+
+        objTargetPos = [self.allLegsHeight, self.leg_init_stretch * math.sin(angle_radian),
+                        self.leg_init_stretch * math.cos(angle_radian)]
+        worldTargetPos = LinearTrajectory.coord.objectToWorld(objTargetPos, leg.get_init_transformation_matrix())
+
+        print("genLegRotateTraj leg:{} Traj Points:{},{}".format(legId, worldStartPos, worldTargetPos))
 
         return LinearTrajectory.genTrajectory(leg, [worldStartPos, worldTargetPos])
 
