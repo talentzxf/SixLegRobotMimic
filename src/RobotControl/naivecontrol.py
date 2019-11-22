@@ -6,6 +6,11 @@ from RobotControl.RobotMove.StopMove import StopMove
 
 from RobotControl.RobotMove.LeftMove import LeftMoveFactory
 
+import requests
+import time
+
+base_url = "http://176.122.187.37/robot/legs/{}/links/{}?angle={}"
+
 
 class NavieControl:
     def __init__(self, legs):
@@ -31,6 +36,17 @@ class NavieControl:
         def setAngle(angle):
             self.legs[legNo].set_link_angle(linkNo, angle)
             print("Setting Leg:{}, link:{} to angle: {}".format(legNo, linkNo, angle))
+            # send command to remote
+            full_url = base_url.format(legNo, linkNo, angle)
+            print("calling:", full_url)
+
+            if legNo != 0:
+                return
+
+            try:
+                print("Response:", response=requests.post(full_url))
+            except Exception as e:
+                print("Error calling remote service", e)
 
         return setAngle
 

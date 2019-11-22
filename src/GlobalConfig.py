@@ -6,7 +6,7 @@ class RobotConfig:
     link2Length = 0.75
     link3Length = 1.4
 
-    defaultStretch = 1.25
+    defaultStretch = 2.0
     defaultLegHeight = -1.0
     defaultStepSize = 1.0
 

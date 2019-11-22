@@ -6,3 +6,4 @@ pip3 install httpserver
 pip3 install Flask
 pip3 install Flask-restful
 pip3 install webargs
+pip3 install requests

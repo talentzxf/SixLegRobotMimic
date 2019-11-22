@@ -37,23 +37,23 @@ class RobotModel:
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = RoboLeg([width / 2, 0, 0], [[180, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
+        leg = RoboLeg(1, [width / 2, 0, 0], [[180, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = RoboLeg([width / 2, -length / 2, 0], [[135, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
+        leg = RoboLeg(2, [width / 2, -length / 2, 0], [[135, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = RoboLeg([-width / 2, -length / 2, 0], [[45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
+        leg = RoboLeg(3, [-width / 2, -length / 2, 0], [[45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = RoboLeg([-width / 2, 0, 0], [[-90, 0.0, 1.0, 0.0]])
+        leg = RoboLeg(4, [-width / 2, 0, 0], [[-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
-        leg = RoboLeg([-width / 2, length / 2, 0], [[-45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
+        leg = RoboLeg(5, [-width / 2, length / 2, 0], [[-45, 0.0, 0.0, 1.0], [-90, 0.0, 1.0, 0.0]])
         self.addLegLinks(leg)
         self.legs.append(leg)
 
