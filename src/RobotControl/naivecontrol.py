@@ -4,6 +4,8 @@ from RobotControl.RobotMove.ForwardMove import MoveStepFactory
 
 from RobotControl.RobotMove.StopMove import StopMove
 
+import threading
+
 
 class NavieControl:
     def __init__(self, legs):
@@ -42,10 +44,15 @@ class NavieControl:
         for leg in self.legs:
             leg.set_end_pos_local([self.allLegsHeight, 0, self.leg_init_stretch])
 
-    def robotGo(self):
+    def _robotGo(self):
         stepFactory = MoveStepFactory(self.legs, self.allLegsHeight, self.leg_init_stretch)
-        self.moves.append(stepFactory.getGoMove().setCallBack(self.robotGo))
+        self.moves.append(stepFactory.getGoMove().setCallBack(self._robotGo))
 
+    def robotGo(self):
+        self.robotStop()  # Stop first, then go forward
+        self._robotGo()
+
+    # TODO, check if leg is too low. If too low, raise and then put down to avoid damage!!!
     def robotStop(self):
-        self.moves = [] # Remove all current moves
+        self.moves = []  # Remove all current moves
         self.moves.append(StopMove(self.legs, self.allLegsHeight, self.leg_init_stretch))
