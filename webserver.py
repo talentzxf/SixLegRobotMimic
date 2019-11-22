@@ -58,7 +58,7 @@ class RobotResource(Resource):
     def post(self, leg_id, link_id, angle):
         """An addition endpoint."""
         cmd = '"#%03dP%04dT1000!"' % (self.leg_link_map[leg_id][link_id], self.convert_angle(angle))
-        ser.write(cmd)
+        ser.write(cmd.encode())
         return {"cmd": cmd}
 
     def get(self, leg_id, link_id):
