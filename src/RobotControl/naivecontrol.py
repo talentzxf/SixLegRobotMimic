@@ -2,6 +2,8 @@ from GlobalConfig import RobotConfig
 
 from RobotControl.RobotMove.ForwardMove import MoveStepFactory
 
+from RobotControl.RobotMove.StopMove import StopMove
+
 
 class NavieControl:
     def __init__(self, legs):
@@ -45,4 +47,5 @@ class NavieControl:
         self.moves.append(stepFactory.getGoMove().setCallBack(self.robotGo))
 
     def robotStop(self):
-        pass
+        self.moves = [] # Remove all current moves
+        self.moves.append(StopMove(self.legs, self.allLegsHeight, self.leg_init_stretch))
