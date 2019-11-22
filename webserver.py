@@ -57,6 +57,8 @@ class RobotResource(Resource):
     @use_kwargs(add_args)
     def post(self, leg_id, link_id, angle):
         """An addition endpoint."""
+        if link_id = 1:
+            angle = -angle
         cmd = '"#%03dP%04dT1000!"' % (self.leg_link_map[leg_id][link_id], self.convert_angle(angle))
         ser.write(cmd.encode())
         return {"cmd": cmd}
