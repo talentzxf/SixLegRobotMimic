@@ -9,14 +9,53 @@ from RobotControl.RobotMove.LeftMove import LeftMoveFactory
 import requests
 
 import GlobalConfig
+import serial
+
+
+class SerialControl:
+    def __init__(self):
+        self.ser = serial.Serial(
+            port='/dev/ttyAMA0',
+            baudrate=115200,
+            parity=serial.PARITY_NONE,
+            stopbits=serial.STOPBITS_ONE,
+            bytesize=serial.EIGHTBITS,
+            timeout=1
+        )
+
+    def convert_angle(self, angle):
+        # 0 -- 500
+        # 90 -- 1500
+        # 180 -- 2000
+        return 1500 + angle / 180 * 2000
+
+    def set_angle(self, leg_id, link_id, angle):
+        # Hack to make the mimic robot same as the real robot
+        if link_id == 1 or link_id == 0:
+            angle = -angle
+        cmd = '"#%03dP%04dT0100!"' % (self.leg_link_map[leg_id][link_id], self.convert_angle(angle))
+        self.ser.write(cmd.encode())
+        return {"cmd": cmd}
 
 
 class NavieControl:
-    def __init__(self, legs):
+    def __init__(self, legs, update_serial=False):
         self.legs = legs
         self.allLegsHeight = RobotConfig.defaultLegHeight
         self.leg_init_stretch = RobotConfig.defaultStretch
         self.moves = []
+        self.update_serial = update_serial
+        if update_serial:
+            self.enableSerial()
+
+    def enableSerial(self):
+        self.update_serial = True
+        self.serial = SerialControl()
+
+    def isMoving(self):
+        if len(self.moves) != 0:
+            return True
+        return False
 
     def update(self):
         endedMoves = []
@@ -35,6 +74,9 @@ class NavieControl:
         def setAngle(angle):
             self.legs[legNo].set_link_angle(linkNo, angle)
             print("Setting Leg:{}, link:{} to angle: {}".format(legNo, linkNo, angle))
+
+            if self.update_serial:
+                self.serial.set_angle(legNo, linkNo, angle)
 
             if write_remote:
                 # send command to remote

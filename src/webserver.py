@@ -3,21 +3,13 @@ from flask_restful import Resource, Api, reqparse
 
 from webargs import fields, validate
 from webargs.flaskparser import use_args, use_kwargs, parser, abort
-import serial
+
+from GlobalContext import GlobalContext
+
+from threading import Thread
 
 app = Flask(__name__)
 api = Api(app)
-
-ser = serial.Serial(
-
-    port='/dev/ttyAMA0',
-    baudrate=115200,
-    parity=serial.PARITY_NONE,
-    stopbits=serial.STOPBITS_ONE,
-    bytesize=serial.EIGHTBITS,
-    timeout=1
-)
-
 
 class IndexResource(Resource):
     """A welcome page."""
@@ -56,15 +48,11 @@ class RobotResource(Resource):
 
     @use_kwargs(add_args)
     def post(self, leg_id, link_id, angle):
-        """An addition endpoint."""
+        # Hack to make the mimic robot same as the real robot
         if link_id == 1 or link_id == 0:
             angle = -angle
         cmd = '"#%03dP%04dT0100!"' % (self.leg_link_map[leg_id][link_id], self.convert_angle(angle))
-        ser.write(cmd.encode())
         return {"cmd": cmd}
-
-    def go(self):
-        GlobalContext.getRobot().getController().robotGo()
 
     def get(self, leg_id, link_id):
         return {"leg": leg_id, "link": link_id, }
@@ -78,9 +66,26 @@ class RobotResource(Resource):
         abort(error_status_code, errors=err.messages)
 
 
+class RobotMoveResource(Resource):
+    def get(self, action):
+        if action == 'go':
+            GlobalContext.getRobot().getController().robotGo()
+        elif action == 'stop':
+            GlobalContext.getRobot().getController().robotStop()
+        return "OK"
+
+
+def robot_update_function():
+    # GlobalContext.getRobot().getController().enableSerial()
+    while True:
+        GlobalContext.getRobot().getController().update()
+
+
 if __name__ == "__main__":
+    x = Thread(target=robot_update_function)
+    x.start()
+
     api.add_resource(IndexResource, "/")
     api.add_resource(RobotResource, "/robot/legs/<int:leg_id>/links/<int:link_id>")
-    api.add_resource(RobotResource, "/robot/go")
+    api.add_resource(RobotMoveResource, "/robot/move/<string:action>")
     app.run(port=5001, debug=True)
-    ser.close()

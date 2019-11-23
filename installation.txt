@@ -7,3 +7,4 @@ pip3 install Flask
 pip3 install Flask-restful
 pip3 install webargs
 pip3 install requests
+pip3 install serial
