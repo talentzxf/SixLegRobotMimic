@@ -12,3 +12,4 @@ class RobotConfig:
 
     # Only affect the view in simulator
     linkRadius = 0.1
+    base_url = "http://176.122.187.37/robot/legs/{}/links/{}?angle={}"

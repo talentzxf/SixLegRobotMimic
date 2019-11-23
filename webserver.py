@@ -52,7 +52,7 @@ class RobotResource(Resource):
         # 0 -- 500
         # 90 -- 1500
         # 180 -- 2000
-        return 1500 + angle/180*2000
+        return 1500 + angle / 180 * 2000
 
     @use_kwargs(add_args)
     def post(self, leg_id, link_id, angle):
@@ -62,6 +62,9 @@ class RobotResource(Resource):
         cmd = '"#%03dP%04dT0100!"' % (self.leg_link_map[leg_id][link_id], self.convert_angle(angle))
         ser.write(cmd.encode())
         return {"cmd": cmd}
+
+    def go(self):
+        GlobalContext.getRobot().getController().robotGo()
 
     def get(self, leg_id, link_id):
         return {"leg": leg_id, "link": link_id, }
@@ -78,5 +81,6 @@ class RobotResource(Resource):
 if __name__ == "__main__":
     api.add_resource(IndexResource, "/")
     api.add_resource(RobotResource, "/robot/legs/<int:leg_id>/links/<int:link_id>")
+    api.add_resource(RobotResource, "/robot/go")
     app.run(port=5001, debug=True)
     ser.close()
