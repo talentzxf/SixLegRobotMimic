@@ -4,7 +4,7 @@ from RobotControl.RobotMove.ForwardMove import MoveStepFactory
 
 from RobotControl.RobotMove.StopMove import StopMove
 
-from RobotControl.RobotMove.LeftMove import LeftMoveFactory
+from RobotControl.RobotMove.RotateMove import RotateMoveFactory
 
 import requests
 
@@ -114,11 +114,16 @@ class NavieControl:
         self.moves = []  # Remove all current moves
         self.moves.append(StopMove(self.legs, self.allLegsHeight, self.leg_init_stretch))
 
-    def _robotLeft(self):
-        # self.robotStop()
-        leftStepFactory = LeftMoveFactory(self.legs, self.allLegsHeight, self.leg_init_stretch)
-        self.moves.append(leftStepFactory.getMove().setCallBack(self._robotLeft))
+    def _robotRotate(self, theta):
+        def __robotRotate():
+            rotateStepFactory = RotateMoveFactory(self.legs, self.allLegsHeight, self.leg_init_stretch)
+            self.moves.append(rotateStepFactory.getMove(theta).setCallBack(self._robotRotate(theta)))
+        return __robotRotate
 
     def robotLeft(self):
         self.robotStop()
-        self._robotLeft()
+        self._robotRotate(-45)()
+
+    def robotRight(self):
+        self.robotStop()
+        self._robotRotate(45)()

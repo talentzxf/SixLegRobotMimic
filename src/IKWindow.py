@@ -103,6 +103,10 @@ class MyTableWidget(QWidget):
         vboxlayout.addWidget(leftButton)
         leftButton.clicked.connect(self.robotLeft)
 
+        rightButton = QPushButton("Right")
+        vboxlayout.addWidget(rightButton)
+        rightButton.clicked.connect(self.robotRight)
+
         hboxLayout = QHBoxLayout()
         zslider = QSlider(Qt.Vertical)
         zslider.setRange(-30, 30)
@@ -134,6 +138,9 @@ class MyTableWidget(QWidget):
 
     def robotLeft(self):
         GlobalContext.getRobot().getController().robotLeft()
+
+    def robotRight(self):
+        GlobalContext.getRobot().getController().robotRight()
 
 # Everything in this class happens in Screen coordinate
 class DraggableRect(QObject):
