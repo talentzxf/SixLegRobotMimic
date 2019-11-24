@@ -85,9 +85,9 @@ class Window(QWidget):
             slider.valueChanged.connect(self.refreshLegLabel(robot_controller, legNo))
 
             def setValueOnly(slider):
-                def _setValueOnly(int):
+                def _setValueOnly(value):
                     slider.blockSignals(True)
-                    slider.setValue(int)
+                    slider.setValue(value)
                     slider.blockSignals(False)
 
                 return _setValueOnly

@@ -114,7 +114,11 @@ class NavieControl:
         self.moves = []  # Remove all current moves
         self.moves.append(StopMove(self.legs, self.allLegsHeight, self.leg_init_stretch))
 
+    def _robotLeft(self):
+        # self.robotStop()
+        leftStepFactory = LeftMoveFactory(self.legs, self.allLegsHeight, self.leg_init_stretch)
+        self.moves.append(leftStepFactory.getMove().setCallBack(self._robotLeft))
+
     def robotLeft(self):
         self.robotStop()
-        leftStepFactory = LeftMoveFactory(self.legs, self.allLegsHeight, self.leg_init_stretch)
-        self.moves.append(leftStepFactory.getMove())
+        self._robotLeft()
