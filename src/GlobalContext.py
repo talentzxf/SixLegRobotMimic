@@ -3,6 +3,22 @@ import serial
 
 class SerialControl:
     def __init__(self):
+        self.leg_link_angle_map = {
+            0: {0: 0, 1: 0, 2: 0},
+            1: {0: 0, 1: 0, 2: 0},
+            2: {0: 0, 1: 0, 2: 0},
+            3: {0: 0, 1: 0, 2: 0},
+            4: {0: 0, 1: 0, 2: 0},
+            5: {0: 0, 1: 0, 2: 0}
+        }
+
+        self.leg_link_map = [[0, 1, 2],
+                    [3, 4, 5],
+                    [6, 7, 8],
+                    [9, 10, 11],
+                    [12, 13, 14],
+                    [15, 16, 17]]
+
         self.ser = serial.Serial(
             port='/dev/ttyAMA0',
             baudrate=115200,
