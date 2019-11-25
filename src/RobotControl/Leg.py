@@ -3,8 +3,8 @@ from RobotControl.linksystem import LinkSystem
 from IKSolver.Solver import IKSolver
 
 from Geometry.CoordinateConverter import CoordinateConverter
-from GlobalContext import GlobalContext
 from GlobalConfig import RobotConfig
+from GlobalContext import GlobalContext
 
 
 class RoboLeg(LinkSystem):

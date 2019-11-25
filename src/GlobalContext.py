@@ -1,5 +1,3 @@
-from RobotControl.robotmodel import RobotModel
-
 import serial
 
 
@@ -37,10 +35,12 @@ class GlobalContext:
 
     @staticmethod
     def getRobot():
+        from RobotControl.robotmodel import RobotModel
         if GlobalContext.robot is None:
             GlobalContext.robot = RobotModel()
         return GlobalContext.robot
 
+    @staticmethod
     def getSerial(self):
         if GlobalContext.serial is None:
             GlobalContext.serial = SerialControl()
