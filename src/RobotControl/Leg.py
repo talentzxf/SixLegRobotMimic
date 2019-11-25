@@ -3,6 +3,8 @@ from RobotControl.linksystem import LinkSystem
 from IKSolver.Solver import IKSolver
 
 from Geometry.CoordinateConverter import CoordinateConverter
+from GlobalContext import GlobalContext
+from GlobalConfig import RobotConfig
 
 
 class RoboLeg(LinkSystem):
@@ -21,7 +23,7 @@ class RoboLeg(LinkSystem):
 
     def set_link_angle(self, link_id, theta):
         self.links[link_id].setTheta(theta)
-        if GlobalConfig.enable_serial:
+        if RobotConfig.enable_serial:
             GlobalContext.getSerial().set_angle(self.legId, self.link_id, theta)
 
     def set_link_callback(self, link_id, callback):
