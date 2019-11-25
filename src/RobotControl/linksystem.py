@@ -6,7 +6,7 @@ import numpy as np
 from Geometry.CoordinateSystem import CoordinateSystem
 from PyQt5.QtCore import pyqtSignal
 
-from src.GlobalConfig import RobotConfig
+from GlobalConfig import RobotConfig
 
 
 class Link(Cylinder):

@@ -1,4 +1,4 @@
-from src.RobotControl.robotmodel import RobotModel
+from RobotControl.robotmodel import RobotModel
 
 
 class GlobalContext:

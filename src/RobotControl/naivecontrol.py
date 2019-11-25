@@ -22,6 +22,7 @@ class SerialControl:
             bytesize=serial.EIGHTBITS,
             timeout=1
         )
+        print('Serial enabled!')
 
     def convert_angle(self, angle):
         # 0 -- 500
@@ -35,6 +36,7 @@ class SerialControl:
             angle = -angle
         cmd = '"#%03dP%04dT0100!"' % (self.leg_link_map[leg_id][link_id], self.convert_angle(angle))
         self.ser.write(cmd.encode())
+        print('Set serial:', cmd)
         return {"cmd": cmd}
 
 
