@@ -47,7 +47,7 @@ class NavieControl:
 
                 try:
                     print("Response:", response=requests.post(full_url))
-                    except Exception as e:
+                except Exception as e:
                     print("Error calling remote service", e)
 
         return setAngle
