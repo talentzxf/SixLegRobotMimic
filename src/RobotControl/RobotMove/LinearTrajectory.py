@@ -41,7 +41,7 @@ class LinearTrajectory:
         next_pos = self.linearInterpolator.get_next()
         if next_pos:
             self.leg.set_end_pos_local(next_pos)
-            print("current leg position:", self.leg.get_target_pos())
+            # print("current leg position:", self.leg.get_target_pos())
             return True
         elif self.next:
             return self.next.go()

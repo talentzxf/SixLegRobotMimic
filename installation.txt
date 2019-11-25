@@ -8,3 +8,18 @@ pip3 install Flask-restful
 pip3 install webargs
 pip3 install requests
 pip3 install pyserial
+sudo apt-get install python-opengl
+sudo apt-get install libatlas3-base
+sudo apt-get install qt5-default pyqt5-dev pyqt5-dev-tools
+
+# QT Core needs to be installed with
+#
+# sudo apt-get install qt5-default
+#
+# You'll need to copy over sip and PyQt5 to your Raspberry Pi (I used SFTP). Just put the tar files someplace that you can get to them easily.
+#
+# You'll need to extract each of them, using the tar command, with the -xzvf tag so you'll end up with tar -xzvf sip-4.19.1.tar.gz`for sip.
+#
+# In each folder, you'll need to set up for the build. This is done by typing "python config.py" in each directory.
+#
+# The contents of each directory needs to be built and installed, go to your sip folder and type "make" this will take a very long time. After it's through, type "sudo make install".
