@@ -41,7 +41,7 @@ class GlobalContext:
         return GlobalContext.robot
 
     @staticmethod
-    def getSerial(self):
+    def getSerial():
         if GlobalContext.serial is None:
             GlobalContext.serial = SerialControl()
         return GlobalContext.serial
