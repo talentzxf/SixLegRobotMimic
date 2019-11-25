@@ -76,7 +76,6 @@ class RobotMoveResource(Resource):
 
 
 def robot_update_function():
-    GlobalContext.getRobot().getController().enableSerial()
     while True:
         GlobalContext.getRobot().getController().update()
 

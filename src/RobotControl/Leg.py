@@ -6,7 +6,7 @@ from Geometry.CoordinateConverter import CoordinateConverter
 
 
 class RoboLeg(LinkSystem):
-    def __init__(self, legId = None, pos=None, rotate=None):
+    def __init__(self, legId=None, pos=None, rotate=None):
         super().__init__(pos, rotate)
         self.legId = legId
         self.link_length_array = []
@@ -21,6 +21,8 @@ class RoboLeg(LinkSystem):
 
     def set_link_angle(self, link_id, theta):
         self.links[link_id].setTheta(theta)
+        if GlobalConfig.enable_serial:
+            GlobalContext.getSerial().set_angle(self.legId, self.link_id, theta)
 
     def set_link_callback(self, link_id, callback):
         self.links[link_id].angleChanged.connect(callback)
