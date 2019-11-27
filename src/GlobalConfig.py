@@ -6,9 +6,9 @@ class RobotConfig:
     link2Length = 0.75
     link3Length = 1.4
 
-    defaultStretch = 2.0
-    defaultLegHeight = -1.0
-    defaultStepSize = 1.0
+    defaultStretch = 1.5
+    defaultLegHeight = -1.5
+    defaultStepSize = 1.2
 
     # Only affect the view in simulator
     linkRadius = 0.1
