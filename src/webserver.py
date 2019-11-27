@@ -54,6 +54,10 @@ class RobotMoveResource(Resource):
     def get(self, action):
         if action == 'go':
             GlobalContext.getRobot().getController().robotGo()
+        elif action == 'left':
+            GlobalContext.getRobot().getController().robotLeft()
+        elif action == 'right':
+            GlobalContext.getRobot().getController().robotRight()
         elif action == 'stop':
             GlobalContext.getRobot().getController().robotStop()
         return "OK"
