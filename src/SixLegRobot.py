@@ -81,13 +81,13 @@ class Window(QWidget):
             slider = sliders[idx]
             legSliderLayout.addWidget(slider)
 
-            slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, idx, True))
+            slider.valueChanged.connect(robot_controller.setLegLinkAngle(legNo, idx))
             slider.valueChanged.connect(self.refreshLegLabel(robot_controller, legNo))
 
             def setValueOnly(slider):
                 def _setValueOnly(value):
                     slider.blockSignals(True)
-                    slider.setValue(value)
+                    slider.setValue(int(value))
                     slider.blockSignals(False)
 
                 return _setValueOnly

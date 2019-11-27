@@ -36,10 +36,10 @@ class NavieControl:
 
     def setLegLinkAngle(self, legNo, linkNo, write_remote=False):
         def setAngle(angle):
-            self.legs[legNo].set_link_angle(linkNo, angle)
             print("Setting Leg:{}, link:{} to angle: {}".format(legNo, linkNo, angle))
+            self.legs[legNo].set_link_angle(linkNo, angle)
 
-            if write_remote:
+            if GlobalConfig.enable_remote_rest:
                 # send command to remote
                 base_url = GlobalConfig.RobotConfig.base_url
                 full_url = base_url.format(legNo, linkNo, angle)
