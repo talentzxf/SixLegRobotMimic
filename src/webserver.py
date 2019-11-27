@@ -11,6 +11,7 @@ from threading import Thread
 app = Flask(__name__)
 api = Api(app)
 
+
 class IndexResource(Resource):
     """A welcome page."""
 
@@ -63,6 +64,19 @@ class RobotMoveResource(Resource):
         return "OK"
 
 
+class RobotHeightResource(Resource):
+    add_args = {"height": fields.Float(required=True)}
+
+    def get(self):
+        return GlobalContext.getRobot().getController().getLegHeight()
+
+    @use_kwargs(add_args)
+    def put(self, height):
+        GlobalContext.getRobot().getController().setLegHeight(height)
+        GlobalContext.getRobot().getController().robotStop()
+        return "OK"
+
+
 def robot_update_function():
     while True:
         GlobalContext.getRobot().getController().update()
@@ -75,4 +89,5 @@ if __name__ == "__main__":
     api.add_resource(IndexResource, "/")
     api.add_resource(RobotResource, "/robot/legs/<int:leg_id>/links/<int:link_id>")
     api.add_resource(RobotMoveResource, "/robot/move/<string:action>")
+    api.add_resource(RobotHeightResource, "/robot/height")
     app.run(port=5001, debug=True)
