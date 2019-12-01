@@ -116,7 +116,7 @@ def multicast_ip_function():
         print("Add multicast group:" + status)
 
     while True:
-        data = 'Robot:' + ip_address + '\0'
+        data = 'Robot:' + ip_address + ':' + '\r\n'
         s.sendto(data.encode(), (GROUP, PORT))
         print("send data:" + data + "OK")
         time.sleep(10)
@@ -138,4 +138,4 @@ if __name__ == "__main__":
     api.add_resource(RobotResource, "/robot/legs/<int:leg_id>/links/<int:link_id>")
     api.add_resource(RobotMoveResource, "/robot/move/<string:action>")
     api.add_resource(RobotHeightResource, "/robot/height")
-    app.run(port=5001, debug=True)
+    app.run(port=5001, debug=True, host="0.0.0.0")
