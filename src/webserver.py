@@ -1,3 +1,6 @@
+import sys
+import time
+
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
 
@@ -7,6 +10,7 @@ from webargs.flaskparser import use_args, use_kwargs, parser, abort
 from GlobalContext import GlobalContext
 
 from threading import Thread
+import socket
 
 app = Flask(__name__)
 api = Api(app)
@@ -78,13 +82,57 @@ class RobotHeightResource(Resource):
 
 
 def robot_update_function():
+    print("Updating robot")
     while True:
         GlobalContext.getRobot().getController().update()
+
+
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    return s.getsockname()[0]
+
+
+def multicast_ip_function():
+    import struct
+    # get ip address
+    ip_address = get_ip_address()
+    print("Begin to multicast:" + ip_address)
+
+    GROUP = "224.1.1.1"
+    PORT = 6666
+
+    # create socket, prepare to multicast
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    s.bind((ip_address, 0))
+
+    ttl_bin = struct.pack('@i', 255)  # 255 is ttl
+    s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl_bin)
+    status = s.setsockopt(socket.IPPROTO_IP,
+                          socket.IP_ADD_MEMBERSHIP,
+                          socket.inet_aton(GROUP) + socket.inet_aton(ip_address))  # 加入到组播组
+
+    if status != None:
+        print("Add multicast group:" + status)
+
+    while True:
+        data = 'Robot:' + ip_address + '\0'
+        s.sendto(data.encode(), (GROUP, PORT))
+        print("send data:" + data + "OK")
+        time.sleep(10)
+        sys.stdout.flush()
+
+
+# Broadcast this address
 
 
 if __name__ == "__main__":
     x = Thread(target=robot_update_function)
     x.start()
+
+    y = Thread(target=multicast_ip_function)
+    print("Start multicast thread")
+    y.start()
 
     api.add_resource(IndexResource, "/")
     api.add_resource(RobotResource, "/robot/legs/<int:leg_id>/links/<int:link_id>")
