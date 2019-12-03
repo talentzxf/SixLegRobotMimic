@@ -90,4 +90,4 @@ if __name__ == "__main__":
     api.add_resource(RobotResource, "/robot/legs/<int:leg_id>/links/<int:link_id>")
     api.add_resource(RobotMoveResource, "/robot/move/<string:action>")
     api.add_resource(RobotHeightResource, "/robot/height")
-    app.run(port=5001, debug=True)
+    app.run(port=5001, debug=True, host='0.0.0.0')
