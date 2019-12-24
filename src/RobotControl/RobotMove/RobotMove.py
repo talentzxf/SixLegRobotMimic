@@ -38,6 +38,20 @@ class RobotMove:
         return LinearTrajectory.genTrajectory(leg,
                                               [worldStartPos, worldTargetPos1, worldTargetPos2])
 
+    # Move up and down via a mid point in the air, i.e. the leg is moving and didn't hold body weight
+    def genLegMoveBackTraj(self, legId):
+        leg = self.legs[legId]
+        objStartPos = [self.allLegsHeight, 0, self.leg_init_stretch]
+        worldStartPos = LinearTrajectory.coord.objectToWorld(objStartPos, leg.get_init_transformation_matrix())
+        worldTargetPos1 = [worldStartPos[0], worldStartPos[1] - self.step_size / 2,
+                           worldStartPos[2] + self.step_size / 2]
+        worldTargetPos2 = [worldStartPos[0], worldStartPos[1] - self.step_size, worldStartPos[2]]
+
+        print("genLegMoveForwardTraj Leg:{} Traj Points:{},{},{}".format(legId, worldStartPos, worldTargetPos1,
+                                                                         worldTargetPos2))
+        return LinearTrajectory.genTrajectory(leg,
+                                              [worldStartPos, worldTargetPos1, worldTargetPos2])
+
     # Move directly to the original point (in object space),
     # i.e. the leg is just rotating and is holding the body weight
     def genLegBackToStartTraj(self, legId):

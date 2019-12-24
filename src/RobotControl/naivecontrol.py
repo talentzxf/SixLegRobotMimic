@@ -6,6 +6,8 @@ from RobotControl.RobotMove.StopMove import StopMove
 
 from RobotControl.RobotMove.RotateMove import RotateMoveFactory
 
+from RobotControl.RobotMove.BackStepFactory import BackStepFactory
+
 import GlobalConfig
 
 
@@ -69,6 +71,14 @@ class NavieControl:
     def _robotGo(self):
         stepFactory = MoveStepFactory(self.legs, self.allLegsHeight, self.leg_init_stretch)
         self.moves.append(stepFactory.getGoMove().setCallBack(self._robotGo))
+
+    def _robotBack(self):
+        stepFactory = BackStepFactory(self.legs, self.allLegsHeight, self.leg_init_stretch)
+        self.moves.append(stepFactory.getBackMove().setCallBack(self._robotBack))
+
+    def robotBack(self):
+        self.robotStop()  # Stop first, then go forward
+        self._robotBack()
 
     def robotGo(self):
         self.robotStop()  # Stop first, then go forward

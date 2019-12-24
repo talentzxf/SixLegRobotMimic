@@ -65,6 +65,8 @@ class RobotMoveResource(Resource):
             GlobalContext.getRobot().getController().robotRight()
         elif action == 'stop':
             GlobalContext.getRobot().getController().robotStop()
+        elif action == 'back':
+            GlobalContext.getRobot().getController().robotBack()
         return "OK"
 
 
