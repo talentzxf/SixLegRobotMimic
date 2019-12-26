@@ -90,8 +90,8 @@ class RobotStretchResource(Resource):
         return GlobalContext.getRobot().getController().getLegStretch()
 
     @use_kwargs(add_args)
-    def put(self, height):
-        GlobalContext.getRobot().getController().setLegStretch(height)
+    def put(self, stretch):
+        GlobalContext.getRobot().getController().setLegStretch(stretch)
         GlobalContext.getRobot().getController().robotStop()
         return "Current stretch:" + str(GlobalContext.getRobot().getController().getLegStretch())
 
