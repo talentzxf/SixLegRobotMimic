@@ -101,8 +101,9 @@ def robot_update_function():
     try:
         while True:
             GlobalContext.getRobot().getController().update()
-    except:
+    except Exception as e:
         print("Oops!", sys.exc_info()[0], " occurred.")
+        print("Exception is:", e)
     finally:
         print("Main update thread stopped!!")
 
