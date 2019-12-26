@@ -35,10 +35,15 @@ class NavieControl:
 
     def setLegHeight(self, height):
         self.allLegsHeight = height
-        RobotConfig.defaultLegHeight = height
 
     def getLegHeight(self):
         return self.allLegsHeight
+
+    def getLegStretch(self):
+        return self.leg_init_stretch
+
+    def setLegStretch(self, stretch):
+        self.leg_init_stretch = stretch
 
     def setLegLinkAngle(self, legNo, linkNo, write_remote=False):
         def setAngle(angle):

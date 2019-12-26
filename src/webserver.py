@@ -83,6 +83,19 @@ class RobotHeightResource(Resource):
         return "Current height:" + str(GlobalContext.getRobot().getController().getLegHeight())
 
 
+class RobotStretchResource(Resource):
+    add_args = {"stretch": fields.Float(required=True)}
+
+    def get(self):
+        return GlobalContext.getRobot().getController().getLegStretch()
+
+    @use_kwargs(add_args)
+    def put(self, height):
+        GlobalContext.getRobot().getController().setLegStretch(height)
+        GlobalContext.getRobot().getController().robotStop()
+        return "Current stretch:" + str(GlobalContext.getRobot().getController().getLegStretch())
+
+
 def robot_update_function():
     print("Updating robot")
     while True:
@@ -140,4 +153,5 @@ if __name__ == "__main__":
     api.add_resource(RobotResource, "/robot/legs/<int:leg_id>/links/<int:link_id>")
     api.add_resource(RobotMoveResource, "/robot/move/<string:action>")
     api.add_resource(RobotHeightResource, "/robot/height")
+    api.add_resource(RobotStretchResource, "/robot/stretch")
     app.run(port=5001, debug=True, host='0.0.0.0')
