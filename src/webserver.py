@@ -80,7 +80,7 @@ class RobotHeightResource(Resource):
     def put(self, height):
         GlobalContext.getRobot().getController().setLegHeight(height)
         GlobalContext.getRobot().getController().robotStop()
-        return "OK"
+        return "Current height:" + GlobalContext.getRobot().getController().getLegHeight()
 
 
 def robot_update_function():
