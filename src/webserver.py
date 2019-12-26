@@ -98,8 +98,13 @@ class RobotStretchResource(Resource):
 
 def robot_update_function():
     print("Updating robot")
-    while True:
-        GlobalContext.getRobot().getController().update()
+    try:
+        while True:
+            GlobalContext.getRobot().getController().update()
+    except:
+        print("Oops!", sys.exc_info()[0], " occurred.")
+    finally:
+        print("Main update thread stopped!!")
 
 
 def get_ip_address():
