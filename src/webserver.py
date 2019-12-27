@@ -96,7 +96,7 @@ class RobotStretchResource(Resource):
         return "Current stretch:" + str(GlobalContext.getRobot().getController().getLegStretch())
 
 
-class CameraYawResource:
+class CameraYawResource(Resource):
     add_args = {"degree": fields.Float(required=True)}
 
     @use_kwargs(add_args)
@@ -104,7 +104,7 @@ class CameraYawResource:
         GlobalContext.setCameraYaw(degree)
 
 
-class CameraPitchResource:
+class CameraPitchResource(Resource):
     add_args = {"degree": fields.Float(required=True)}
 
     @use_kwargs(add_args)
