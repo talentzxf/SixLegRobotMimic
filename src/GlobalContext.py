@@ -1,6 +1,6 @@
 import serial
 
-import RobotConfig from GlobalConfig
+from GlobalConfig import RobotConfig
 
 
 class SerialControl:
