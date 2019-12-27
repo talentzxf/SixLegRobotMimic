@@ -16,3 +16,6 @@ class RobotConfig:
 
     enable_serial = True
     enable_remote_rest = False
+
+    camera_pitch_servo_id = 18
+    camera_yaw_servo_id = 19

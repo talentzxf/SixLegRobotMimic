@@ -1,5 +1,7 @@
 import serial
 
+import RobotConfig from GlobalConfig
+
 
 class SerialControl:
     def __init__(self):
@@ -13,11 +15,11 @@ class SerialControl:
         }
 
         self.leg_link_map = [[0, 1, 2],
-                    [3, 4, 5],
-                    [6, 7, 8],
-                    [9, 10, 11],
-                    [12, 13, 14],
-                    [15, 16, 17]]
+                             [3, 4, 5],
+                             [6, 7, 8],
+                             [9, 10, 11],
+                             [12, 13, 14],
+                             [15, 16, 17]]
 
         self.ser = serial.Serial(
             port='/dev/ttyAMA0',
@@ -39,7 +41,10 @@ class SerialControl:
         # Hack to make the mimic robot same as the real robot
         if link_id == 1 or link_id == 0:
             angle = -angle
-        cmd = '"#%03dP%04dT0100!"' % (self.leg_link_map[leg_id][link_id], self.convert_angle(angle))
+        self.set_servo_angle(self.leg_link_map[leg_id][link_id])
+
+    def set_servo_angle(self, servo_id, angle):
+        cmd = '"#%03dP%04dT0100!"' % (servo_id, self.convert_angle(angle))
         self.ser.write(cmd.encode())
         print('Set serial:', cmd)
         return {"cmd": cmd}
@@ -61,3 +66,11 @@ class GlobalContext:
         if GlobalContext.serial is None:
             GlobalContext.serial = SerialControl()
         return GlobalContext.serial
+
+    @staticmethod
+    def setCameraPitch(angle):
+        GlobalContext.getSerial().set_servo_angle(RobotConfig.camera_pitch_servo_id, angle)
+
+    @staticmethod
+    def setCameraYaw(angle):
+        GlobalContext.getSerial().set_servo_angle(RobotConfig.camera_yaw_servo_id, angle)

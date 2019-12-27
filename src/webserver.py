@@ -96,6 +96,22 @@ class RobotStretchResource(Resource):
         return "Current stretch:" + str(GlobalContext.getRobot().getController().getLegStretch())
 
 
+class CameraYawResource:
+    add_args = {"degree": fields.Float(required=True)}
+
+    @use_kwargs(add_args)
+    def put(self, degree):
+        GlobalContext.setCameraYaw(degree)
+
+
+class CameraPitchResource:
+    add_args = {"degree": fields.Float(required=True)}
+
+    @use_kwargs(add_args)
+    def put(self, degree):
+        GlobalContext.setCameraPitch(degree)
+
+
 def robot_update_function():
     print("Updating robot")
     while True:
@@ -159,4 +175,6 @@ if __name__ == "__main__":
     api.add_resource(RobotMoveResource, "/robot/move/<string:action>")
     api.add_resource(RobotHeightResource, "/robot/height")
     api.add_resource(RobotStretchResource, "/robot/stretch")
+    api.add_resource(CameraYawResource, "/camera/yaw")
+    api.add_resource(CameraPitchResource, "/camera/pitch")
     app.run(port=5001, debug=True, host='0.0.0.0')
