@@ -23,3 +23,10 @@ sudo apt-get install qt5-default pyqt5-dev pyqt5-dev-tools
 # In each folder, you'll need to set up for the build. This is done by typing "python config.py" in each directory.
 #
 # The contents of each directory needs to be built and installed, go to your sip folder and type "make" this will take a very long time. After it's through, type "sudo make install".
+
+
+sudo apt install autoconf automake build-essential pkgconf libtool git libzip-dev libjpeg-dev gettext libmicrohttpd-dev libavformat-dev libavcodec-dev libavutil-dev libswscale-dev libavdevice-dev default-libmysqlclient-dev libpq-dev libsqlite3-dev libwebp-dev
+sudo wget https://github.com/Motion-Project/motion/releases/download/release-4.2.2/pi_buster_motion_4.2.2-1_armhf.deb
+sudo dpkg -i pi_buster_motion_4.2.2-1_armhf.deb
+
+# Follow this instruction to setup camera: https://pimylifeup.com/raspberry-pi-webcam-server/
