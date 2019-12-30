@@ -41,7 +41,7 @@ class SerialControl:
         # Hack to make the mimic robot same as the real robot
         if link_id == 1 or link_id == 0:
             angle = -angle
-        self.set_servo_angle(self.leg_link_map[leg_id][link_id])
+        self.set_servo_angle(self.leg_link_map[leg_id][link_id], angle)
 
     def set_servo_angle(self, servo_id, angle):
         cmd = '"#%03dP%04dT0100!"' % (servo_id, self.convert_angle(angle))
