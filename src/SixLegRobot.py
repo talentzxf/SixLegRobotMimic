@@ -18,6 +18,8 @@ from IKWindow import IKWindow
 
 from GlobalContext import GlobalContext
 
+from GlobalConfig import RobotConfig
+
 
 class Window(QWidget):
 
@@ -241,6 +243,7 @@ class GLWidget(QOpenGLWidget):
 
 if __name__ == '__main__':
     try:
+        RobotConfig.enable_serial = False
         app = QApplication(sys.argv)
         window = Window()
         window.show()
