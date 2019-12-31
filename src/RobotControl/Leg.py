@@ -30,13 +30,16 @@ class RoboLeg(LinkSystem):
         self.links[link_id].angleChanged.connect(callback)
 
     def set_end_pos_local(self, target_obj_pos):
+        print("Setting local pos:"+str(target_obj_pos))
         thetas = self.solver.solve(target_obj_pos)
+        print("theta:"+str(thetas))
         if thetas is not None:
             # 3. Update angles
             for i in range(len(thetas)):
                 self.set_link_angle(i, thetas[i])
 
     def set_end_pos(self, target_world_pos):
+        print("Setting world pos:" + str(target_world_pos))
         target_obj_pos = self.coord.worldToObject(target_world_pos, self.get_init_transformation_matrix())
         self.set_end_pos_local(target_obj_pos)
 
