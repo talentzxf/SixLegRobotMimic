@@ -54,7 +54,7 @@ class RobotMove:
 
     # Move directly to the original point (in object space),
     # i.e. the leg is just rotating and is holding the body weight
-    def genLegBackToStartTraj(self, legId, targetHeight):
+    def genLegBackToStartTraj(self, legId, targetHeight=None):
         if targetHeight is None:
             targetHeight = self.allLegsHeight
 
