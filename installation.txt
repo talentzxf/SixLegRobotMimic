@@ -30,3 +30,6 @@ sudo wget https://github.com/Motion-Project/motion/releases/download/release-4.2
 sudo dpkg -i pi_buster_motion_4.2.2-1_armhf.deb
 
 # Follow this instruction to setup camera: https://pimylifeup.com/raspberry-pi-webcam-server/
+
+# Wukong sound card
+sudo apt-get install portaudio19-dev python-pyaudio python3-pyaudio sox pulseaudio libsox-fmt-all ffmpeg

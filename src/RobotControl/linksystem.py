@@ -106,6 +106,7 @@ class LinkSystem:
 
         return model_matrix
 
+    # World Coordinate
     def get_target_pos(self):
         model_matrix = self.get_init_transformation_matrix()
 

@@ -70,6 +70,9 @@ class RobotModel:
     def getLegs(self):
         return self.legs
 
+    def getLeg(self, legId):
+        return self.legs[legId]
+
     def draw(self):
         self.body.draw()
 

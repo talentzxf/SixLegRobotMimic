@@ -55,6 +55,16 @@ class RobotResource(Resource):
         abort(error_status_code, errors=err.messages)
 
 
+class LegHeightResource(Resource):
+    add_args = {"height": fields.Float(required=True)}
+
+    @use_kwargs(add_args)
+    def put(self, leg_id, height):
+        leg_target_point = GlobalContext.getRobot().getLeg(leg_id).get_target_pos()
+        GlobalContext.getRobot().getLeg(leg_id).set_end_pos(
+            [leg_target_point[0].item(0), leg_target_point[1].item(0), height])
+
+
 class RobotMoveResource(Resource):
     def get(self, action):
         if action == 'go':
@@ -172,6 +182,7 @@ if __name__ == "__main__":
 
     api.add_resource(IndexResource, "/")
     api.add_resource(RobotResource, "/robot/legs/<int:leg_id>/links/<int:link_id>")
+    api.add_resource(LegHeightResource, "/robot/legs/<int:leg_id>/height")
     api.add_resource(RobotMoveResource, "/robot/move/<string:action>")
     api.add_resource(RobotHeightResource, "/robot/height")
     api.add_resource(RobotStretchResource, "/robot/stretch")
