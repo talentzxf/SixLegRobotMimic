@@ -10,6 +10,8 @@ from RobotControl.RobotMove.BackStepFactory import BackStepFactory
 
 import GlobalConfig
 
+from RobotControl.RobotMove.IKLegMove import IKLegMove
+
 
 class NavieControl:
     def __init__(self, legs):
@@ -93,6 +95,10 @@ class NavieControl:
     def robotStop(self):
         self.moves = []  # Remove all current moves
         self.moves.append(StopMove(self.legs, self.allLegsHeight, self.leg_init_stretch))
+
+    def setLegHeight(self, legId, targetHeight):
+        self.robotStop()
+        self.moves.append(IKLegMove(self.legs, legId, targetHeight, self.allLegsHeight, self.leg_init_stretch))
 
     def _robotRotate(self, theta):
         def __robotRotate():

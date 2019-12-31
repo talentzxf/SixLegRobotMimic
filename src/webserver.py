@@ -60,11 +60,7 @@ class LegHeightResource(Resource):
 
     @use_kwargs(add_args)
     def put(self, leg_id, height):
-        leg_target_point = GlobalContext.getRobot().getLeg(leg_id).get_target_pos()
-        print("Current leg pos:" + str([leg_target_point[0].item(0), leg_target_point[1].item(0), leg_target_point[2].item(0)]))
-        GlobalContext.getRobot().getLeg(leg_id).set_end_pos(
-            [leg_target_point[0].item(0), leg_target_point[1].item(0), height])
-        print("Setting leg pos:" + str([leg_target_point[0].item(0), leg_target_point[1].item(0), height]))
+        GlobalContext.getRobot().getController().setLegHeight(leg_id, height)
         return "OK"
 
 

@@ -52,9 +52,12 @@ class RobotMove:
         return LinearTrajectory.genTrajectory(leg,
                                               [worldStartPos, worldTargetPos1, worldTargetPos2])
 
+    def genLegBackToStartTraj(self, legId):
+        return self.genLegBackToStartTraj(legId, self.allLegsHeight)
+
     # Move directly to the original point (in object space),
     # i.e. the leg is just rotating and is holding the body weight
-    def genLegBackToStartTraj(self, legId):
+    def genLegBackToStartTraj(self, legId, targetHeight):
         leg = self.legs[legId]
         # 1. get current leg target position in world
         leg_target_point = leg.get_target_pos()
@@ -62,7 +65,7 @@ class RobotMove:
         print("target is:", leg_target_point)
         # TODO: not sure how to elegantly convert numpy data to python list
         worldStartPos = [leg_target_point[0].item(0), leg_target_point[1].item(0), leg_target_point[2].item(0)]
-        objTargetPos = [self.allLegsHeight, 0, self.leg_init_stretch]
+        objTargetPos = [targetHeight, 0, self.leg_init_stretch]
         worldTargetPos = LinearTrajectory.coord.objectToWorld(objTargetPos, leg.get_init_transformation_matrix())
 
         print("genLegBackToStartTraj Leg:{} Traj Points:{},{}".format(legId, worldStartPos, worldTargetPos))
