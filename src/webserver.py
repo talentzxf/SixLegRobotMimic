@@ -63,6 +63,8 @@ class LegHeightResource(Resource):
         leg_target_point = GlobalContext.getRobot().getLeg(leg_id).get_target_pos()
         GlobalContext.getRobot().getLeg(leg_id).set_end_pos(
             [leg_target_point[0].item(0), leg_target_point[1].item(0), height])
+        print("Setting leg pos:" + [leg_target_point[0].item(0), leg_target_point[1].item(0), height])
+        return "OK"
 
 
 class RobotMoveResource(Resource):
