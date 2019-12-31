@@ -52,12 +52,12 @@ class RobotMove:
         return LinearTrajectory.genTrajectory(leg,
                                               [worldStartPos, worldTargetPos1, worldTargetPos2])
 
-    def genLegBackToStartTraj(self, legId):
-        return self.genLegBackToStartTraj(legId, self.allLegsHeight)
-
     # Move directly to the original point (in object space),
     # i.e. the leg is just rotating and is holding the body weight
     def genLegBackToStartTraj(self, legId, targetHeight):
+        if targetHeight is None:
+            targetHeight = self.allLegsHeight
+
         leg = self.legs[legId]
         # 1. get current leg target position in world
         leg_target_point = leg.get_target_pos()
