@@ -1,3 +1,9 @@
+# Raspberrypi enable serial
+# https://spellfoundry.com/2016/05/29/configuring-gpio-serial-port-raspbian-jessie-including-pi-3-4/
+
+# Raspberrypi GPIO definition
+# https://pinout.xyz/pinout/serial_pi_zero
+
 pip3 install pyside2
 pip3 install pyqt5
 pip3 install numpy
