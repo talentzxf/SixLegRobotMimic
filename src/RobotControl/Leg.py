@@ -16,10 +16,10 @@ class RoboLeg(LinkSystem):
         self.solver = IKSolver(self.link_length_array, self.start_angles)
         self.coord = CoordinateConverter()
 
-    def add_link(self, length, axis):
+    def add_link(self, length, axis, init_theta=0.0):
         self.link_length_array.append(length)
-        self.start_angles.append(0)
-        super().add_link(length, axis)
+        self.start_angles.append(init_theta)
+        super().add_link(length, axis, init_theta)
 
     def set_link_angle(self, link_id, theta):
         self.links[link_id].setTheta(theta)

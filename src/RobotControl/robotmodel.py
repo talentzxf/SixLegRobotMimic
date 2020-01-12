@@ -17,12 +17,30 @@ class RobotModel:
     link1_length = RobotConfig.link1Length
     link2_length = RobotConfig.link2Length
     link3_length = RobotConfig.link3Length
+    link4_length = RobotConfig.link4Length
+
+    # Add a static link4
+    link2_3Angle_Y = RobotConfig.link2_3Angle_Y
+    link3_4Angle_Y = RobotConfig.link3_4Angle_Y
 
     @staticmethod
     def addLegLinks(leg):
         leg.add_link(RobotModel.link1_length, [1.0, 0.0, 0.0])
         leg.add_link(RobotModel.link2_length, [0.0, 1.0, 0.0])
-        leg.add_link(RobotModel.link3_length, [0.0, 1.0, 0.0])
+
+        if None is not RobotModel.link2_3Angle_Y:
+            leg.add_link(RobotModel.link3_length, [0.0, 1.0, 0.0], RobotModel.link2_3Angle_Y)
+        else:
+            leg.add_link(RobotModel.link3_length, [0.0, 1.0, 0.0])
+
+        if None is not RobotModel.link4_length:
+            leg.add_link(RobotModel.link4_length, [0.0, 1.0, 0.0])
+
+        if RobotModel.link4_length > 0:
+            if RobotModel.link3_4Angle_Y is not None:
+                leg.add_link(RobotModel.link4_length, [0.0, 1.0, 0.0], RobotModel.link3_4Angle_Y)
+            else:
+                leg.add_link(RobotModel.link4_length, [0.0, 1.0, 0.0])
 
     def __init__(self):
         self.legs = []

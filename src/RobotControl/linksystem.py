@@ -16,11 +16,13 @@ class Link(Cylinder):
     next = None
     prev = None
     axis = None
-    theta = 0
+    theta = 0  # servo angle
+    init_theta = 0  # init angle
 
-    def __init__(self, length, axis):
+    def __init__(self, length, axis, init_theta=0):
         Cylinder.__init__(self, self.radius, length)
         self.axis = axis
+        self.init_theta = init_theta
 
     def setNext(self, next):
         self.next = next
@@ -58,8 +60,8 @@ class Link(Cylinder):
 
         if self.axis:
             if realDraw:
-                gl.glRotated(self.theta, self.axis[0], self.axis[1], self.axis[2])
-            model_matrix = np.matmul(model_matrix, rotate_matrix(self.theta, self.axis))
+                gl.glRotated(self.theta + self.init_theta, self.axis[0], self.axis[1], self.axis[2])
+            model_matrix = np.matmul(model_matrix, rotate_matrix(self.theta + self.init_theta, self.axis))
         if realDraw:
             Cylinder.draw(self)
         return model_matrix
@@ -80,8 +82,8 @@ class LinkSystem:
     def getSolver(self):
         return self.solver
 
-    def add_link(self, length, axis):
-        new_link = Link(length, axis)
+    def add_link(self, length, axis, init_theta=0.0):
+        new_link = Link(length, axis, init_theta)
 
         # get the last link
         if len(self.links) > 0:

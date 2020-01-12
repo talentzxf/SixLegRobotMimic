@@ -45,7 +45,11 @@ def get_intercetions(x0, y0, r0, x1, y1, r1):
 class IKSolver:
     def __init__(self, l_array, start_angles):
         self.l_array = l_array  # link length definition
-        self.prev_angles = start_angles
+
+        self.prev_angles = []
+        for i in range(len(self.l_array)):
+            self.prev_angles.append(0.0)
+        self.start_angles = start_angles
 
     def getAngle(self, target_x, target_y, mid_x, mid_y):
         theta1 = math.atan2(mid_y, mid_x - self.l_array[0])
@@ -53,14 +57,24 @@ class IKSolver:
         theta2 = theta1_2 - theta1
         return [180 * theta1 / math.pi, 180 * theta2 / math.pi]
 
-    # TODO: Currently, we only implement 3 link system. Can we do this for any number of links? hmmmmm
+    # Can only solve 3 points.
+    # If given 4 points, last linke has to be fixed.
     def solve(self, p):  # Find the three angles
+
+        print("Target:" + str(p))
+
         # theta0 is just rotation toward the target point in y-z plane
         theta0 = -180.0 * math.atan2(p[1], p[2]) / math.pi
 
         # calculate other two angles in x-xp plane:
         p_conv_x = math.sqrt(p[1] * p[1] + p[2] * p[2])
         p_conv_y = p[0]
+
+        if self.l_array[3] is not None and self.l_array[3] > 0:
+            print("Before convert:" + str(p_conv_x) + "," + str(p_conv_y))
+            p_conv_x = p_conv_x - self.l_array[3] * math.cos(self.start_angles[3])
+            p_conv_y = p_conv_y - self.l_array[3] * math.sin(self.start_angles[3])
+            print("Converted target:" + str(p_conv_x) + "," + str(p_conv_y))
 
         x0 = self.l_array[0]
         y0 = 0

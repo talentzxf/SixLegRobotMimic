@@ -51,18 +51,6 @@ class NavieControl:
         def setAngle(angle):
             print("Setting Leg:{}, link:{} to angle: {}".format(legNo, linkNo, angle))
             self.legs[legNo].set_link_angle(linkNo, angle)
-
-            if GlobalConfig.enable_remote_rest:
-                # send command to remote
-                base_url = GlobalConfig.RobotConfig.base_url
-                full_url = base_url.format(legNo, linkNo, angle)
-                print("calling:", full_url)
-
-                try:
-                    print("Response:", response=requests.post(full_url))
-                except Exception as e:
-                    print("Error calling remote service", e)
-
         return setAngle
 
     def addValueChangeCallback(self, legNo, linkNo, callback):
