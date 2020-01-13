@@ -7,9 +7,9 @@ class RobotConfig:
     link3Length = 0.7
 
     # Add a static link4
-    link2_3Angle_Y = -60
-    link3_4Angle_Y = -60
-    link4Length = 1.0
+    # link4Length = 0.0
+    # link2_3Angle_Y = -60
+    # link3_4Angle_Y = -60
 
     defaultStretch = 1.5
     defaultLegHeight = -1.5

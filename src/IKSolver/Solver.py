@@ -47,8 +47,6 @@ class IKSolver:
         self.l_array = l_array  # link length definition
 
         self.prev_angles = []
-        for i in range(len(self.l_array)):
-            self.prev_angles.append(0.0)
         self.start_angles = start_angles
 
     def getAngle(self, target_x, target_y, mid_x, mid_y):
@@ -61,6 +59,10 @@ class IKSolver:
     # If given 4 points, last linke has to be fixed.
     def solve(self, p):  # Find the three angles
 
+        if len(self.prev_angles) == 0 and len(self.l_array) != 0:
+            for i in range(len(self.l_array)):
+                self.prev_angles.append(0.0)
+
         print("Target:" + str(p))
 
         # theta0 is just rotation toward the target point in y-z plane
@@ -70,7 +72,7 @@ class IKSolver:
         p_conv_x = math.sqrt(p[1] * p[1] + p[2] * p[2])
         p_conv_y = p[0]
 
-        if self.l_array[3] is not None and self.l_array[3] > 0:
+        if len(self.l_array) >= 4 and self.l_array[3] is not None and self.l_array[3] > 0:
             print("Before convert:" + str(p_conv_x) + "," + str(p_conv_y))
             p_conv_x = p_conv_x - self.l_array[3] * math.cos(self.start_angles[3])
             p_conv_y = p_conv_y - self.l_array[3] * math.sin(self.start_angles[3])
