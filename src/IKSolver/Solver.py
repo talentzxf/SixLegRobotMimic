@@ -49,16 +49,29 @@ class IKSolver:
         self.prev_angles = []
         self.start_angles = start_angles
 
-    def getAngle(self, target_x, target_y, mid_x, mid_y):
+    def getAngle(self, target_x, target_y, mid_x, mid_y, isFourPoints=False):
         theta1 = math.atan2(mid_y, mid_x - self.l_array[0])
         theta1_2 = math.atan2(target_y - mid_y, target_x - mid_x)
         theta2 = theta1_2 - theta1
-        return [180 * theta1 / math.pi, 180 * theta2 / math.pi]
 
-    # Can only solve 3 points.
+        if not isFourPoints:
+            return [180 * theta1 / math.pi, 180 * theta2 / math.pi]
+
+        l_prime = math.sqrt((target_x - mid_x) * (target_x - mid_x) + (target_y - mid_y) * (target_y - mid_y))
+        # Use sine law to find the angle
+        triangle_theta = math.asin(self.l_array[3] / l_prime * math.sin(self.start_angles[3] * 180 / math.pi))
+
+        theta2_1 = theta2 - triangle_theta
+        return [180 * theta1 / math.pi, 180 * theta2_1 / math.pi]
+
+    # calculate the length of an triangle, given other two edge length and the other angle
+    def cosine_law(self, theta, l1, l2):
+        radian = theta / 180 * math.pi
+        return math.sqrt(l1 * l1 + l2 * l2 - 2 * math.cos(radian) * l1 * l2)
+
     # If given 4 points, last linke has to be fixed.
     def solve(self, p):  # Find the three angles
-
+        isFourPoints = False
         if len(self.prev_angles) == 0 and len(self.l_array) != 0:
             for i in range(len(self.l_array)):
                 self.prev_angles.append(0.0)
@@ -72,19 +85,17 @@ class IKSolver:
         p_conv_x = math.sqrt(p[1] * p[1] + p[2] * p[2])
         p_conv_y = p[0]
 
-        if len(self.l_array) >= 4 and self.l_array[3] is not None and self.l_array[3] > 0:
-            print("Before convert:" + str(p_conv_x) + "," + str(p_conv_y))
-            p_conv_x = p_conv_x - self.l_array[3] * math.cos(self.start_angles[3])
-            p_conv_y = p_conv_y - self.l_array[3] * math.sin(self.start_angles[3])
-            print("Converted target:" + str(p_conv_x) + "," + str(p_conv_y))
-
         x0 = self.l_array[0]
         y0 = 0
         r0 = self.l_array[1]
 
         x1 = p_conv_x
         y1 = p_conv_y
-        r1 = self.l_array[2]
+        if len(self.l_array) >= 4 and self.l_array[3] is not None and self.l_array[3] > 0:
+            r1 = self.cosine_law(self.start_angles[3], self.l_array[2], self.l_array[3])
+            isFourPoints = True
+        else:
+            r1 = self.l_array[2]
 
         try:
             intersect_points = get_intercetions(x0, y0, r0, x1, y1, r1)
@@ -97,22 +108,27 @@ class IKSolver:
             return None
         if intersect_points is None:
             return None
+
+        candidate_angle_array = []
         if len(intersect_points) == 1:  # Only one point, just calculate the angle
-            angles = self.getAngle(p_conv_x, p_conv_y, intersect_points[0][0], intersect_points[0][1])
-            self.prev_angles = [theta0, angles[0], angles[1]]
-            return self.prev_angles
+            candidate_angle_array.append(
+                self.getAngles(p_conv_x, p_conv_y, intersect_points[0][0], intersect_points[0][1], isFourPoints))
 
         mid_point_0 = intersect_points[0]
         mid_point_1 = intersect_points[1]
-        angles_1 = self.getAngle(p_conv_x, p_conv_y, mid_point_0[0], mid_point_0[1])
-        angles_2 = self.getAngle(p_conv_x, p_conv_y, mid_point_1[0], mid_point_1[1])
+        candidate_angle_array.append(self.getAngle(p_conv_x, p_conv_y, mid_point_0[0], mid_point_0[1]), isFourPoints)
+        candidate_angle_array.append(self.getAngle(p_conv_x, p_conv_y, mid_point_1[0], mid_point_1[1]), isFourPoints)
 
-        diff1 = math.fabs(angles_1[0] - self.prev_angles[1]) + math.fabs(angles_1[1] - self.prev_angles[2])
-        diff2 = math.fabs(angles_2[0] - self.prev_angles[1]) + math.fabs(angles_2[1] - self.prev_angles[2])
-        if diff1 < diff2:
-            self.prev_angles = [theta0, angles_1[0], angles_1[1]]
-            return self.prev_angles
-        self.prev_angles = [theta0, angles_2[0], angles_2[1]]
+        cur_candidate_angle = candidate_angle_array[0]
+        cur_min_dist = float("inf")
+        for candidate_angle in candidate_angle_array:
+            curDiff = math.fabs(candidate_angle[0] - self.prev_angles[1]) + math.fabs(
+                candidate_angle[1] - self.prev_angles[2])
+            if cur_min_dist > curDiff:
+                cur_min_dist = curDiff
+                cur_candidate_angle = candidate_angle
+
+        self.prev_angles = [theta0, cur_candidate_angle[0], cur_candidate_angle[1]]
         return self.prev_angles
 
 
