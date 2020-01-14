@@ -92,7 +92,7 @@ class IKSolver:
         x1 = p_conv_x
         y1 = p_conv_y
         if len(self.l_array) >= 4 and self.l_array[3] is not None and self.l_array[3] > 0:
-            r1 = self.cosine_law(self.start_angles[3], self.l_array[2], self.l_array[3])
+            r1 = self.cosine_law(180 - self.start_angles[3], self.l_array[2], self.l_array[3])
             isFourPoints = True
         else:
             r1 = self.l_array[2]
@@ -112,12 +112,14 @@ class IKSolver:
         candidate_angle_array = []
         if len(intersect_points) == 1:  # Only one point, just calculate the angle
             candidate_angle_array.append(
-                self.getAngles(p_conv_x, p_conv_y, intersect_points[0][0], intersect_points[0][1], isFourPoints))
-
-        mid_point_0 = intersect_points[0]
-        mid_point_1 = intersect_points[1]
-        candidate_angle_array.append(self.getAngle(p_conv_x, p_conv_y, mid_point_0[0], mid_point_0[1], isFourPoints))
-        candidate_angle_array.append(self.getAngle(p_conv_x, p_conv_y, mid_point_1[0], mid_point_1[1], isFourPoints))
+                self.getAngle(p_conv_x, p_conv_y, intersect_points[0][0], intersect_points[0][1], isFourPoints))
+        else:
+            mid_point_0 = intersect_points[0]
+            mid_point_1 = intersect_points[1]
+            candidate_angle_array.append(
+                self.getAngle(p_conv_x, p_conv_y, mid_point_0[0], mid_point_0[1], isFourPoints))
+            candidate_angle_array.append(
+                self.getAngle(p_conv_x, p_conv_y, mid_point_1[0], mid_point_1[1], isFourPoints))
 
         cur_candidate_angle = candidate_angle_array[0]
         cur_min_dist = float("inf")
@@ -128,7 +130,8 @@ class IKSolver:
                 cur_min_dist = curDiff
                 cur_candidate_angle = candidate_angle
 
-        self.prev_angles = [theta0, cur_candidate_angle[0], cur_candidate_angle[1]]
+        self.prev_angles = [theta0, cur_candidate_angle[0] - self.start_angles[2],
+                            cur_candidate_angle[1]]
         return self.prev_angles
 
 

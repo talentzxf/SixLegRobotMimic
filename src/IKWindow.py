@@ -42,7 +42,7 @@ class MyTableWidget(QWidget):
     # TODO: better naming
     def initTab1(self):
         slider = QSlider(Qt.Vertical)
-        slider.setRange(-30, 30)
+        slider.setRange(-10, 10)
         slider.setSingleStep(1)
         slider.setPageStep(10)
         slider.setTickInterval(1)
@@ -113,7 +113,7 @@ class MyTableWidget(QWidget):
 
         hboxLayout = QHBoxLayout()
         zslider = QSlider(Qt.Vertical)
-        zslider.setRange(-30, 30)
+        zslider.setRange(-10, 10)
         zslider.setSingleStep(1)
         zslider.setPageStep(10)
         zslider.setTickInterval(1)

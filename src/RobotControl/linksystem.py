@@ -60,6 +60,7 @@ class Link(Cylinder):
 
         if self.axis:
             if realDraw:
+                # gl.glRotated(self.theta + self.init_theta, self.axis[0], self.axis[1], self.axis[2])
                 gl.glRotated(self.theta + self.init_theta, self.axis[0], self.axis[1], self.axis[2])
             model_matrix = np.matmul(model_matrix, rotate_matrix(self.theta + self.init_theta, self.axis))
         if realDraw:
