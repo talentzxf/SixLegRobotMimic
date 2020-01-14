@@ -116,8 +116,8 @@ class IKSolver:
 
         mid_point_0 = intersect_points[0]
         mid_point_1 = intersect_points[1]
-        candidate_angle_array.append(self.getAngle(p_conv_x, p_conv_y, mid_point_0[0], mid_point_0[1]), isFourPoints)
-        candidate_angle_array.append(self.getAngle(p_conv_x, p_conv_y, mid_point_1[0], mid_point_1[1]), isFourPoints)
+        candidate_angle_array.append(self.getAngle(p_conv_x, p_conv_y, mid_point_0[0], mid_point_0[1], isFourPoints))
+        candidate_angle_array.append(self.getAngle(p_conv_x, p_conv_y, mid_point_1[0], mid_point_1[1], isFourPoints))
 
         cur_candidate_angle = candidate_angle_array[0]
         cur_min_dist = float("inf")
