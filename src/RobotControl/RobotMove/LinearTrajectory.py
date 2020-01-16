@@ -9,13 +9,14 @@ class LinearInterpolator:
         self.delta = 1.0 / steps
 
     def get_next(self):
+        if self.t > 1.0:
+            return None
+
         retPoint = []
         for idx in range(len(self.start)):
             p = self.start[idx] + self.t * (self.end[idx] - self.start[idx])
             retPoint.append(p)
         self.t += self.delta
-        if self.t > 1.0:
-            return None
         return retPoint
 
     def reset(self):

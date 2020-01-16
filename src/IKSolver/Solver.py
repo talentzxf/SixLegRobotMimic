@@ -130,8 +130,8 @@ class IKSolver:
                 cur_min_dist = curDiff
                 cur_candidate_angle = candidate_angle
 
-        self.prev_angles = [theta0, cur_candidate_angle[0] - self.start_angles[2],
-                            cur_candidate_angle[1]]
+        self.prev_angles = [theta0, cur_candidate_angle[0],
+                            cur_candidate_angle[1] - self.start_angles[2]]
         return self.prev_angles
 
 

@@ -60,7 +60,7 @@ class LegHeightResource(Resource):
 
     @use_kwargs(add_args)
     def put(self, leg_id, height):
-        GlobalContext.getRobot().getController().setLegHeight(leg_id, height)
+        GlobalContext.getRobot().getController().setSingleLegHeight(leg_id, height)
         return "OK"
 
 

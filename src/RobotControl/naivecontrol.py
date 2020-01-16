@@ -84,7 +84,7 @@ class NavieControl:
         self.moves = []  # Remove all current moves
         self.moves.append(StopMove(self.legs, self.allLegsHeight, self.leg_init_stretch))
 
-    def setLegHeight(self, legId, targetHeight):
+    def setSingleLegHeight(self, legId, targetHeight):
         # self.robotStop()
         self.moves.append(IKLegMove(self.legs, legId, targetHeight, self.allLegsHeight, self.leg_init_stretch))
 

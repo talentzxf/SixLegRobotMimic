@@ -39,7 +39,7 @@ class SerialControl:
 
     def set_angle(self, leg_id, link_id, angle):
         # Hack to make the mimic robot same as the real robot
-        if link_id == 1 or link_id == 0:
+        if link_id == 1 or link_id == 0 or link_id == 2:
             angle = -angle
         self.set_servo_angle(self.leg_link_map[leg_id][link_id], angle)
 
