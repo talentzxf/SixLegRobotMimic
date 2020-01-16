@@ -38,7 +38,7 @@ class RobotResource(Resource):
     @use_kwargs(add_args)
     def post(self, leg_id, link_id, angle):
         GlobalContext.getSerial().set_angle(leg_id, link_id, angle)
-        return {"OK"}
+        return "OK"
 
     def get(self, leg_id, link_id):
         return {"leg": leg_id, "link": link_id, }
