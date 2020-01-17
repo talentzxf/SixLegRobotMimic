@@ -4,7 +4,6 @@
 # Raspberrypi GPIO definition
 # https://pinout.xyz/pinout/serial_pi_zero
 
-pip3 install pyside2
 pip3 install pyqt5
 pip3 install numpy
 pip3 install PyOpenGL
