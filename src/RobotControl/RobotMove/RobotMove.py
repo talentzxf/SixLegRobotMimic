@@ -30,7 +30,7 @@ class RobotMove:
         objStartPos = [self.allLegsHeight, 0, self.leg_init_stretch]
         worldStartPos = LinearTrajectory.coord.objectToWorld(objStartPos, leg.get_init_transformation_matrix())
         worldTargetPos1 = [worldStartPos[0], worldStartPos[1] + self.step_size / 2,
-                           worldStartPos[2] + self.step_size / 2]
+                           worldStartPos[2] + self.step_size]
         worldTargetPos2 = [worldStartPos[0], worldStartPos[1] + self.step_size, worldStartPos[2]]
 
         print("genLegMoveForwardTraj Leg:{} Traj Points:{},{},{}".format(legId, worldStartPos, worldTargetPos1,
