@@ -32,9 +32,9 @@ class SerialControl:
         print('Serial enabled!')
 
     def convert_angle(self, angle):
-        # 0 -- 500
-        # 90 -- 1500
-        # 180 -- 2000
+        # -90 -- 500
+        # 0 -- 1500
+        # 90 -- 2500
         return 1500 + angle / 180 * 2000
 
     def set_angle(self, leg_id, link_id, angle):
