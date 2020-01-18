@@ -6,12 +6,15 @@ class RobotConfig:
     link2Length = 0.65
     link3Length = 0.4
 
+    angle_min = -90
+    angle_max = 90
+
     # Add a static link4
     link4Length = 0.8
     link2_3Angle_Y = -60
     link3_4Angle_Y = -60
 
-    defaultStretch = 1.5
+    defaultStretch = 1.3
     defaultLegHeight = -1.0
     defaultStepSize = 0.8
 

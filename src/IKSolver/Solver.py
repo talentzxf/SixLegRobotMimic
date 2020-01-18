@@ -43,11 +43,12 @@ def get_intercetions(x0, y0, r0, x1, y1, r1):
 
 
 class IKSolver:
-    def __init__(self, l_array, start_angles):
+    def __init__(self, l_array, start_angles, minAngle = -90.0, maxAngle = 90.0):
         self.l_array = l_array  # link length definition
-
         self.prev_angles = []
         self.start_angles = start_angles
+        self.minAngle = minAngle
+        self.maxAngle = maxAngle
 
     def getAngle(self, target_x, target_y, mid_x, mid_y, isFourPoints=False):
         theta1 = math.atan2(mid_y, mid_x - self.l_array[0])
@@ -55,19 +56,25 @@ class IKSolver:
         theta2 = theta1_2 - theta1
 
         if not isFourPoints:
-            return [180 * theta1 / math.pi, 180 * theta2 / math.pi]
+            return [180 * theta1 / math.pi, 180 * theta2 / math.pi - self.start_angles[2]]
 
         l_prime = math.sqrt((target_x - mid_x) * (target_x - mid_x) + (target_y - mid_y) * (target_y - mid_y))
         # Use sine law to find the angle
         triangle_theta = math.asin(self.l_array[3] / l_prime * math.sin(self.start_angles[3] * 180 / math.pi))
 
         theta2_1 = theta2 - triangle_theta
-        return [180 * theta1 / math.pi, 180 * theta2_1 / math.pi]
+        return [180 * theta1 / math.pi, 180 * theta2_1 / math.pi - self.start_angles[2]]
 
     # calculate the length of an triangle, given other two edge length and the other angle
     def cosine_law(self, theta, l1, l2):
         radian = theta / 180 * math.pi
         return math.sqrt(l1 * l1 + l2 * l2 - 2 * math.cos(radian) * l1 * l2)
+
+    def isValidAngles(self, angles):
+        for angle in angles:
+            if angle > self.maxAngle or angle < self.minAngle:
+                return False
+        return True
 
     # If given 4 points, last linke has to be fixed.
     def solve(self, p):  # Find the three angles
@@ -121,17 +128,28 @@ class IKSolver:
             candidate_angle_array.append(
                 self.getAngle(p_conv_x, p_conv_y, mid_point_1[0], mid_point_1[1], isFourPoints))
 
-        cur_candidate_angle = candidate_angle_array[0]
+        cur_candidate_angle = None
+        for candidate_angle in candidate_angle_array:
+            if self.isValidAngles(candidate_angle):
+                cur_candidate_angle = candidate_angle
+                break
+
+        # None of the angles in the array can satisfy the angle criteria,
+        if cur_candidate_angle is None:
+            return None
+
         cur_min_dist = float("inf")
         for candidate_angle in candidate_angle_array:
-            curDiff = math.fabs(candidate_angle[0] - self.prev_angles[1]) + math.fabs(
-                candidate_angle[1] - self.prev_angles[2])
-            if cur_min_dist > curDiff:
-                cur_min_dist = curDiff
-                cur_candidate_angle = candidate_angle
+            # Rule out all impossible angles:
+            if self.isValidAngles(candidate_angle):
+                curDiff = math.fabs(candidate_angle[0] - self.prev_angles[1]) + math.fabs(
+                    candidate_angle[1] - self.prev_angles[2])
+                if cur_min_dist > curDiff:
+                    cur_min_dist = curDiff
+                    cur_candidate_angle = candidate_angle
 
         self.prev_angles = [theta0, cur_candidate_angle[0],
-                            cur_candidate_angle[1] - self.start_angles[2]]
+                            cur_candidate_angle[1]]
         return self.prev_angles
 
 
