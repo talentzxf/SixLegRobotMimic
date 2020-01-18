@@ -1,13 +1,13 @@
 class RobotConfig:
-    bodyLength = 1.9
-    bodyWidth = 0.9
+    bodyLength = 2.23
+    bodyWidth = 1.19
     bodyHeight = 0.25
     link1Length = 0.5
-    link2Length = 0.5
-    link3Length = 0.7
+    link2Length = 0.65
+    link3Length = 0.4
 
     # Add a static link4
-    link4Length = 1.0
+    link4Length = 0.8
     link2_3Angle_Y = -60
     link3_4Angle_Y = -60
 

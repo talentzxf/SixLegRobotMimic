@@ -46,7 +46,7 @@ class SerialControl:
     def set_servo_angle(self, servo_id, angle):
         cmd = '"#%03dP%04dT0100!"' % (servo_id, self.convert_angle(angle))
         self.ser.write(cmd.encode())
-        print('Set serial:', cmd)
+        # print('Set serial:', cmd)
         return {"cmd": cmd}
 
 
