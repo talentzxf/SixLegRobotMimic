@@ -32,6 +32,7 @@ class MyTableWidget(QWidget):
         # Add tabs
         self.tabs.addTab(self.initTab1(), "IK control")
         self.tabs.addTab(self.initTab2(), "Global control")
+        self.tabs.addTab(self.initTab3(), "Incline Control")
 
         # Add tabs to widget
         self.layout.addWidget(self.tabs)
@@ -89,6 +90,7 @@ class MyTableWidget(QWidget):
         vboxlayout = QVBoxLayout()
         button = QPushButton("Reset position")
         button.clicked.connect(self.resetRobotPos)
+        button.clicked.connect(self.resetRobotPos)
         vboxlayout.addWidget(button)
 
         goButton = QPushButton("Forward")
@@ -126,6 +128,19 @@ class MyTableWidget(QWidget):
         tab.setLayout(vboxlayout)
 
         return tab
+
+    def initTab3(self):
+        tab = QWidget()
+        layout = QVBoxLayout()
+        inclineButton = QPushButton("Incline")
+        inclineButton.clicked.connect(self.inclineRobot)
+        layout.addWidget(inclineButton)
+        tab.setLayout(layout)
+        return tab
+
+    def inclineRobot(self):
+        pass
+
 
     def globalZChanged(self, newValue):
         GlobalContext.getRobot().getController().setLegHeight(newValue/10)

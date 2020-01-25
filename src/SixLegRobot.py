@@ -20,6 +20,10 @@ from GlobalContext import GlobalContext
 
 from GlobalConfig import RobotConfig
 
+from Geometry.cylinder import Cylinder
+
+from Geometry import MatrixOps
+
 
 class Window(QWidget):
 
@@ -108,6 +112,25 @@ class Window(QWidget):
         return refreshLabel
 
 
+class InclineIndicator:
+    def __init__(self):
+        self.indicator = Cylinder(0.15, 10, QColor.fromRgb(255, 0, 255))
+        # self.rotation_matrix = np.identity(4)
+
+        self.rotation_matrix = MatrixOps.rotate_matrix(0.5750981,
+                                                       [-0.2080853, -0.19589223, -0.7665436])
+
+    def incline(self, theta, axis):
+        self.rotation_matrix = MatrixOps.rotate_matrix(theta, axis)
+
+    def init_object(self):
+        self.indicator.init_object()
+
+    def draw(self):
+
+        self.indicator.draw()
+
+
 class GLWidget(QOpenGLWidget):
 
     def __init__(self, parent=None):
@@ -121,6 +144,8 @@ class GLWidget(QOpenGLWidget):
         self.bg_color = QColor.fromCmykF(0.39, 0.39, 0.0, 0.0)
 
         self.coordinates = CoordinateSystem()
+
+        self.inclineIndicator = InclineIndicator()
 
     def getOpenglInfo(self):
         info = """
@@ -174,6 +199,8 @@ class GLWidget(QOpenGLWidget):
         GlobalContext.getRobot().initRobot()
         self.coordinates.init_object()
 
+        self.inclineIndicator.init_object()
+
     def enableLightAndMaterial(self):
         flashLightPos = [10.0, 10.0, 0.0]
         flashLightColor = [0.2, 0.2, 0.2]
@@ -203,6 +230,7 @@ class GLWidget(QOpenGLWidget):
         gl.glRotated(self.zRot, 0.0, 0.0, 1.0)
         self.coordinates.draw()
         GlobalContext.getRobot().draw()
+        self.inclineIndicator.draw()
 
     def resizeGL(self, width, height):
         side = min(width, height)
