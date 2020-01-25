@@ -190,7 +190,7 @@ if __name__ == "__main__":
     api.add_resource(RobotMoveResource, "/robot/move/<string:action>")
     api.add_resource(RobotHeightResource, "/robot/height")
     api.add_resource(RobotStretchResource, "/robot/stretch")
-    api.add_resource(RobotInclineResource, "robot/incline")
+    api.add_resource(RobotInclineResource, "/robot/incline")
     api.add_resource(CameraYawResource, "/camera/yaw")
     api.add_resource(CameraPitchResource, "/camera/pitch")
     app.run(port=5001, debug=True, host='0.0.0.0')
