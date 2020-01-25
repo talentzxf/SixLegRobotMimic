@@ -1,10 +1,33 @@
+# Raspberrypi enable wifi
+# https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md
+# 0. Enable wifi and ssh through raspi-config
+
+sudo apt-get -y install vim
+sudo apt-get -y install git
+sudo apt-get -y install sox
+sudo apt-get -y install espeak
+sudo apt-get -y python3
+sudo apt-get -y python3-pip
+sudo apt-get install portaudio19-dev python-pyaudio python3-pyaudio sox pulseaudio libsox-fmt-all ffmpeg
+sudo apt-get install libsox-fmt-mp3
+sudo apt-get install portaudio19-dev
+sudo pip3 install pyaudio
+sudo apt-get install python3-dev
+sudo pip3 install playsound
+wget http://hahack-1253537070.file.myqcloud.com/misc/swig-3.0.10.tar.gz
+
+
+
+# Sound card drive
+# https://github.com/jim2meng/dueros/wiki/PSound-card-driver
+
 # Raspberrypi enable serial
 # https://spellfoundry.com/2016/05/29/configuring-gpio-serial-port-raspbian-jessie-including-pi-3-4/
 
 # Raspberrypi GPIO definition
 # https://pinout.xyz/pinout/serial_pi_zero
 
-pip3 install pyside2
+# pip3 install pyside2
 pip3 install pyqt5
 pip3 install numpy
 pip3 install PyOpenGL
@@ -39,3 +62,6 @@ sudo dpkg -i pi_buster_motion_4.2.2-1_armhf.deb
 
 # Wukong sound card
 sudo apt-get install portaudio19-dev python-pyaudio python3-pyaudio sox pulseaudio libsox-fmt-all ffmpeg
+
+# Set audio default output device
+# https://unix.stackexchange.com/questions/62818/how-can-i-switch-between-different-audio-output-hardware-using-the-shell
