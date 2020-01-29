@@ -1,6 +1,7 @@
 import serial
 
 from GlobalConfig import RobotConfig
+from RobotControl.inclineindicator import InclineIndicator
 
 
 class SerialControl:
@@ -40,7 +41,7 @@ class SerialControl:
     def set_angle(self, leg_id, link_id, angle):
         # Hack to make the mimic robot same as the real robot
         # if link_id == 1 or link_id == 0 or link_id == 2:
-            # angle = -angle
+        # angle = -angle
         self.set_servo_angle(self.leg_link_map[leg_id][link_id], angle)
 
     def set_servo_angle(self, servo_id, angle):
@@ -53,6 +54,7 @@ class SerialControl:
 class GlobalContext:
     robot = None
     serial = None
+    inclineIndicator = None
 
     @staticmethod
     def getRobot():
@@ -74,3 +76,9 @@ class GlobalContext:
     @staticmethod
     def setCameraYaw(angle):
         GlobalContext.getSerial().set_servo_angle(RobotConfig.camera_yaw_servo_id, angle)
+
+    @staticmethod
+    def getInclineIndicator():
+        if GlobalContext.inclineIndicator is None:
+            GlobalContext.inclineIndicator = InclineIndicator()
+        return GlobalContext.inclineIndicator

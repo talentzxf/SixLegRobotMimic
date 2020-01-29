@@ -103,11 +103,15 @@ class RobotStretchResource(Resource):
 
 
 class RobotInclineResource(Resource):
-    add_args = {"angles": fields.List(fields.Float, required=True)}
+    # Pass a String in and parse later
+    add_args = {"angles": fields.String(required=True)}
 
     @use_kwargs(add_args)
     def put(self, angles):
         print("Angles:", angles)
+        angles_list = [float(i) for i in angles.split(",")]
+        GlobalContext.getRobot().getController().inclineRobot(angles_list)
+        GlobalContext.getInclineIndicator().incline(angles_list[0], angles_list[1:])
         return "OK"
 
 

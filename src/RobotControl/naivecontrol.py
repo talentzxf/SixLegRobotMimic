@@ -67,6 +67,9 @@ class NavieControl:
         stepFactory = MoveStepFactory(self.legs, self.allLegsHeight, self.leg_init_stretch)
         self.moves.append(stepFactory.getGoMove().setCallBack(self._robotGo))
 
+    def inclineRobot(self, angles):
+        pass
+
     def _robotBack(self):
         stepFactory = BackStepFactory(self.legs, self.allLegsHeight, self.leg_init_stretch)
         self.moves.append(stepFactory.getBackMove().setCallBack(self._robotBack))
