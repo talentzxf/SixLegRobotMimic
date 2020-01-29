@@ -138,6 +138,11 @@ class InclineIndicator:
         rightUpCylinder.setInitPos(RobotConfig.bodyWidth / 2, RobotConfig.bodyLength / 2, 0.0)
         self.targetLegEndPoints.append(rightUpCylinder)
 
+        # right center
+        rightCenterCylinder = PositionedCylinder(0.15, 0.5, QColor.fromRgb(0, 255, 255))
+        rightCenterCylinder.setInitPos(RobotConfig.bodyWidth / 2, 0, 0.0)
+        self.targetLegEndPoints.append(rightCenterCylinder)
+
         # right down
         rightDownCylinder = PositionedCylinder(0.15, 0.5, QColor.fromRgb(0, 255, 255))
         rightDownCylinder.setInitPos(RobotConfig.bodyWidth / 2, -RobotConfig.bodyLength / 2, 0.0)
@@ -147,6 +152,11 @@ class InclineIndicator:
         leftUpCylinder = PositionedCylinder(0.15, 0.5, QColor.fromRgb(0, 255, 255))
         leftUpCylinder.setInitPos(-RobotConfig.bodyWidth / 2, RobotConfig.bodyLength / 2, 0.0)
         self.targetLegEndPoints.append(leftUpCylinder)
+
+        # left center
+        leftCenterCylinder = PositionedCylinder(0.15, 0.5, QColor.fromRgb(0, 255, 255))
+        leftCenterCylinder.setInitPos(-RobotConfig.bodyWidth / 2, 0, 0.0)
+        self.targetLegEndPoints.append(leftCenterCylinder)
 
         # Left down
         leftDownCylinder = PositionedCylinder(0.15, 0.5, QColor.fromRgb(0, 255, 255))
@@ -169,11 +179,12 @@ class InclineIndicator:
         gl.glPushMatrix()
         gl.glMultMatrixd(self.rotation_matrix)
         self.indicator.draw()
-        gl.glPopMatrix()
-
         # draw six leg new end points
         for endPoint in self.targetLegEndPoints:
             endPoint.draw()
+        gl.glPopMatrix()
+
+
 
 
 class GLWidget(QOpenGLWidget):
