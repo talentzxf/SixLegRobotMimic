@@ -103,12 +103,13 @@ class RobotStretchResource(Resource):
 
 
 class RobotInclineResource(Resource):
-    add_args={"angles": fields.List(fields.Float, required=True)}
+    add_args = {"angles": fields.List(fields.Float, required=True)}
 
     @use_kwargs(add_args)
     def put(self, angles):
         print("Angles:", angles)
         return "OK"
+
 
 class CameraYawResource(Resource):
     add_args = {"degree": fields.Float(required=True)}
@@ -175,14 +176,16 @@ def multicast_ip_function():
 
 # Broadcast this address
 
+def start_web_server(update_robot = True, broadcast_enabled = True):
 
-if __name__ == "__main__":
-    x = Thread(target=robot_update_function)
-    x.start()
+    if update_robot:
+        x = Thread(target=robot_update_function)
+        x.start()
 
-    y = Thread(target=multicast_ip_function)
-    print("Start multicast thread")
-    y.start()
+    if broadcast_enabled:
+        y = Thread(target=multicast_ip_function)
+        print("Start multicast thread")
+        y.start()
 
     api.add_resource(IndexResource, "/")
     api.add_resource(RobotResource, "/robot/legs/<int:leg_id>/links/<int:link_id>")
@@ -193,4 +196,7 @@ if __name__ == "__main__":
     api.add_resource(RobotInclineResource, "/robot/incline")
     api.add_resource(CameraYawResource, "/camera/yaw")
     api.add_resource(CameraPitchResource, "/camera/pitch")
-    app.run(port=5001, debug=True, host='0.0.0.0')
+    app.run(port=5001, debug=False, host='0.0.0.0')
+
+if __name__ == "__main__":
+    start_web_server()

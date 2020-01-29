@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import traceback
+from threading import Thread
 
 import numpy as np
 import sys
@@ -12,6 +13,7 @@ from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider,
 
 import OpenGL.GL as gl
 
+import webserver
 from Geometry.CoordinateSystem import CoordinateSystem
 
 from IKWindow import IKWindow
@@ -185,8 +187,6 @@ class InclineIndicator:
         gl.glPopMatrix()
 
 
-
-
 class GLWidget(QOpenGLWidget):
 
     def __init__(self, parent=None):
@@ -325,6 +325,10 @@ class GLWidget(QOpenGLWidget):
         return angle
 
 
+def start_web_server():
+    webserver.start_web_server(False, False)
+
+
 if __name__ == '__main__':
     try:
         RobotConfig.enable_serial = False
@@ -334,6 +338,9 @@ if __name__ == '__main__':
 
         ikWindow = IKWindow()
         ikWindow.show()
+
+        web_thread = Thread(target=start_web_server)
+        web_thread.start()
     except Exception as e:
         print(e)
 
