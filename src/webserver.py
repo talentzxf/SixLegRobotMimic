@@ -110,7 +110,7 @@ class RobotInclineResource(Resource):
     def put(self, angles):
         print("Angles:", angles)
         angles_list = [float(i) for i in angles.split(",")]
-        GlobalContext.getRobot().getController().inclineRobot(angles_list)
+        GlobalContext.getRobot().getController().inclineRobot(angles_list[3] * 30, angles_list[0:3])
         GlobalContext.getInclineIndicator().incline(angles_list[3] * 30, angles_list[0:3])
         return "OK"
 

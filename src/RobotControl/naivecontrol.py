@@ -1,14 +1,14 @@
+from Geometry import MatrixOps
 from GlobalConfig import RobotConfig
 
 from RobotControl.RobotMove.ForwardMove import MoveStepFactory
+from RobotControl.RobotMove.InclineMove import InclineMove
 
 from RobotControl.RobotMove.StopMove import StopMove
 
 from RobotControl.RobotMove.RotateMove import RotateMoveFactory
 
 from RobotControl.RobotMove.BackStepFactory import BackStepFactory
-
-import GlobalConfig
 
 from RobotControl.RobotMove.IKLegMove import IKLegMove
 
@@ -51,6 +51,7 @@ class NavieControl:
         def setAngle(angle):
             print("Setting Leg:{}, link:{} to angle: {}".format(legNo, linkNo, angle))
             self.legs[legNo].set_link_angle(linkNo, angle)
+
         return setAngle
 
     def addValueChangeCallback(self, legNo, linkNo, callback):
@@ -67,8 +68,16 @@ class NavieControl:
         stepFactory = MoveStepFactory(self.legs, self.allLegsHeight, self.leg_init_stretch)
         self.moves.append(stepFactory.getGoMove().setCallBack(self._robotGo))
 
-    def inclineRobot(self, angles):
-        pass
+    def inclineRobot(self, theta, axis):
+        self.moves = []  # Stop current moves
+
+        # 1. Convert angles to matrix
+        rotate_matrix = MatrixOps.rotate_matrix(theta, axis)
+        # 2. Calculate it's inverse
+        rotate_matrix_inv = MatrixOps.inverse_rotate_matrix(rotate_matrix)
+
+        inclineMove = InclineMove(self.legs, rotate_matrix_inv, self.allLegsHeight, self.leg_init_stretch)
+        self.moves.append(inclineMove)
 
     def _robotBack(self):
         stepFactory = BackStepFactory(self.legs, self.allLegsHeight, self.leg_init_stretch)

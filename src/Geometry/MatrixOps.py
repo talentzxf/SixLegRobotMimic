@@ -35,3 +35,7 @@ def rotate_matrix(angle_theta, axis):
          [axz * verst - a1 * s, ayz * verst + a0 * s, c + az2 * verst, 0],
          [0, 0, 0, 1]]
     )
+
+
+def inverse_rotate_matrix(in_matrix):
+    return in_matrix.transpose()

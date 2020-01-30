@@ -54,7 +54,7 @@ class RobotMove:
 
     # Move directly to the original point (in object space),
     # i.e. the leg is just rotating and is holding the body weight
-    def genLegBackToStartTraj(self, legId, targetHeight=None):
+    def genLegBackToStartTraj(self, legId, targetHeight=None, inclineMatrix=None):
         if targetHeight is None:
             targetHeight = self.allLegsHeight
 
@@ -67,6 +67,10 @@ class RobotMove:
         worldStartPos = [leg_target_point[0].item(0), leg_target_point[1].item(0), leg_target_point[2].item(0)]
         objTargetPos = [targetHeight, 0, self.leg_init_stretch]
         worldTargetPos = LinearTrajectory.coord.objectToWorld(objTargetPos, leg.get_init_transformation_matrix())
+
+        if inclineMatrix is not None:
+            worldTargetPos = LinearTrajectory.coord.objectToWorld(worldTargetPos,
+                                                                  inclineMatrix)  # Transform again to include the incline matrix
 
         print("genLegBackToStartTraj Leg:{} Traj Points:{},{}".format(legId, worldStartPos, worldTargetPos))
 
