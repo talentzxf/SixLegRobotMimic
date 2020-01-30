@@ -111,7 +111,7 @@ class RobotInclineResource(Resource):
         print("Angles:", angles)
         angles_list = [float(i) for i in angles.split(",")]
         GlobalContext.getRobot().getController().inclineRobot(angles_list)
-        GlobalContext.getInclineIndicator().incline(angles_list[0], angles_list[1:])
+        GlobalContext.getInclineIndicator().incline(angles_list[3] * 30, angles_list[0:3])
         return "OK"
 
 
@@ -180,8 +180,7 @@ def multicast_ip_function():
 
 # Broadcast this address
 
-def start_web_server(update_robot = True, broadcast_enabled = True):
-
+def start_web_server(update_robot=True, broadcast_enabled=True):
     if update_robot:
         x = Thread(target=robot_update_function)
         x.start()
@@ -201,6 +200,7 @@ def start_web_server(update_robot = True, broadcast_enabled = True):
     api.add_resource(CameraYawResource, "/camera/yaw")
     api.add_resource(CameraPitchResource, "/camera/pitch")
     app.run(port=5001, debug=False, host='0.0.0.0')
+
 
 if __name__ == "__main__":
     start_web_server()
