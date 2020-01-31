@@ -69,7 +69,7 @@ class NavieControl:
         self.moves.append(stepFactory.getGoMove().setCallBack(self._robotGo))
 
     def inclineRobot(self, theta, axis):
-        self.moves = []  # Stop current moves
+        # self.moves = []  # Stop current moves
 
         # 1. Convert angles to matrix
         rotate_matrix = MatrixOps.rotate_matrix(theta, axis)

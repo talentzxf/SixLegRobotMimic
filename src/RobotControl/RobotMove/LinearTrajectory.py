@@ -26,7 +26,7 @@ class LinearInterpolator:
 class LinearTrajectory:
     def __init__(self, leg, start_point, end_point):
         self.leg = leg
-        self.linearInterpolator = LinearInterpolator(start_point, end_point, 5)
+        self.linearInterpolator = LinearInterpolator(start_point, end_point, 1)
         self.next = None
 
     def setNext(self, nextTrajectory):
@@ -42,7 +42,8 @@ class LinearTrajectory:
         next_pos = self.linearInterpolator.get_next()
         if next_pos:
             self.leg.set_end_pos_local(next_pos)
-            # print("current leg position:", self.leg.get_target_pos())
+            print("\t Set leg position:", self.coord.objectToWorld(next_pos, self.leg.get_init_transformation_matrix()))
+            print("\t Current leg position:", self.leg.get_target_pos())
             return True
         elif self.next:
             return self.next.go()
@@ -68,5 +69,3 @@ class LinearTrajectory:
                 else:
                     retTraj.getLastTrajectory().setNext(newTraj)
         return retTraj
-
-

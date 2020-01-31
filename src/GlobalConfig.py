@@ -4,18 +4,21 @@ class RobotConfig:
     bodyHeight = 0.25
     link1Length = 0.5
     link2Length = 0.65
-    link3Length = 0.4
+    link3Length = 0.72
 
     angle_min = -90
     angle_max = 90
 
     # Add a static link4
-    link4Length = 0.8
-    link2_3Angle_Y = -60
-    link3_4Angle_Y = -60
+    link4Length = 0.72
+    link2_3Angle_Y = -45
+    link3_4Angle_Y = -45
 
     defaultStretch = 1.3
     defaultLegHeight = -1.0
+
+    # defaultStretch = 2.2082
+    # defaultLegHeight = 0.0
     defaultStepSize = 0.8
 
     # Only affect the view in simulator
