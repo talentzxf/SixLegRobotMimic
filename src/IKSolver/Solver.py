@@ -60,7 +60,7 @@ class IKSolver:
 
         l_prime = math.sqrt((target_x - mid_x) * (target_x - mid_x) + (target_y - mid_y) * (target_y - mid_y))
         # Use sine law to find the angle
-        triangle_theta = math.asin(self.l_array[3] / l_prime * math.sin(self.start_angles[3] * 180 / math.pi))
+        triangle_theta = math.asin(self.l_array[3] / l_prime * math.sin(self.start_angles[3] / 180 * math.pi))
 
         theta2_1 = theta2 - triangle_theta
         return [180 * theta1 / math.pi, 180 * theta2_1 / math.pi - self.start_angles[2]]
