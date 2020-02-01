@@ -115,6 +115,20 @@ class RobotInclineResource(Resource):
         return "OK"
 
 
+class LegPositionResource(Resource):
+    add_args = {"position": fields.String(required=True)}
+
+    def get(self, leg_id):
+        leg = GlobalContext.getRobot().getLeg(leg_id)
+        return leg.get_target_pos().flatten().tolist()[0][0:3]
+
+    @use_kwargs(add_args)
+    def put(self, leg_id, position):
+        world_pos = [float(i) for i in position.split(",")]
+        leg = GlobalContext.getRobot().getLeg(leg_id)
+        return leg.set_end_pos(world_pos)
+
+
 class CameraYawResource(Resource):
     add_args = {"degree": fields.Float(required=True)}
 
@@ -193,6 +207,7 @@ def start_web_server(update_robot=True, broadcast_enabled=True):
     api.add_resource(IndexResource, "/")
     api.add_resource(RobotResource, "/robot/legs/<int:leg_id>/links/<int:link_id>")
     api.add_resource(LegHeightResource, "/robot/legs/<int:leg_id>/height")
+    api.add_resource(LegPositionResource, "/robot/legs/<int:leg_id>/position")
     api.add_resource(RobotMoveResource, "/robot/move/<string:action>")
     api.add_resource(RobotHeightResource, "/robot/height")
     api.add_resource(RobotStretchResource, "/robot/stretch")
