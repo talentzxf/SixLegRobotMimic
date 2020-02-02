@@ -25,6 +25,9 @@ class Link(Cylinder):
         self.init_theta = init_theta
         self.isMovable = isMovable
 
+    def getInitTheta(self):
+        return self.init_theta
+
     def isMovable(self):
         return self.isMovable()
 
@@ -100,6 +103,7 @@ class LinkSystem:
         self.links.append(new_link)
         if isMovable:
             self.movable_links.append(new_link)
+        return new_link
 
     def get_start_pos(self):
         return self.init_pos

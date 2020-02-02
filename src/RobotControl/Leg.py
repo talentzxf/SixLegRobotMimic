@@ -11,16 +11,14 @@ class RoboLeg(LinkSystem):
     def __init__(self, legId=None, pos=None, rotate=None):
         super().__init__(pos, rotate)
         self.legId = legId
-        self.link_length_array = []
-        self.start_angles = []
-        self.solver = IKSolver(self.link_length_array, self.start_angles)
+        self.solver = IKSolver()
         self.coord = CoordinateConverter()
 
     def add_link(self, length, axis, init_theta=0.0, isMovable=True):
-        self.link_length_array.append(length)
-        self.start_angles.append(init_theta)
-        super().add_link(length, axis, init_theta, isMovable)
+        new_link = super().add_link(length, axis, init_theta, isMovable)
+        self.solver.add_link(new_link)
 
+    # TODO: Move this to super class
     def set_link_angle(self, link_id, theta):
         self.movable_links[link_id].setTheta(theta)
         if RobotConfig.enable_serial:
