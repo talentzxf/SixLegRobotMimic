@@ -19,10 +19,14 @@ class Link(Cylinder):
     theta = 0  # servo angle
     init_theta = 0  # init angle
 
-    def __init__(self, length, axis, init_theta=0):
+    def __init__(self, length, axis, init_theta=0, isMovable = True):
         Cylinder.__init__(self, self.radius, length)
         self.axis = axis
         self.init_theta = init_theta
+        self.isMovable = isMovable
+
+    def isMovable(self):
+        return self.isMovable()
 
     def setNext(self, next):
         self.next = next
@@ -70,6 +74,7 @@ class Link(Cylinder):
 
 class LinkSystem:
     def __init__(self, pos=None, rotate=None):
+        self.movable_links = []
         self.links = []
         self.cylinder = Cylinder(0.02, 0.02)
         self.init_pos = pos
@@ -83,8 +88,8 @@ class LinkSystem:
     def getSolver(self):
         return self.solver
 
-    def add_link(self, length, axis, init_theta=0.0):
-        new_link = Link(length, axis, init_theta)
+    def add_link(self, length, axis, init_theta=0.0, isMovable = True):
+        new_link = Link(length, axis, init_theta, isMovable)
 
         # get the last link
         if len(self.links) > 0:
@@ -93,6 +98,8 @@ class LinkSystem:
             new_link.setPrev(last_link)
 
         self.links.append(new_link)
+        if isMovable:
+            self.movable_links.append(new_link)
 
     def get_start_pos(self):
         return self.init_pos

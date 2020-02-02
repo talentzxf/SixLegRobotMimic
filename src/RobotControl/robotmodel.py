@@ -16,21 +16,26 @@ from GlobalConfig import RobotConfig
 class RobotModel:
     link1_length = RobotConfig.link1Length
     link2_length = RobotConfig.link2Length
+
+    link2_arm_length = getattr(RobotConfig, "link2_arm_length", None)
+    link2_arm_angle = getattr(RobotConfig, "link2_arm_angle", 0.0)
+
     link3_length = RobotConfig.link3Length
     link4_length = getattr(RobotConfig, 'link4Length', None)
 
     # Add a static link4
-    link2_3Angle_Y = getattr(RobotConfig, "link2_3Angle_Y", 0.0)
     link3_4Angle_Y = getattr(RobotConfig, "link3_4Angle_Y", 0.0)
 
     @staticmethod
     def addLegLinks(leg):
         leg.add_link(RobotModel.link1_length, [1.0, 0.0, 0.0])
         leg.add_link(RobotModel.link2_length, [0.0, 1.0, 0.0])
-        leg.add_link(RobotModel.link3_length, [0.0, 1.0, 0.0], RobotModel.link2_3Angle_Y)
+        if RobotModel.link2_arm_length:
+            leg.add_link(RobotModel.link2_arm_length, [0.0, 1.0, 0.0], RobotModel.link2_arm_angle, False)  # This arm is fixed
+        leg.add_link(RobotModel.link3_length, [0.0, 1.0, 0.0])
 
         if RobotModel.link4_length is not None and RobotModel.link4_length > 0:
-            leg.add_link(RobotModel.link4_length, [0.0, 1.0, 0.0], RobotModel.link3_4Angle_Y)
+            leg.add_link(RobotModel.link4_length, [0.0, 1.0, 0.0], RobotModel.link3_4Angle_Y, False) # This link is fixed
 
     def __init__(self):
         self.legs = []
