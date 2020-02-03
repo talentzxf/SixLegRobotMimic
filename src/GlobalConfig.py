@@ -15,11 +15,11 @@ class RobotConfig:
     link4Length = 0.72
     link3_4Angle_Y = -75
 
-    defaultStretch = 0.78
-    defaultLegHeight = -1.2
+    # defaultStretch = 0.78
+    # defaultLegHeight = -1.2
 
-    # defaultStretch = 2.2082
-    # defaultLegHeight = 0.0
+    defaultStretch = 2.2874868
+    defaultLegHeight = 0.0
     defaultStepSize = 0.8
 
     # Only affect the view in simulator

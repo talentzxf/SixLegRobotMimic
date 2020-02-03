@@ -15,11 +15,11 @@ def sine_law(l1, l2, theta):
 
 # deg to radian
 def degToRad(deg):
-    return math.pi * deg / 180
+    return math.pi * deg / 180.0
 
 
 def radToDeg(rad):
-    return rad / math.pi * 180
+    return rad / math.pi * 180.0
 
 
 def vector_length(v):
@@ -35,8 +35,17 @@ def vector_angle(v1, v2):
     normalized_v1 = vector_normalize(v1)
     normalized_v2 = vector_normalize(v2)
     dot = normalized_v1[0] * normalized_v2[0] + normalized_v1[1] * normalized_v2[1]
-    
+
     return math.acos(dot)
+
+
+def vector_dir(v1, v2):
+    cross_z = (v1[0] * v2[1] - v1[1] * v2[0])
+    if cross_z > 0:
+        return 1;
+    elif cross_z == 0:
+        return 0;
+    return -1
 
 
 # Get the intersection of two circles

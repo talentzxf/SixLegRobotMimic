@@ -10,7 +10,8 @@ class StopMove(RobotMove):
         if not self.traj_calculated:
             self.traj_calculated = True
 
-            for legId in range(len(self.legs)):
-                 self.trajectoryArray.append(self.genLegBackToStartTraj(legId))
+            # for legId in range(len(self.legs)):
+                 #self.trajectoryArray.append(self.genLegBackToStartTraj(legId))
 
+            self.trajectoryArray.append(self.genLegBackToStartTraj(0))
         return super().go()
