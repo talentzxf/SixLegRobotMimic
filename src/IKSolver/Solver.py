@@ -228,7 +228,11 @@ class IKSolver:
 
         l_prime_2 = vector_length([target_x - mid_x, target_y - mid_y])
         theta2_pre = sine_law(self.links[4].getLength(), l_prime_2, degToRad(180 - self.links[4].getInitTheta()))
-        theta2 = angle - theta2_pre * vector_dir(vector1, vector2)
+
+        if vector_dir(vector1, vector2) == -1:
+            theta2 = -angle - theta2_pre
+        else:
+            theta2 = angle - theta2_pre
 
         return [radToDeg(theta1), radToDeg(theta2)]
 
