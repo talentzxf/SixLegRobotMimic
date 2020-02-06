@@ -41,6 +41,8 @@ class LinearTrajectory:
     def go(self):
         next_pos = self.linearInterpolator.get_next()
         if next_pos:
+            import time
+            time.sleep(0.1)  # Sleep to ensure joint is at the end of the joint.
             self.leg.set_end_pos_local(next_pos)
             print("\t Set leg position:", self.coord.objectToWorld(next_pos, self.leg.get_init_transformation_matrix()))
             print("\t Current leg position:", self.leg.get_target_pos())
