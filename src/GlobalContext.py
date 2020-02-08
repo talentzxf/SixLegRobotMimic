@@ -32,6 +32,8 @@ class SerialControl:
         )
         print('Serial enabled!')
 
+        self.link_degree_map = {}
+
     def convert_angle(self, angle):
         # -90 -- 500
         # 0 -- 1500
@@ -45,10 +47,24 @@ class SerialControl:
         self.set_servo_angle(self.leg_link_map[leg_id][link_id], angle)
 
     def set_servo_angle(self, servo_id, angle):
-        cmd = '"#%03dP%04dT0100!"' % (servo_id, self.convert_angle(angle))
+        self.link_degree_map[servo_id] = self.convert_angle(angle)
+        # cmd = '"#%03dP%04dT0100!"' % (servo_id, )
+        # self.ser.write(cmd.encode())
+        # # print('Set serial:', cmd)
+        # return {"cmd": cmd}
+
+    def flush(self):
+        cmd = "{"
+        for servo_id in self.link_degree_map:
+            angle = self.link_degree_map[servo_id]
+            cmd += '#%03dP%04dT0100' % (servo_id, angle)
+        cmd += "}"
+        print(cmd)
         self.ser.write(cmd.encode())
-        # print('Set serial:', cmd)
-        return {"cmd": cmd}
+        self.ser.flush()
+        self.link_degree_map = {}
+        import time
+        time.sleep(0.1)
 
 
 class GlobalContext:

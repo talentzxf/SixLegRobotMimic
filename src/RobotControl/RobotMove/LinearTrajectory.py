@@ -26,7 +26,8 @@ class LinearInterpolator:
 class LinearTrajectory:
     def __init__(self, leg, start_point, end_point):
         self.leg = leg
-        self.linearInterpolator = LinearInterpolator(start_point, end_point, 5)
+        self.linearInterpolator = LinearInterpolator(start_point, end_point,
+                                                     1)  # 1 Step basically means no interpolation.
         self.next = None
 
     def setNext(self, nextTrajectory):
