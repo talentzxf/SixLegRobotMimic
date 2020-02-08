@@ -125,6 +125,8 @@ class RobotMove:
     def flush(self):
         if RobotConfig.enable_serial:
             GlobalContext.getSerial().flush()
+        # import time
+        # time.sleep(0.1)
 
     def setNext(self, nextMove):
         self.next_move = nextMove

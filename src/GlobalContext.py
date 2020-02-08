@@ -57,7 +57,7 @@ class SerialControl:
         cmd = "{"
         for servo_id in self.link_degree_map:
             angle = self.link_degree_map[servo_id]
-            cmd += '#%03dP%04dT0100' % (servo_id, angle)
+            cmd += '#%03dP%04dT0100!' % (servo_id, angle)
         cmd += "}"
         print(cmd)
         self.ser.write(cmd.encode())
