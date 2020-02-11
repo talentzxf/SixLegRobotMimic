@@ -22,15 +22,16 @@ class SerialControl:
                              [12, 13, 14],
                              [15, 16, 17]]
 
-        self.ser = serial.Serial(
-            port='/dev/ttyAMA0',
-            baudrate=115200,
-            parity=serial.PARITY_NONE,
-            stopbits=serial.STOPBITS_ONE,
-            bytesize=serial.EIGHTBITS,
-            timeout=1
-        )
-        print('Serial enabled!')
+        if RobotConfig.enable_serial:
+            self.ser = serial.Serial(
+                port='/dev/ttyAMA0',
+                baudrate=115200,
+                parity=serial.PARITY_NONE,
+                stopbits=serial.STOPBITS_ONE,
+                bytesize=serial.EIGHTBITS,
+                timeout=1
+            )
+            print('Serial enabled!')
 
         self.link_degree_map = {}
 
@@ -59,9 +60,10 @@ class SerialControl:
             angle = self.link_degree_map[servo_id]
             cmd += '#%03dP%04dT0100!' % (servo_id, angle)
         cmd += "}"
-        print(cmd)
-        self.ser.write(cmd.encode())
-        self.ser.flush()
+        print("Flush: ", cmd)
+        if RobotConfig.enable_serial:
+            self.ser.write(cmd.encode())
+            self.ser.flush()
         self.link_degree_map = {}
         import time
         time.sleep(0.1)

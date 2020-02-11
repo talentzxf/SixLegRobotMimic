@@ -1,3 +1,4 @@
+from RobotControl.RobotMove.FlushMove import FlushMove
 from RobotControl.RobotMove.RobotMove import RobotMove
 
 
@@ -13,5 +14,5 @@ class IKLegMove(RobotMove):
             self.traj_calculated = True
 
             self.trajectoryArray.append(self.genLegBackToStartTraj(self.legId, self.targetHeight))
-
+            self.trajectoryArray.append(FlushMove())
         return super().go()

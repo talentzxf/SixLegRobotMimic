@@ -1,3 +1,4 @@
+from RobotControl.RobotMove.FlushMove import FlushMove
 from RobotControl.RobotMove.RobotMove import RobotMove
 
 
@@ -13,4 +14,5 @@ class StopMove(RobotMove):
             for legId in range(len(self.legs)):
                 self.trajectoryArray.append(self.genLegBackToStartTraj(legId))
 
+            self.trajectoryArray.append(FlushMove())
         return super().go()

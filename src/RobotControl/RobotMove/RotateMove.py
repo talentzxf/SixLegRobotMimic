@@ -1,3 +1,4 @@
+from RobotControl.RobotMove.FlushMove import FlushMove
 from RobotControl.RobotMove.RobotMove import RobotMove
 
 
@@ -47,6 +48,8 @@ class RotateMoveStep2(RobotMove):
             self.trajectoryArray.append(traj3)
             self.trajectoryArray.append(traj4)
             self.trajectoryArray.append(traj5)
+
+            self.trajectoryArray.append(FlushMove())
 
         return super().go()
 

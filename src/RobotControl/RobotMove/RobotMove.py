@@ -117,16 +117,7 @@ class RobotMove:
                 return False
             else:
                 return self.next_move.go()
-
-        # Flush when one step finished
-        self.flush()
         return True
-
-    def flush(self):
-        if RobotConfig.enable_serial:
-            GlobalContext.getSerial().flush()
-        # import time
-        # time.sleep(0.1)
 
     def setNext(self, nextMove):
         self.next_move = nextMove

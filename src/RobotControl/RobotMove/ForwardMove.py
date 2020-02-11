@@ -1,3 +1,4 @@
+from RobotControl.RobotMove.FlushMove import FlushMove
 from RobotControl.RobotMove.RobotMove import RobotMove
 
 
@@ -23,6 +24,8 @@ class GoForwardMoveStep1(RobotMove):
             self.trajectoryArray.append(traj3)
             self.trajectoryArray.append(traj4)
             self.trajectoryArray.append(traj5)
+
+            self.trajectoryArray.append(FlushMove())
         return super().go()
 
 
@@ -48,6 +51,8 @@ class GoForwardMoveStep2(RobotMove):
             self.trajectoryArray.append(traj3)
             self.trajectoryArray.append(traj4)
             self.trajectoryArray.append(traj5)
+
+            self.trajectoryArray.append(FlushMove())
         return super().go()
 
 
@@ -57,13 +62,7 @@ class MoveStepFactory:
         self.allLegsHeight = allLegsHeight
         self.leg_init_stretch = leg_init_stretch
 
-    def genMove1(self):
-        return GoForwardMoveStep1(self.legs, self.allLegsHeight, self.leg_init_stretch)
-
-    def genMove2(self):
-        return GoForwardMoveStep2(self.legs, self.allLegsHeight, self.leg_init_stretch)
-
     def getGoMove(self):
-        first_step = self.genMove1()
-        first_step.setNext(self.genMove2())
+        first_step = GoForwardMoveStep1(self.legs, self.allLegsHeight, self.leg_init_stretch)
+        first_step.setNext(GoForwardMoveStep2(self.legs, self.allLegsHeight, self.leg_init_stretch))
         return first_step

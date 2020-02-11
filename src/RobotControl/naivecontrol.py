@@ -90,7 +90,7 @@ class NavieControl:
         self.robotStop(self._robotGo)
 
     # TODO, check if leg is too low. If too low, raise and then put down to avoid damage!!!
-    def robotStop(self, callback = None):
+    def robotStop(self, callback=None):
         self.moves = []  # Remove all current moves
         stopMove = StopMove(self.legs, self.allLegsHeight, self.leg_init_stretch)
         if callback is not None:

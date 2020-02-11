@@ -21,8 +21,7 @@ class RoboLeg(LinkSystem):
     # TODO: Move this to super class
     def set_link_angle(self, link_id, theta):
         self.movable_links[link_id].setTheta(theta)
-        if RobotConfig.enable_serial:
-            GlobalContext.getSerial().set_angle(self.legId, link_id, theta)
+        GlobalContext.getSerial().set_angle(self.legId, link_id, theta)
 
     def set_link_callback(self, link_id, callback):
         self.links[link_id].angleChanged.connect(callback)
