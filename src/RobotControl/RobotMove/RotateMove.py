@@ -24,6 +24,8 @@ class RotateMoveStep1(RobotMove):
             self.trajectoryArray.append(traj4)
             self.trajectoryArray.append(traj5)
 
+            self.trajectoryArray.append(FlushMove())
+
         return super().go()
 
 
