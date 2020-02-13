@@ -174,7 +174,7 @@ class PointTrajMove(RobotMove):
         worldTargetPos = None
         if step == 1:
             worldTargetPos = [worldStartPos[0], worldStartPos[1] - self.step_size / 2,
-                              worldStartPos[2] + self.step_size / 2]
+                              worldStartPos[2] + self.step_size]
         elif step == 2:
             worldTargetPos = [worldStartPos[0], worldStartPos[1] - self.step_size, worldStartPos[2]]
 
