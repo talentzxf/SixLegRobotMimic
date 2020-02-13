@@ -1,58 +1,47 @@
 from RobotControl.RobotMove.FlushMove import FlushMove
-from RobotControl.RobotMove.RobotMove import RobotMove
+from RobotControl.RobotMove.RobotMove import PointTrajMove
 
 
-class GoForwardMoveStep1(RobotMove):
-    def __init__(self, legs, allLegsHeight=0, leg_init_stretch=0.3):
+class GoForwardMoveStep1(PointTrajMove):
+    def __init__(self, legs, step, allLegsHeight=0, leg_init_stretch=0.3):
         super().__init__(legs, allLegsHeight, leg_init_stretch)
         self.traj_calculated = False
+        self.step = step
 
     def go(self):
         if not self.traj_calculated:
             self.traj_calculated = True
-            traj1 = self.genLegMoveForwardTraj(1)
-            traj3 = self.genLegMoveForwardTraj(3)
-            traj5 = self.genLegMoveForwardTraj(5)
 
-            traj0 = self.genLegBackToStartTraj(0)
-            traj2 = self.genLegBackToStartTraj(2)
-            traj4 = self.genLegBackToStartTraj(4)
+            self.trajectoryArray.append(self.genLegBackToStartTraj(0))
+            self.trajectoryArray.append(self.genLegBackToStartTraj(2))
+            self.trajectoryArray.append(self.genLegBackToStartTraj(4))
 
-            self.trajectoryArray.append(traj0)
-            self.trajectoryArray.append(traj1)
-            self.trajectoryArray.append(traj2)
-            self.trajectoryArray.append(traj3)
-            self.trajectoryArray.append(traj4)
-            self.trajectoryArray.append(traj5)
-
+            self.trajectoryArray.append(self.genLegMoveForwardTraj(1, self.step))
+            self.trajectoryArray.append(self.genLegMoveForwardTraj(3, self.step))
+            self.trajectoryArray.append(self.genLegMoveForwardTraj(5, self.step))
             self.trajectoryArray.append(FlushMove())
         return super().go()
 
 
-class GoForwardMoveStep2(RobotMove):
-    def __init__(self, legs, allLegsHeight=0, leg_init_stretch=0.3):
+class GoForwardMoveStep2(PointTrajMove):
+    def __init__(self, legs, step, allLegsHeight=0, leg_init_stretch=0.3):
         super().__init__(legs, allLegsHeight, leg_init_stretch)
         self.traj_calculated = False
+        self.step = step
 
     def go(self):
         if not self.traj_calculated:
             self.traj_calculated = True
-            traj0 = self.genLegMoveForwardTraj(0)
-            traj2 = self.genLegMoveForwardTraj(2)
-            traj4 = self.genLegMoveForwardTraj(4)
 
-            traj1 = self.genLegBackToStartTraj(1)
-            traj3 = self.genLegBackToStartTraj(3)
-            traj5 = self.genLegBackToStartTraj(5)
+            self.trajectoryArray.append(self.genLegBackToStartTraj(1))
+            self.trajectoryArray.append(self.genLegBackToStartTraj(3))
+            self.trajectoryArray.append(self.genLegBackToStartTraj(5))
 
-            self.trajectoryArray.append(traj0)
-            self.trajectoryArray.append(traj1)
-            self.trajectoryArray.append(traj2)
-            self.trajectoryArray.append(traj3)
-            self.trajectoryArray.append(traj4)
-            self.trajectoryArray.append(traj5)
-
+            self.trajectoryArray.append(self.genLegMoveForwardTraj(0, self.step))
+            self.trajectoryArray.append(self.genLegMoveForwardTraj(2, self.step))
+            self.trajectoryArray.append(self.genLegMoveForwardTraj(4, self.step))
             self.trajectoryArray.append(FlushMove())
+
         return super().go()
 
 
@@ -62,7 +51,13 @@ class MoveStepFactory:
         self.allLegsHeight = allLegsHeight
         self.leg_init_stretch = leg_init_stretch
 
+    def genMove1(self, step):
+        return GoForwardMoveStep1(self.legs, step, self.allLegsHeight, self.leg_init_stretch)
+
+    def genMove2(self, step):
+        return GoForwardMoveStep2(self.legs, step, self.allLegsHeight, self.leg_init_stretch)
+
     def getGoMove(self):
-        first_step = GoForwardMoveStep1(self.legs, self.allLegsHeight, self.leg_init_stretch)
-        first_step.setNext(GoForwardMoveStep2(self.legs, self.allLegsHeight, self.leg_init_stretch))
+        first_step = self.genMove1(1)
+        first_step.setNext(self.genMove1(2)).setNext(self.genMove2(1)).setNext(self.genMove2(2))
         return first_step

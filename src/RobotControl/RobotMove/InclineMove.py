@@ -1,8 +1,8 @@
 from RobotControl.RobotMove.FlushMove import FlushMove
-from RobotControl.RobotMove.RobotMove import RobotMove
+from RobotControl.RobotMove.RobotMove import PointTrajMove
 
 
-class InclineMove(RobotMove):
+class InclineMove(PointTrajMove):
     def __init__(self, legs, matrix=None, allLegsHeight=0, leg_init_stretch=0.3):
         super().__init__(legs, allLegsHeight, leg_init_stretch)
         self.traj_calculated = False

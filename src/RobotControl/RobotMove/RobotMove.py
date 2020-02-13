@@ -1,5 +1,5 @@
 from GlobalConfig import RobotConfig
-from GlobalContext import GlobalContext
+from RobotControl.RobotMove.PointTrajectory import PointTrajectory
 
 from RobotControl.RobotMove.LinearTrajectory import LinearTrajectory
 
@@ -25,82 +25,82 @@ class RobotMove:
         if self.after_move_complete_callback:
             self.after_move_complete_callback()
 
-    # Move up and down via a mid point in the air, i.e. the leg is moving and didn't hold body weight
-    def genLegMoveForwardTraj(self, legId):
-        leg = self.legs[legId]
-        objStartPos = [self.allLegsHeight, 0, self.leg_init_stretch]
-        worldStartPos = LinearTrajectory.coord.objectToWorld(objStartPos, leg.get_init_transformation_matrix())
-        worldTargetPos1 = [worldStartPos[0], worldStartPos[1] + self.step_size / 2,
-                           worldStartPos[2] + self.step_size]
-        worldTargetPos2 = [worldStartPos[0], worldStartPos[1] + self.step_size, worldStartPos[2]]
-
-        print("genLegMoveForwardTraj Leg:{} Traj Points:{},{},{}".format(legId, worldStartPos, worldTargetPos1,
-                                                                         worldTargetPos2))
-        return LinearTrajectory.genTrajectory(leg,
-                                              [worldStartPos, worldTargetPos1, worldTargetPos2])
-
-    # Move up and down via a mid point in the air, i.e. the leg is moving and didn't hold body weight
-    def genLegMoveBackTraj(self, legId):
-        leg = self.legs[legId]
-        objStartPos = [self.allLegsHeight, 0, self.leg_init_stretch]
-        worldStartPos = LinearTrajectory.coord.objectToWorld(objStartPos, leg.get_init_transformation_matrix())
-        worldTargetPos1 = [worldStartPos[0], worldStartPos[1] - self.step_size / 2,
-                           worldStartPos[2] + self.step_size / 2]
-        worldTargetPos2 = [worldStartPos[0], worldStartPos[1] - self.step_size, worldStartPos[2]]
-
-        print("genLegMoveForwardTraj Leg:{} Traj Points:{},{},{}".format(legId, worldStartPos, worldTargetPos1,
-                                                                         worldTargetPos2))
-        return LinearTrajectory.genTrajectory(leg,
-                                              [worldStartPos, worldTargetPos1, worldTargetPos2])
-
-    # Move directly to the original point (in object space),
-    # i.e. the leg is just rotating and is holding the body weight
-    def genLegBackToStartTraj(self, legId, targetHeight=None, inclineMatrix=None):
-        if targetHeight is None:
-            targetHeight = self.allLegsHeight
-
-        leg = self.legs[legId]
-        # 1. get current leg target position in world
-        leg_target_point = leg.get_target_pos()
-
-        print("target is:", leg_target_point)
-        # TODO: not sure how to elegantly convert numpy data to python list
-        worldStartPos = [leg_target_point[0].item(0), leg_target_point[1].item(0), leg_target_point[2].item(0)]
-        objTargetPos = [targetHeight, 0, self.leg_init_stretch]
-        worldTargetPos = LinearTrajectory.coord.objectToWorld(objTargetPos, leg.get_init_transformation_matrix())
-
-        if inclineMatrix is not None:
-            worldTargetPos = LinearTrajectory.coord.objectToWorld(worldTargetPos,
-                                                                  inclineMatrix)  # Transform again to include the incline matrix
-
-        print("genLegBackToStartTraj Leg:{} Traj Points:{},{}".format(legId, worldStartPos, worldTargetPos))
-
-        return LinearTrajectory.genTrajectory(leg, [worldStartPos, worldTargetPos])
-
-    # Move directly to the original point (in object space),
-    # i.e. the leg is just rotating and is holding the body weight
-    def genLegRotateTraj(self, legId, theta):
-        angle_radian = theta / 180 * math.pi
-        leg = self.legs[legId]
-        # 1. get current leg target position in world
-        leg_target_point = leg.get_target_pos()
-
-        print("target is:", leg_target_point)
-        # TODO: not sure how to elegantly convert numpy data to python list
-        worldStartPos = [leg_target_point[0].item(0), leg_target_point[1].item(0), leg_target_point[2].item(0)]
-
-        objTargetPos1 = [self.allLegsHeight + self.step_size / 2, self.leg_init_stretch * math.sin(angle_radian / 2),
-                         self.leg_init_stretch * math.cos(angle_radian / 2)]
-        worldTargetPos1 = LinearTrajectory.coord.objectToWorld(objTargetPos1, leg.get_init_transformation_matrix())
-
-        objTargetPos2 = [self.allLegsHeight, self.leg_init_stretch * math.sin(angle_radian),
-                         self.leg_init_stretch * math.cos(angle_radian)]
-        worldTargetPos2 = LinearTrajectory.coord.objectToWorld(objTargetPos2, leg.get_init_transformation_matrix())
-
-        print("genLegRotateTraj leg:{} Traj Points:{},{},{}".format(legId, worldStartPos, worldTargetPos1,
-                                                                    worldTargetPos2))
-
-        return LinearTrajectory.genTrajectory(leg, [worldStartPos, worldTargetPos1, worldTargetPos2])
+    # # Move up and down via a mid point in the air, i.e. the leg is moving and didn't hold body weight
+    # def genLegMoveForwardTraj(self, legId):
+    #     leg = self.legs[legId]
+    #     objStartPos = [self.allLegsHeight, 0, self.leg_init_stretch]
+    #     worldStartPos = LinearTrajectory.coord.objectToWorld(objStartPos, leg.get_init_transformation_matrix())
+    #     worldTargetPos1 = [worldStartPos[0], worldStartPos[1] + self.step_size / 2,
+    #                        worldStartPos[2] + self.step_size]
+    #     worldTargetPos2 = [worldStartPos[0], worldStartPos[1] + self.step_size, worldStartPos[2]]
+    #
+    #     print("genLegMoveForwardTraj Leg:{} Traj Points:{},{},{}".format(legId, worldStartPos, worldTargetPos1,
+    #                                                                      worldTargetPos2))
+    #     return LinearTrajectory.genTrajectory(leg,
+    #                                           [worldStartPos, worldTargetPos1, worldTargetPos2])
+    #
+    # # Move up and down via a mid point in the air, i.e. the leg is moving and didn't hold body weight
+    # def genLegMoveBackTraj(self, legId):
+    #     leg = self.legs[legId]
+    #     objStartPos = [self.allLegsHeight, 0, self.leg_init_stretch]
+    #     worldStartPos = LinearTrajectory.coord.objectToWorld(objStartPos, leg.get_init_transformation_matrix())
+    #     worldTargetPos1 = [worldStartPos[0], worldStartPos[1] - self.step_size / 2,
+    #                        worldStartPos[2] + self.step_size / 2]
+    #     worldTargetPos2 = [worldStartPos[0], worldStartPos[1] - self.step_size, worldStartPos[2]]
+    #
+    #     print("genLegMoveForwardTraj Leg:{} Traj Points:{},{},{}".format(legId, worldStartPos, worldTargetPos1,
+    #                                                                      worldTargetPos2))
+    #     return LinearTrajectory.genTrajectory(leg,
+    #                                           [worldStartPos, worldTargetPos1, worldTargetPos2])
+    #
+    # # Move directly to the original point (in object space),
+    # # i.e. the leg is just rotating and is holding the body weight
+    # def genLegBackToStartTraj(self, legId, targetHeight=None, inclineMatrix=None):
+    #     if targetHeight is None:
+    #         targetHeight = self.allLegsHeight
+    #
+    #     leg = self.legs[legId]
+    #     # 1. get current leg target position in world
+    #     leg_target_point = leg.get_target_pos()
+    #
+    #     print("target is:", leg_target_point)
+    #     # TODO: not sure how to elegantly convert numpy data to python list
+    #     worldStartPos = [leg_target_point[0].item(0), leg_target_point[1].item(0), leg_target_point[2].item(0)]
+    #     objTargetPos = [targetHeight, 0, self.leg_init_stretch]
+    #     worldTargetPos = LinearTrajectory.coord.objectToWorld(objTargetPos, leg.get_init_transformation_matrix())
+    #
+    #     if inclineMatrix is not None:
+    #         worldTargetPos = LinearTrajectory.coord.objectToWorld(worldTargetPos,
+    #                                                               inclineMatrix)  # Transform again to include the incline matrix
+    #
+    #     print("genLegBackToStartTraj Leg:{} Traj Points:{},{}".format(legId, worldStartPos, worldTargetPos))
+    #
+    #     return LinearTrajectory.genTrajectory(leg, [worldStartPos, worldTargetPos])
+    #
+    # # Move directly to the original point (in object space),
+    # # i.e. the leg is just rotating and is holding the body weight
+    # def genLegRotateTraj(self, legId, theta):
+    #     angle_radian = theta / 180 * math.pi
+    #     leg = self.legs[legId]
+    #     # 1. get current leg target position in world
+    #     leg_target_point = leg.get_target_pos()
+    #
+    #     print("target is:", leg_target_point)
+    #     # TODO: not sure how to elegantly convert numpy data to python list
+    #     worldStartPos = [leg_target_point[0].item(0), leg_target_point[1].item(0), leg_target_point[2].item(0)]
+    #
+    #     objTargetPos1 = [self.allLegsHeight + self.step_size / 2, self.leg_init_stretch * math.sin(angle_radian / 2),
+    #                      self.leg_init_stretch * math.cos(angle_radian / 2)]
+    #     worldTargetPos1 = LinearTrajectory.coord.objectToWorld(objTargetPos1, leg.get_init_transformation_matrix())
+    #
+    #     objTargetPos2 = [self.allLegsHeight, self.leg_init_stretch * math.sin(angle_radian),
+    #                      self.leg_init_stretch * math.cos(angle_radian)]
+    #     worldTargetPos2 = LinearTrajectory.coord.objectToWorld(objTargetPos2, leg.get_init_transformation_matrix())
+    #
+    #     print("genLegRotateTraj leg:{} Traj Points:{},{},{}".format(legId, worldStartPos, worldTargetPos1,
+    #                                                                 worldTargetPos2))
+    #
+    #     return LinearTrajectory.genTrajectory(leg, [worldStartPos, worldTargetPos1, worldTargetPos2])
 
     def go(self):  # return False if the move is finished
         endedTraj = []
@@ -122,3 +122,77 @@ class RobotMove:
     def setNext(self, nextMove):
         self.next_move = nextMove
         return nextMove
+
+
+class PointTrajMove(RobotMove):
+    def __init__(self, legs, allLegsHeight, leg_init_stretch):
+        super().__init__(legs, allLegsHeight, leg_init_stretch)
+
+    # Move directly to the original point (in object space),
+    # i.e. the leg is just rotating and is holding the body weight
+    def genLegBackToStartTraj(self, legId, targetHeight=None, inclineMatrix=None):
+        if targetHeight is None:
+            targetHeight = self.allLegsHeight
+
+        leg = self.legs[legId]
+        objTargetPos = [targetHeight, 0, self.leg_init_stretch]
+        worldTargetPos = PointTrajectory.coord.objectToWorld(objTargetPos, leg.get_init_transformation_matrix())
+
+        if inclineMatrix is not None:
+            worldTargetPos = PointTrajectory.coord.objectToWorld(worldTargetPos,
+                                                                  inclineMatrix)  # Transform again to include the incline matrix
+
+        print("genLegBackToStartTraj Leg:{} Traj Points:{}".format(legId, worldTargetPos))
+
+        return PointTrajectory(leg, [worldTargetPos])
+
+    # Move directly to the original point (in object space),
+    # i.e. the leg is just rotating and is holding the body weight
+    def genLegRotateTraj(self, legId, theta, step):
+        angle_radian = theta / 180 * math.pi
+        leg = self.legs[legId]
+
+        worldTargetPos = None
+        if step == 1:
+            objTargetPos1 = [self.allLegsHeight + self.step_size / 2,
+                             self.leg_init_stretch * math.sin(angle_radian / 2),
+                             self.leg_init_stretch * math.cos(angle_radian / 2)]
+            worldTargetPos = PointTrajectory.coord.objectToWorld(objTargetPos1, leg.get_init_transformation_matrix())
+        elif step == 2:
+            objTargetPos2 = [self.allLegsHeight, self.leg_init_stretch * math.sin(angle_radian),
+                             self.leg_init_stretch * math.cos(angle_radian)]
+            worldTargetPos = PointTrajectory.coord.objectToWorld(objTargetPos2, leg.get_init_transformation_matrix())
+
+        return PointTrajectory(leg, [worldTargetPos])
+
+    # Move up and down via a mid point in the air, i.e. the leg is moving and didn't hold body weight
+    def genLegMoveBackTraj(self, legId, step):
+        leg = self.legs[legId]
+        objStartPos = [self.allLegsHeight, 0, self.leg_init_stretch]
+        worldStartPos = LinearTrajectory.coord.objectToWorld(objStartPos, leg.get_init_transformation_matrix())
+
+        worldTargetPos = None
+        if step == 1:
+            worldTargetPos = [worldStartPos[0], worldStartPos[1] - self.step_size / 2,
+                              worldStartPos[2] + self.step_size / 2]
+        elif step == 2:
+            worldTargetPos = [worldStartPos[0], worldStartPos[1] - self.step_size, worldStartPos[2]]
+
+        print("genLegMoveBackTraj Leg:{} Traj Points:{}".format(legId, worldTargetPos))
+        return PointTrajectory(leg, [worldTargetPos])
+
+    # Move up and down via a mid point in the air, i.e. the leg is moving and didn't hold body weight
+    def genLegMoveForwardTraj(self, legId, step):
+        leg = self.legs[legId]
+        objStartPos = [self.allLegsHeight, 0, self.leg_init_stretch]
+        worldStartPos = LinearTrajectory.coord.objectToWorld(objStartPos, leg.get_init_transformation_matrix())
+        worldTargetPos = None
+
+        if step == 1:
+            worldTargetPos = [worldStartPos[0], worldStartPos[1] + self.step_size / 2,
+                              worldStartPos[2] + self.step_size]
+        elif step == 2:
+            worldTargetPos = [worldStartPos[0], worldStartPos[1] + self.step_size, worldStartPos[2]]
+
+        print("genLegMoveForwardTraj Step:{} Leg:{} Traj Points:{}".format(step, legId, worldTargetPos))
+        return PointTrajectory(leg, [worldTargetPos])
