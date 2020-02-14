@@ -66,7 +66,7 @@ class SerialControl:
             self.ser.flush()
         self.link_degree_map = {}
         import time
-        time.sleep(1)
+        time.sleep(0.1)
 
 
 class GlobalContext:

@@ -12,7 +12,7 @@
 import numpy as np
 import pyaudio
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 import requests
 
@@ -74,27 +74,28 @@ class SpectrumAnalyzer:
         self.wave_y = self.data[self.START:self.START + self.N]
         self.spec_x = np.fft.fftfreq(self.N, d=1.0 / self.RATE)
         y = np.fft.fft(self.data[self.START:self.START + self.N])
-        self.spec_y = [np.sqrt(c.real ** 2 + c.imag ** 2) * 100.0 for c in y]
+        self.spec_y = [np.sqrt(c.real ** 2 + c.imag ** 2)*2.0 for c in y]
 
     def graphplot(self):
-        plt.clf()
+        # plt.clf()
         # wave
-        plt.subplot(311)
-        plt.plot(self.wave_x, self.wave_y)
+        # plt.subplot(311)
+        # plt.plot(self.wave_x, self.wave_y)
         # print("wave:" + str(self.wave_x) + "," + str(self.wave_y))
-        norm = 100.0 * np.linalg.norm(self.wave_y)
+        norm = 2.0 * np.linalg.norm(self.wave_y)
         print("Norm:" + str(norm))
-        plt.axis([self.START, self.START + self.N, -0.5, 0.5])
-        plt.xlabel("time [sample]")
-        plt.ylabel("amplitude")
+        # plt.axis([self.START, self.START + self.N, -0.5, 0.5])
+        # plt.xlabel("time [sample]")
+        # plt.ylabel("amplitude")
         # Spectrum
-        plt.subplot(312)
-        plt.plot(self.spec_x, self.spec_y, marker='o', linestyle='-')
-        plt.axis([0, self.RATE / 2, 0, 50])
-        plt.xlabel("frequency [Hz]")
-        plt.ylabel("amplitude spectrum")
+        # plt.subplot(312)
+        # plt.plot(self.spec_x, self.spec_y, marker='o', linestyle='-')
+        # plt.axis([0, self.RATE / 2, 0, 50])
+        # plt.xlabel("frequency [Hz]")
+        # plt.ylabel("amplitude spectrum")
         # print("freq:" + str(self.spec_x) + "," + str(self.spec_y))
-        dir = normalize(np.array(self.spec_y))
+        # dir = normalize(np.array(self.spec_y))
+        dir = np.array(self.spec_y)
         print("Normalized vector" + str(dir))
 
         result_vec = np.append(dir, norm)
@@ -104,7 +105,7 @@ class SpectrumAnalyzer:
         response = requests.put(result_url_string)
         print("Response:" + str(response))
         # Pause
-        plt.pause(.01)
+        # plt.pause(.01)
 
 
 if __name__ == "__main__":
